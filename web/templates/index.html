@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>particles.js</title>
+  <meta name="description" content="particles.js is a lightweight JavaScript library for creating particles.">
+  <meta name="author" content="Vincent Garreau" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" media="screen" href="{{ url_for('static',filename='vendor/css/styl.css') }}">
+</head>
+<body>
+
+
+<!-- particles.js container -->
+<div id="particles-js" style="background-color: purple;"></div>
+
+<!-- scripts -->
+{% block jsIncludes %}
+<script type="text/javascript" src="{{ url_for('static',filename='vendor/js/mainjscript.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='vendor/js/app.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/js/particles.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/js/stats.min.js') }}"></script>
+<script src="{{ url_for('static',filename='vendor/js/index.js') }}"></script> 
+{% endblock %}
+
+
+
+</body>
+</html>

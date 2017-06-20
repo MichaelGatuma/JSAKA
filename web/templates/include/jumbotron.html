@@ -1,0 +1,55 @@
+<style>
+.jumbotron{
+		opacity: 0.5;
+		font-size: 30px;
+}
+.element{
+	color:#0000FF;
+	font-weight: bold;
+}
+.typed-cursor{
+    opacity: 1;
+    -webkit-animation: blink 0.7s infinite;
+    -moz-animation: blink 0.7s infinite;
+    animation: blink 0.7s infinite;
+}
+@keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-webkit-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+@-moz-keyframes blink{
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
+}
+</style>
+
+<script type="text/javascript" src="{{ url_for('static',filename='vendor/js/typed.min.js') }}"></script>
+<script>
+	document.addEventListener("DOMContentLoaded", function(){
+		Typed.new(".element", {
+			strings: [", Minimal Footprint",", Easily Plugable Spiders",", Uses Scrapy!!",", Set up alert points"],
+			typeSpeed: 0,
+			contentType: 'text',
+			loop: true,
+			showCursor: true,
+			cursorChar: "|",
+			backDelay: 0
+			
+		});
+	});
+</script>
+
+<div class="jumbotron">
+  <h1>JSAKA</h1>
+  The Configurable Site Crawler<span class="typed-cursor"></span><span class="element"></span>
+</div>
+
+
+<div  id="particles-js" ></div>

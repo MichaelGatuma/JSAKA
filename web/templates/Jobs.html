@@ -1,0 +1,159 @@
+{% extends "base.html" %} {% block title %} JSAKA::Jobs
+
+{%endblock %} {% block content %}
+
+<style>
+td, th, .modal {
+	text-align: center;
+}
+</style>
+
+{% include "include/jumbotron.html" %}
+
+
+<div class="container-fluid">
+
+
+
+
+	<div class="row">
+	
+		<div class="alert  alert-dismissible fade in col-sm-12 text-center" id="alerter" style="display: none">
+			<strong>
+				<p class="messageFeedback"></p>
+			</strong>
+		</div>
+		
+		{% include "include/navigation.html" %}
+
+		<div class="col-sm-10">
+
+
+			<div class="panel panel-default">
+				<!-- Default panel contents -->
+				<div class="panel-heading" style="text-align: center;">This
+					List shows all Jobs that have been
+					scraped</div>
+				<div class="panel-body">
+					<p style="text-align: right;">
+						<button type="button" class="btn btn-info" data-toggle="modal"
+							data-target=".newkeyword-modal">
+							<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new
+						</button>
+					</p>
+				</div>
+
+				<!-- Table -->
+				<div class="table-responsive">
+					<table id="contentItems" class="table table-striped">
+						<thead>
+							<tr>
+								<th>Jobs String</th>
+								<th>Jobs Site</th>
+								<th>Date scrapped</th>
+								<th>Jobs Status</th>
+								<th>Jobs Subscribers</th>
+								<th>Control</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for key,val in keyWordList.items() %}
+							<tr>
+								<td id="{{key}}-keyword">{{ val }}</td>
+								<td>
+									<button type="button" id="{{key}}" class="btn btn-info keyword"
+										data-toggle="modal" data-target=".edit-modal">
+										<i class="fa fa-pencil" aria-hidden="true"></i>
+									</button>
+									<button type="button" id="{{key}}"
+										class="btn btn-primary keyword" data-toggle="modal"
+										data-target=".delete-modal">
+										<i class="fa fa-trash" aria-hidden="true"></i>
+									</button>
+								</td>
+							<tr>{% endfor %}
+						</tbody>
+
+					</table>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit keyword modal -->
+	<div class="modal fade edit-modal" id="edit-modal" tabindex="-1" role="dialog"
+		aria-labelledby="mySmallModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+
+				<div class="modal-body text-center">
+					<div>
+						<input class="edit-keyword" type="text" />
+					</div>
+				</div>
+
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary edit-keyword">Save
+						changes</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Delete keyword modal -->
+	<div class="modal fade delete-modal" id="delete-modal" tabindex="-1" role="dialog"
+		aria-labelledby="mySmallModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+
+				<div class="modal-body">
+					<div>
+						Delete <label class="delete-keyword"></label>?
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary delete-keyword">Delete
+						Keyword</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Add keyword modal -->
+	<div class="modal fade newkeyword-modal" id="new-keyword-modal" tabindex="-1" role="dialog"
+		aria-labelledby="mySmallModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+
+				<div class="modal-body">
+					<div>
+						<input id="new-keyword" type="text" />
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+					<button type="button" class="btn btn-primary save-keyword">Save
+						Keyword</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}
+
+{% block jsIncludes %}
+{{ super() }}
+<script type="text/javascript" src="{{ url_for('static',filename='vendor/js/sitescript.js') }}"></script>
+
+{% endblock %}
