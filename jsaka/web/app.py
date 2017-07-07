@@ -156,43 +156,52 @@ def editSite(name=None, site_id=None):
 def fetchAllSubscribers():
     dbUtil = dbConnection()
     cur = dbUtil.getCursor() 
+    
+    subscriberDict = {}
     cur.execute("select * from subscriber")
-    subscriberList = {}
     subscibers = cur.fetchall()
     cur.execute("select * from site_keyword")
     subscriptions = cur.fetchall()
-    totalSites=set()
-    totalKeywords=set()
-    for subsciber in subscibers:
-        subscriberList['id'] = subsciber[0]
-        subscriberList['email'] = subsciber[1]
-        subs=[]
-        for sub in subscriptions: 
-            if sub[0]==subsciber[0]:
-                subs.append(sub[1])
-                subs.append(sub[2])
-                totalSites.add(sub[1])
-                totalKeywords.add(sub[2])
-        subscriberList['subs']= subs
-        subscriberList['totalSites']=len(totalSites)
-        subscriberList['totalKeywords']=len(totalKeywords)
+    
+    
+    for subsc in subscibers: #Create a map of each subscriber and their subscription details(stats)
+        subscriber={}
+        subscriber['email'] = subsc[1]
+        siteKeywordMap={}
+        sitesId=[]
+        uniqueSitesId=set()
+        keyWordsId=[]
+        for sub in subscriptions: #Get all sites and keywords subscriber is subscribed to
+            if sub[0]==subsc[0]:
+                sitesId.append(sub[1])
+                uniqueSitesId.add(sub[1])
+                keyWordsId.append(sub[2])
+        for x in uniqueSitesId: # map keywords per site the subscriber is subscribed to
+            kWords=[]
+            for y in range(0,len(keyWordsId)):
+                if sitesId[y]==x:
+                    kWords.append(keyWordsId[y])
+            siteKeywordMap[x]=kWords
+                      
+        subscriber['subs']= siteKeywordMap
+        subscriber['totalSites']=len(uniqueSitesId)
+        subscriber['totalKeywords']=len(keyWordsId)
+        subscriberDict[subsc[0]]=subscriber
         
     dbUtil.closeDbConnection()
-    return  subscriberList       
+    return  subscriberDict       
 
 @app.route('/getAllSubscribers/', methods=['GET'])
 def getAllSubscribers():
-    returnList=fetchAllSubscribers()
-    return jsonify(returnList)
+    subscriberDict=fetchAllSubscribers()
+    return jsonify(subscriberDict)
     
         
 
 
 @app.route("/subscription/")
 def getSubscription():
-    subsciberList=[]
-    subsciberList.append(fetchAllSubscribers())
-    return  render_template('subscriber.html', subscriptionList=subsciberList)
+    return  render_template('subscriber.html', subscriptionList=fetchAllSubscribers())
 
 @app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
 def editSubscriber(keyword=None, keyword_id=None):

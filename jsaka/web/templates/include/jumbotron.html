@@ -3,7 +3,7 @@
 		opacity: 0.5;
 		font-size: 30px;
 }
-.element{
+.element, .element2 {
 	color:#0000FF;
 	font-weight: bold;
 }
@@ -43,13 +43,21 @@
 			backDelay: 0
 			
 		});
+		Typed.new(".element2", {
+			strings: [" Configurable "],
+			typeSpeed: 0,
+			contentType: 'text',
+			showCursor: false,
+			loop: true,
+			backDelay: 0
+			
+		});
 	});
 </script>
 
 <div class="jumbotron">
   <h1>JSAKA</h1>
-  The Configurable Site Crawler<span class="typed-cursor"></span><span class="element"></span>
+  The <span class="element2"></span> Site Crawler<span class="typed-cursor"></span><span class="element"></span>
 </div>
-
 
 <div  id="particles-js" ></div>

@@ -1,23 +1,54 @@
-{% extends "base.html" %} {% block title %} JSAKA::HOME
-
-
-{%endblock %} {% block content %}
+{% extends "base.html" %} {% block title %} JSAKA::HOME {%endblock %} {%
+block content %}
 
 <style>
-td, th{
+td, th {
 	text-align: center;
-	
 }
+
 .subs {
 	width: 50%;
 }
-.statsTb{
+
+.statsTb {
 	width: 100%;
 }
 
-.sub-mail{
+.sub-mail {
 	vertical-align: middle !important;
 }
+
+/* site-keyword */
+#site-keyword .selected-sites {
+	border: 1px solid;
+	border-bottom-width: 2px;
+	border-color: #ffffff #ebebe0 #ebebe0 #ffffff;
+}
+
+.selected-sites {
+	border-color: #000000 !important;
+}
+
+.h-line {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.site-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.site-list li:HOVER {
+	background-color: #000000;
+	color: #FFFFFF;
+/* 	font-size: 20px; */
+/* 	padding-left: 9px; */
+	border-radius: 7px
+}
+
+/* site-keyword */
 </style>
 
 {% include "include/jumbotron.html" %}
@@ -29,13 +60,14 @@ td, th{
 
 
 	<div class="row">
-	
-		<div class="alert  alert-dismissible fade in col-sm-12 text-center" id="alerter" style="display: none">
+
+		<div class="alert  alert-dismissible fade in col-sm-12 text-center"
+			id="alerter" style="display: none">
 			<strong>
 				<p class="messageFeedback"></p>
 			</strong>
 		</div>
-		
+
 		{% include "include/navigation.html" %}
 
 		<div class="col-sm-10">
@@ -43,15 +75,74 @@ td, th{
 
 			<div class="panel panel-default">
 				<!-- Default panel contents -->
-				<div class="panel-heading" style="text-align: center;">
-					List of all Subscribers, sites and jobs subscribed to </div>
+				<div class="panel-heading" style="text-align: center;">List of
+					all Subscribers, sites and jobs subscribed to</div>
 				<div class="panel-body">
-					<p style="text-align: right;">
-						<button type="button" class="btn btn-info" data-toggle="modal"
-							data-target=".newkeyword-modal">
-							<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new
-						</button>
-					</p>
+					<div class="row">
+						<div class="col-sm-10" id=site-keyword>
+
+							<div class="row">
+
+								<div class="form-group col-sm-12">
+									<form style="padding-bottom: 5px;">
+										<label for="subscriber-email">Email address:</label> <input
+											type="text" class="form-control" id="subscriber-email"
+											placeholder="Email">
+									</form>
+								</div>
+
+								<div class="content-list col-sm-5">
+									<p>Available Sites</p>
+									<ul class="site-list">
+										<li>site 1</li>
+										<li>site 2</li>
+										<li>site 3</li>
+										<li>site 4</li>
+										<li>site 5</li>
+									</ul>
+								</div>
+								<div class="col-sm-2">>></div>
+								<div class="content-list col-sm-5">
+									<p>Subscribed Sites</p>
+									<ul class="site-list">
+										<li>site 1</li>
+										<li>site 2</li>
+										<li>site 3</li>
+										<li>site 4</li>
+										<li>site 5</li>
+									</ul>
+								</div>
+								<div class="col-sm-5 selected-sites">
+									<p>Available Keywords</p>
+									<ul class="site-list">
+										<li>site 1</li>
+										<li>site 2</li>
+										<li>site 3</li>
+										<li>site 4</li>
+										<li>site 5</li>
+									</ul>
+								</div>
+								<div class="col-sm-2">>></div>
+								<div class="col-sm-5 selected-sites">
+									<p>Available Keywords for xxx</p>
+									<ul class="site-list">
+										<li>site 1</li>
+										<li>site 2</li>
+										<li>site 3</li>
+										<li>site 4</li>
+										<li>site 5</li>
+									</ul>
+								</div>
+							</div>
+
+						</div>
+						<div class="col-sm-2">
+							<button type="button" class="btn btn-info">
+								<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new
+							</button>
+						</div>
+
+					</div>
 				</div>
 
 				<!-- Table -->
@@ -65,9 +156,9 @@ td, th{
 							</tr>
 						</thead>
 						<tbody>
-							{% for sub in subscriptionList %}
+							{% for sub in subscriptionList.keys() %}
 							<tr>
-								<td class="sub-mail">{{ sub['email'] }}</td>														
+								<td class="sub-mail">{{ subscriptionList[sub]['email'] }}</td>
 								<td>
 									<table class="statsTb">
 										<thead>
@@ -75,11 +166,13 @@ td, th{
 											<th>Keyword</th>
 										</thead>
 										<tbody>
-											<tr>												
-												<td class="subs">{{ sub['totalSites' ]}}</td>																							
-												<td class="subs">{{ sub['totalKeywords'] }}</td>												
+											<tr>
+												<td class="subs">{{ subscriptionList[sub]['totalSites'
+													]}}</td>
+												<td class="subs">{{
+													subscriptionList[sub]['totalKeywords'] }}</td>
 											</tr>
-											
+
 										</tbody>
 									</table>
 								</td>
@@ -106,8 +199,8 @@ td, th{
 	</div>
 
 	<!-- Edit keyword modal -->
-	<div class="modal fade edit-modal" id="edit-modal" tabindex="-1" role="dialog"
-		aria-labelledby="mySmallModalLabel">
+	<div class="modal fade edit-modal" id="edit-modal" tabindex="-1"
+		role="dialog" aria-labelledby="mySmallModalLabel">
 		<div class="modal-dialog modal-sm" role="document">
 			<div class="modal-content">
 
@@ -129,8 +222,8 @@ td, th{
 	</div>
 
 	<!-- Delete keyword modal -->
-	<div class="modal fade delete-modal" id="delete-modal" tabindex="-1" role="dialog"
-		aria-labelledby="mySmallModalLabel">
+	<div class="modal fade delete-modal" id="delete-modal" tabindex="-1"
+		role="dialog" aria-labelledby="mySmallModalLabel">
 		<div class="modal-dialog modal-sm" role="document">
 			<div class="modal-content">
 
@@ -150,34 +243,10 @@ td, th{
 		</div>
 	</div>
 
-	<!-- Add keyword modal -->
-	<div class="modal fade newkeyword-modal" id="new-keyword-modal" tabindex="-1" role="dialog"
-		aria-labelledby="mySmallModalLabel">
-		<div class="modal-dialog modal-sm" role="document">
-			<div class="modal-content">
-
-				<div class="modal-body">
-					<div>
-						<input id="new-keyword" type="text" />
-					</div>
-				</div>
-
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-					<button type="button" class="btn btn-primary save-keyword">Save
-						Keyword</button>
-				</div>
-
-			</div>
-		</div>
-	</div>
-
 </div>
 
-{% endblock %}
-
-{% block jsIncludes %}
-{{ super() }}
-<script type="text/javascript" src="{{ url_for('static',filename='vendor/js/subscribers.js') }}"></script>
+{% endblock %} {% block jsIncludes %} {{ super() }}
+<script type="text/javascript"
+	src="{{ url_for('static',filename='vendor/js/subscribers.js') }}"></script>
 
 {% endblock %}

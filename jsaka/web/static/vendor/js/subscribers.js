@@ -3,8 +3,6 @@ var selectedKey=''
 $(document).ready(function(){
 	
 	addBtnEvents();
-   
-	//url: 'updateContentById?contentId=' + contentId, 
 	
 	$("button.edit-keyword").click(function (event) {
 		$("div#edit-modal").modal('hide');
