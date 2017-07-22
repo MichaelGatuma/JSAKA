@@ -11,7 +11,7 @@ class dbConnection:
     def __init__(self):
         
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        db_path = os.path.join(BASE_DIR, "HomeWorkMarket.db")
+        db_path = os.path.join(BASE_DIR, "JSaka.db")
         print("The db path---------->"+db_path)
         self.__con = lite.connect(db_path)
         self.__cur = self.__con.cursor()

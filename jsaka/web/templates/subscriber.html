@@ -27,6 +27,7 @@ td, th {
 
 .selected-sites {
 	border-color: #000000 !important;
+	margin-bottom: 4px;
 }
 
 .h-line {
@@ -34,18 +35,31 @@ td, th {
 	margin-bottom: 10px;
 }
 
-.site-list {
+.item-list {
 	list-style-type: none;
 	margin: 0;
 	padding: 0;
+	padding-left: 7px;
 }
 
-ul.site-list li:HOVER {
+ul.item-list li:HOVER {
 	background-color: #000000;
 	color: #FFFFFF;
-/* 	font-size: 20px; */
-/* 	padding-left: 9px; */
+	 	font-size: 17px; 
+	 	padding-left: 9px; 
 	border-radius: 7px
+}
+
+.select-item{
+	background-color: #000000;
+	color: #FFFFFF;
+	 	font-size: 17px; 
+	 	padding-left: 9px; 
+	border-radius: 7px
+}
+
+.picker.panel-heading {
+	background-color: #cce6ff ! important;
 }
 
 /* site-keyword */
@@ -92,56 +106,111 @@ ul.site-list li:HOVER {
 								</div>
 
 								<div class="content-list col-sm-5">
-									<p>Available Sites</p>
-									<ul class="site-list">
-										<li>site 1</li>
-										<li>site 2</li>
-										<li>site 3</li>
-										<li>site 4</li>
-										<li>site 5</li>
-									</ul>
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Available
+											Sites</div>
+										<div class="panel-body">
+											<ul class="item-list nonsubscribed-sites">
+												<li id="1">site 1</li>
+												<li id="2">site 2</li>
+												<li id="3">site 3</li>
+												<li id="4">site 4</li>
+												<li id="5">site 5</li>
+											</ul>
+
+
+										</div>
+									</div>
+
+
+
 								</div>
-								<div class="col-sm-2">>></div>
+
+								<div class="col-sm-2 text-center">
+									<button class="subscribe-to-site">
+										<i class="fa fa-chevron-right" style="color: blue"
+											aria-hidden="true"></i>
+									</button>
+								</div>
+
 								<div class="content-list col-sm-5">
-									<p>Subscribed Sites</p>
-									<ul class="site-list">
-										<li>site 1</li>
-										<li>site 2</li>
-										<li>site 3</li>
-										<li>site 4</li>
-										<li>site 5</li>
-									</ul>
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Subscribed
+											Sites</div>
+										<div class="panel-body">
+											<ul class="item-list subscribed-sites">
+												<li>site 1</li>
+												<li>site 2</li>
+												<li>site 3</li>
+												<li>site 4</li>
+												<li>site 5</li>
+											</ul>
+
+
+										</div>
+									</div>
 								</div>
-								<div class="col-sm-5 selected-sites">
-									<p>Available Keywords</p>
-									<ul class="site-list">
-										<li>site 1</li>
-										<li>site 2</li>
-										<li>site 3</li>
-										<li>site 4</li>
-										<li>site 5</li>
-									</ul>
+							</div>
+							
+							<!--Key words lists ************* -->
+							
+							<div class="row">
+
+								<div class="content-list col-sm-5">
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Available
+											Keywords</div>
+										<div class="panel-body">
+											<ul class="item-list">
+												<li>site 1</li>
+												<li>site 2</li>
+												<li>site 3</li>
+												<li>site 4</li>
+												<li>site 5</li>
+											</ul>
+										</div>
+									</div>
 								</div>
-								<div class="col-sm-2">>></div>
-								<div class="col-sm-5 selected-sites">
-									<p>Available Keywords for xxx</p>
-									<ul class="site-list">
-										<li>site 1</li>
-										<li>site 2</li>
-										<li>site 3</li>
-										<li>site 4</li>
-										<li>site 5</li>
-									</ul>
+
+
+								<div class="col-sm-2  text-center">
+									<button  class="subscribe-to-keyword">
+										<i class="fa fa-chevron-right" style="color: blue"
+											aria-hidden="true"></i>
+									</button>
 								</div>
+
+								<div class="content-list col-sm-5">
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Available
+											Keywords for xxx</div>
+										<div class="panel-body">
+											<ul class="item-list">
+												<li>site 1</li>
+												<li>site 2</li>
+												<li>site 3</li>
+												<li>site 4</li>
+												<li>site 5</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+
+
 							</div>
 
 						</div>
-						<div class="col-sm-2">
+						
+						<div class="col-sm-2" style="margin-top: 25px;">
 							<button type="button" class="btn btn-info">
 								<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new
 							</button>
 						</div>
-
+						
 					</div>
 				</div>
 

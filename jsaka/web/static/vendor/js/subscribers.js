@@ -3,7 +3,7 @@ var selectedKey=''
 $(document).ready(function(){
 	
 	addBtnEvents();
-	
+	//add event on edit button for selected item
 	$("button.edit-keyword").click(function (event) {
 		$("div#edit-modal").modal('hide');
 		var newKeyword=$("input.edit-keyword").val();
@@ -33,7 +33,7 @@ $(document).ready(function(){
 		
 	});
 	
-	
+	//add event on delete button for selected item
 	$("button.delete-keyword").click(function (event) {
 		$("div#delete-modal").modal('hide');
 		var delUrl='/delete-keyword/'+selectedKey+'/';
@@ -60,7 +60,7 @@ $(document).ready(function(){
         });
 	});
 	
-	
+	//add event on add button for new item
 	$("button.save-keyword").click(function (event) {
 		$("div#new-keyword-modal").modal('hide');
 		var newKeyword=$("input#new-keyword").val();
@@ -93,10 +93,23 @@ $(document).ready(function(){
 		
 	});
 	
+	//add event to subscribe to new site from site list button.
+	$("subscribe-to-site").click(function (event) {
+		
+	});
 	
+	//add event to each site in the list
+	$(".nonsubscribed-sites").click(function (event) {
+		console.log("Clicked list id "+event.target.id);
+		console.log("Clicked list value "+event.target.innerHTML);
+		$(event.target).toggleClass("select-item");
+		$(event.target).toggleClass("item-list"); 
+	});
+
+
 });
 
-
+// add events for edit and delete buttons from the subscriptions table
 function addBtnEvents(){
 	 $("button.keyword").click(function (event) {
 	    	console.log("Clicked id "+event.target.id);
