@@ -1,5 +1,6 @@
 var selectedKey=''
-var set=new Set();
+var subscribeSiteSet=new Set();
+var unSubscribeSiteSet=new Set();
 $(document).ready(function(){
 	
 	addBtnEvents();
@@ -94,19 +95,20 @@ $(document).ready(function(){
 	});
 	
 	//add event to subscribe to new site from site list button.
-	$("subscribe-to-site").click(function (event) {
-		
-	});
-	
-	//add event to each site in the list
-	$(".nonsubscribed-sites").click(function (event) {
-		console.log("Clicked list id "+event.target.id);
-		console.log("Clicked list value "+event.target.innerHTML);
+	$(".subscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		if(set.contains(event.target.id)) set.remove(event.target.id);
-		else set.add(event.target.id);
-		set.print();
+		if(unSubscribeSiteSet.contains(event.target.id)) set.remove(event.target.id);
+		else unSubscribeSiteSet.add(event.target.id);
+	});
+	
+	//add event to each unsubscribed site in the list
+	$(".nonsubscribed-sites").click(function (event) {
+		$(event.target).toggleClass("select-item");
+		$(event.target).toggleClass("item-list"); 
+		if(subscribeSiteSet.contains(event.target.id)) set.remove(event.target.id);
+		else subscribeSiteSet.add(event.target.id);
+		
 	});
 
 
