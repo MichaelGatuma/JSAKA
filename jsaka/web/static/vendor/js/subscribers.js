@@ -1,5 +1,5 @@
 var selectedKey=''
-
+var set=new Set();
 $(document).ready(function(){
 	
 	addBtnEvents();
@@ -104,6 +104,9 @@ $(document).ready(function(){
 		console.log("Clicked list value "+event.target.innerHTML);
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
+		if(set.contains(event.target.id)) set.remove(event.target.id);
+		else set.add(event.target.id);
+		set.print();
 	});
 
 
@@ -118,7 +121,7 @@ function addBtnEvents(){
 	    	console.log("keyword selector"+keywordEl)
 	    	$('input.edit-keyword').val($(keywordEl).html());
 	    	$('label.delete-keyword').html($(keywordEl).html());
-	    
+	    	
 	    });
 	
 }

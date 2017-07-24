@@ -127,7 +127,7 @@ ul.item-list li:HOVER {
 
 								</div>
 
-								<div class="col-sm-2 text-center">
+								<div class="col-sm-2 text-center" style="margin-top:5%;">
 									<button class="subscribe-to-site">
 										<i class="fa fa-chevron-right" style="color: blue"
 											aria-hidden="true"></i>
@@ -176,7 +176,7 @@ ul.item-list li:HOVER {
 								</div>
 
 
-								<div class="col-sm-2  text-center">
+								<div class="col-sm-2  text-center"  style="margin-top:5%;">
 									<button  class="subscribe-to-keyword">
 										<i class="fa fa-chevron-right" style="color: blue"
 											aria-hidden="true"></i>
@@ -315,7 +315,7 @@ ul.item-list li:HOVER {
 </div>
 
 {% endblock %} {% block jsIncludes %} {{ super() }}
-<script type="text/javascript"
-	src="{{ url_for('static',filename='vendor/js/subscribers.js') }}"></script>
+<script type="text/javascript"	src="{{ url_for('static',filename='vendor/js/utils.js') }}"></script>
+<script type="text/javascript"	src="{{ url_for('static',filename='vendor/js/subscribers.js') }}"></script>
 
 {% endblock %}
