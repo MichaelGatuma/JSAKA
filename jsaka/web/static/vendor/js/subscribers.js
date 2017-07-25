@@ -1,6 +1,10 @@
 var selectedKey=''
 var subscribeSiteSet=new Set();
 var unSubscribeSiteSet=new Set();
+var sitesMap=new HashTable(3);
+sitesMap.add(1,"site 1");
+sitesMap.add(1,"site 2");
+sitesMap.add(1,"site 3");
 $(document).ready(function(){
 	
 	addBtnEvents();
@@ -94,21 +98,37 @@ $(document).ready(function(){
 		
 	});
 	
-	//add event to subscribe to new site from site list button.
+	//add event to list of subscribe site.
 	$(".subscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
 		if(unSubscribeSiteSet.contains(event.target.id)) set.remove(event.target.id);
 		else unSubscribeSiteSet.add(event.target.id);
 	});
+
 	
-	//add event to each unsubscribed site in the list
+	//add event to list of unsubscribe site.
 	$(".nonsubscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		if(subscribeSiteSet.contains(event.target.id)) set.remove(event.target.id);
-		else subscribeSiteSet.add(event.target.id);
-		
+		if(subscribeSiteSet.contains(event.target.id)){
+				
+				subscribeSiteSet.remove(event.target.id);
+		}else {
+			
+			subscribeSiteSet.add(event.target.id);
+			
+		}
+		subscribeSiteSet.print();
+		//sitesMap.print();
+	});
+	
+	//add event to subscribe btn to add selected sites to subscription side
+	$(".subscribe-btn").click(function (event) {
+		var siteName=sitesMap.search(event.target.id);
+		$("subscribed-sites").append("<li>"+siteName+"</li>");
+		if(unSubscribeSiteSet.contains(event.target.id)) set.remove(event.target.id);
+		else unSubscribeSiteSet.add(event.target.id);
 	});
 
 
