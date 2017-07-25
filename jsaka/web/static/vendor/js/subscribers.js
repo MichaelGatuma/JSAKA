@@ -1,6 +1,12 @@
 var selectedKey=''
 var subscribeSiteSet=new Set();
 var unSubscribeSiteSet=new Set();
+var sitesMap=new HashTable(3);
+sitesMap.add(1,"site 1");
+sitesMap.add(2,"site 2");
+sitesMap.add(3,"site 3");
+sitesMap.add(4,"site 4");
+sitesMap.add(5,"site 5");
 $(document).ready(function(){
 	
 	addBtnEvents();
@@ -94,25 +100,57 @@ $(document).ready(function(){
 		
 	});
 	
-	//add event to subscribe to new site from site list button.
-	$(".subscribed-sites").click(function (event) {
-		$(event.target).toggleClass("select-item");
-		$(event.target).toggleClass("item-list"); 
-		if(unSubscribeSiteSet.contains(event.target.id)) set.remove(event.target.id);
-		else unSubscribeSiteSet.add(event.target.id);
-	});
-	
-	//add event to each unsubscribed site in the list
+	//add event to list of subscribe site.
 	$(".nonsubscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		if(subscribeSiteSet.contains(event.target.id)) set.remove(event.target.id);
-		else subscribeSiteSet.add(event.target.id);
-		
+		var bool=$("#"+event.target.id).hasClass("select-item");
+		if(bool) subscribeSiteSet.add(event.target.id);
+		else subscribeSiteSet.remove(event.target.id);
+		subscribeSiteSet.print();
 	});
 
+	
+	//add event to list of unsubscribe site.
+	$(".subscribed-sites").click(function (event) {
+		$(event.target).toggleClass("select-item");
+		$(event.target).toggleClass("item-list"); 
+		
+		var bool=$("#"+event.target.id).hasClass("select-item");
+		if(bool) unSubscribeSiteSet.add(event.target.id);
+		else unSubscribeSiteSet.remove(event.target.id);
+	});
+	
+	//add event to subscribe btn to add selected sites to subscription list
+	$(".site-subscribe-btn").click(function (event) {
+		jQuery.each(subscribeSiteSet.values,function(index, value){
+			var siteName=sitesMap.search(value);
+			$(".subscribed-sites").append("<li id="+value+">"+siteName+"</li>");
+			$(".nonsubscribed-sites li#"+value).remove();
+			unSubscribeSiteSet.remove(value);
+			subscribeSiteSet.add(value);
+		});
+	});
+
+	
+	//add event to unsubscribe btn to remove selected sites from subscription list
+	$(".site-unsubscribe-btn").click(function (event) {
+		jQuery.each(unSubscribeSiteSet.values,function(index, value){
+			var siteName=sitesMap.search(value);
+			$(".subscribed-sites li#"+value).remove();
+			$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
+			
+			//unSubscribeSiteSet.add(value);
+			//subscribeSiteSet.remove(value);
+		});
+	});
 
 });
+
+
+
+
+
 
 // add events for edit and delete buttons from the subscriptions table
 function addBtnEvents(){

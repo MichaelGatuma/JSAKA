@@ -56,8 +56,9 @@ Set.prototype.isSubset = function(set) {
 		return this.contains(value);
 	}, this);
 };
-Set.prototype.length = function() {
-	return this.numberOfValues;
+
+Set.prototype.iterator = function(){
+	return this.values;
 };
 Set.prototype.print = function() {
 	console.log(this.values.join(' '));
