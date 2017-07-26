@@ -2,11 +2,21 @@ var selectedKey=''
 var subscribeSiteSet=new Set();
 var unSubscribeSiteSet=new Set();
 var sitesMap=new HashTable(3);
-sitesMap.add(1,"site 1");
-sitesMap.add(2,"site 2");
-sitesMap.add(3,"site 3");
-sitesMap.add(4,"site 4");
-sitesMap.add(5,"site 5");
+sitesMap.add(10,"site 1");
+sitesMap.add(20,"site 2");
+sitesMap.add(30,"site 3");
+sitesMap.add(40,"site 4");
+sitesMap.add(50,"site 5");
+
+var subscribeKeywordSet=new Set();
+var unsubscribeKeywordSet=new Set();
+var keywordsMap=new HashTable(3);
+keywordsMap.add(1,"keyword 1");
+keywordsMap.add(2,"keyword 2");
+keywordsMap.add(3,"keyword 3");
+keywordsMap.add(4,"keyword 4");
+keywordsMap.add(5,"keyword 5");
+
 $(document).ready(function(){
 	
 	addBtnEvents();
@@ -104,10 +114,10 @@ $(document).ready(function(){
 	$(".nonsubscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		var bool=$("#"+event.target.id).hasClass("select-item");
+		var bool=$(event.target).hasClass("select-item");
 		if(bool) subscribeSiteSet.add(event.target.id);
 		else subscribeSiteSet.remove(event.target.id);
-		subscribeSiteSet.print();
+		
 	});
 
 	
@@ -115,10 +125,10 @@ $(document).ready(function(){
 	$(".subscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		
-		var bool=$("#"+event.target.id).hasClass("select-item");
+		var bool=$(event.target).hasClass("select-item");
 		if(bool) unSubscribeSiteSet.add(event.target.id);
 		else unSubscribeSiteSet.remove(event.target.id);
+		
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -127,8 +137,8 @@ $(document).ready(function(){
 			var siteName=sitesMap.search(value);
 			$(".subscribed-sites").append("<li id="+value+">"+siteName+"</li>");
 			$(".nonsubscribed-sites li#"+value).remove();
-			unSubscribeSiteSet.remove(value);
-			subscribeSiteSet.add(value);
+			unSubscribeSiteSet.empty();
+			subscribeSiteSet.empty();
 		});
 	});
 
@@ -139,13 +149,60 @@ $(document).ready(function(){
 			var siteName=sitesMap.search(value);
 			$(".subscribed-sites li#"+value).remove();
 			$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
-			
-			//unSubscribeSiteSet.add(value);
-			//subscribeSiteSet.remove(value);
+			unSubscribeSiteSet.empty();
+			subscribeSiteSet.empty();
+		});
+	});
+	
+	
+	//add event to list of nonsubscribe keywords list.
+	$(".nonsubscribed-keywords").click(function (event) {
+		$(event.target).toggleClass("select-item");
+		$(event.target).toggleClass("item-list"); 
+		var bool=$(event.target).hasClass("select-item");
+		if(bool) subscribeKeywordSet.add(event.target.id);
+		else unsubscribeKeywordSet.remove(event.target.id);
+		subscribeKeywordSet.print();
+	});
+
+	
+	//add event to list of unsubscribe site.
+	$(".subscribed-keywords").click(function (event) {
+		$(event.target).toggleClass("select-item");
+		$(event.target).toggleClass("item-list"); 
+		var bool=$(event.target).hasClass("select-item");
+		if(bool) unsubscribeKeywordSet.add(event.target.id);
+		else subscribeKeywordSet.remove(event.target.id);
+		unsubscribeKeywordSet.print();
+	});
+	
+	//add event to subscribe btn to add selected sites to subscription list
+	$(".keyword-subscribe-btn").click(function (event) {
+		jQuery.each(subscribeKeywordSet.values,function(index, value){
+			var keywordName=keywordsMap.search(value);
+			$(".nonsubscribed-keywords #"+value).remove();
+			$(".subscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+			unsubscribeKeywordSet.empty();
+			subscribeKeywordSet.empty();
+		});
+	});
+
+	
+	//add event to unsubscribe btn to remove selected keyword(s) from subscription list
+	$(".keyword-unsubscribe-btn").click(function (event) {
+		jQuery.each(unsubscribeKeywordSet.values,function(index, value){
+			var keywordName=keywordsMap.search(value);
+			console.log("The value "+value);
+			$(".subscribed-sites li#"+value).remove();
+			$(".subscribed-keywords li#"+value).remove();
+			$(".nonsubscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+			unsubscribeKeywordSet.empty();
+			subscribeKeywordSet.empty();
 		});
 	});
 
 });
+
 
 
 
