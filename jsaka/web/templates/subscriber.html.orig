@@ -1,0 +1,335 @@
+{% extends "base.html" %} {% block title %} JSAKA::HOME {%endblock %} {%
+block content %}
+
+<style>
+td, th {
+	text-align: center;
+}
+
+.subs {
+	width: 50%;
+}
+
+.statsTb {
+	width: 100%;
+}
+
+.sub-mail {
+	vertical-align: middle !important;
+}
+
+/* site-keyword */
+#site-keyword .selected-sites {
+	border: 1px solid;
+	border-bottom-width: 2px;
+	border-color: #ffffff #ebebe0 #ebebe0 #ffffff;
+}
+
+.selected-sites {
+	border-color: #000000 !important;
+	margin-bottom: 4px;
+}
+
+.h-line {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.item-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	padding-left: 7px;
+}
+
+ul.item-list li:HOVER {
+	background-color: #000000;
+	color: #FFFFFF;
+	 	font-size: 17px; 
+	 	padding-left: 9px; 
+	border-radius: 7px
+}
+
+.select-item{
+	background-color: #000000;
+	color: #FFFFFF;
+	 	font-size: 17px; 
+	 	padding-left: 9px; 
+	border-radius: 7px
+}
+
+.picker.panel-heading {
+	background-color: #cce6ff ! important;
+}
+
+/* site-keyword */
+</style>
+
+{% include "include/jumbotron.html" %}
+
+
+<div class="container-fluid">
+
+
+
+
+	<div class="row">
+
+		<div class="alert  alert-dismissible fade in col-sm-12 text-center"
+			id="alerter" style="display: none">
+			<strong>
+				<p class="messageFeedback"></p>
+			</strong>
+		</div>
+
+		{% include "include/navigation.html" %}
+
+		<div class="col-sm-10">
+
+
+			<div class="panel panel-default">
+				<!-- Default panel contents -->
+				<div class="panel-heading" style="text-align: center;">List of
+					all Subscribers, sites and jobs subscribed to</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-sm-10" id=site-keyword>
+
+							<div class="row">
+
+								<div class="form-group col-sm-12">
+									<form style="padding-bottom: 5px;">
+										<label for="subscriber-email">Email address:</label> <input
+											type="text" class="form-control" id="subscriber-email"
+											placeholder="Email">
+									</form>
+								</div>
+
+								<div class="content-list col-sm-5">
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Available
+											Sites</div>
+										<div class="panel-body">
+											<ul class="item-list nonsubscribed-sites">
+												<li id="1">site 1</li>
+												<li id="2">site 2</li>
+												<li id="3">site 3</li>
+												<li id="4">site 4</li>
+												<li id="5">site 5</li>
+											</ul>
+
+
+										</div>
+									</div>
+
+
+
+								</div>
+<<<<<<< HEAD
+								
+								<div class="col-sm-2">
+								<div class="row">
+									<div class="col-sm-12 text-center" style="margin-top:5%;">
+									<button class="site-subscribe-btn">
+=======
+
+								<div class="col-sm-2 text-center" style="margin-top:5%;">
+									<button class="subscribe-btn">
+>>>>>>> ad6513fc0236bd5719d6b408d9566d7788fd5fc5
+										<i class="fa fa-chevron-right" style="color: blue"
+											aria-hidden="true"></i>
+									</button>
+								</div>
+								
+								<div class="col-sm-12 text-center" style="margin-top:5%;">
+									<button class="site-unsubscribe-btn">
+										<i class="fa fa-chevron-left" style="color: blue"
+											aria-hidden="true"></i>
+									</button>
+								</div>
+								</div>
+								</div>
+								
+
+								<div class="content-list col-sm-5">
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Subscribed
+											Sites</div>
+										<div class="panel-body">
+											<ul class="item-list subscribed-sites">
+											
+											</ul>
+
+
+										</div>
+									</div>
+								</div>
+							</div>
+							
+							<!--Key words lists ************* -->
+							
+							<div class="row">
+
+								<div class="content-list col-sm-5">
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Available
+											Keywords</div>
+										<div class="panel-body">
+											<ul class="item-list subscribed-sites">
+												<li>site 1</li>
+												<li>site 2</li>
+												<li>site 3</li>
+												<li>site 4</li>
+												<li>site 5</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+
+
+								<div class="col-sm-2  text-center"  style="margin-top:5%;">
+									<button  class="subscribe-to-keyword">
+										<i class="fa fa-chevron-right" style="color: blue"
+											aria-hidden="true"></i>
+									</button>
+								</div>
+
+								<div class="content-list col-sm-5">
+									<div class="panel panel-default">
+										<!-- Default panel contents -->
+										<div class="picker panel-heading" style="text-align: center;">Available
+											Keywords for xxx</div>
+										<div class="panel-body">
+											<ul class="item-list">
+												<li>site 1</li>
+												<li>site 2</li>
+												<li>site 3</li>
+												<li>site 4</li>
+												<li>site 5</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+
+
+							</div>
+
+						</div>
+						
+						<div class="col-sm-2" style="margin-top: 25px;">
+							<button type="button" class="btn btn-info">
+								<i class="fa fa-plus-circle" aria-hidden="true"></i> Add new
+							</button>
+						</div>
+						
+					</div>
+				</div>
+
+				<!-- Table -->
+				<div class="table-responsive">
+					<table id="contentItems" class="table table-striped">
+						<thead>
+							<tr>
+								<th>Subscriber</th>
+								<th>Subscriptions</th>
+								<th>Control</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for sub in subscriptionList.keys() %}
+							<tr>
+								<td class="sub-mail">{{ subscriptionList[sub]['email'] }}</td>
+								<td>
+									<table class="statsTb">
+										<thead>
+											<th>Sites</th>
+											<th>Keyword</th>
+										</thead>
+										<tbody>
+											<tr>
+												<td class="subs">{{ subscriptionList[sub]['totalSites'
+													]}}</td>
+												<td class="subs">{{
+													subscriptionList[sub]['totalKeywords'] }}</td>
+											</tr>
+
+										</tbody>
+									</table>
+								</td>
+								<td>
+									<button type="button" id="{{key}}" class="btn btn-info keyword"
+										data-toggle="modal" data-target=".edit-modal">
+										<i class="fa fa-pencil" aria-hidden="true"></i>
+									</button>
+									<button type="button" id="{{key}}"
+										class="btn btn-primary keyword" data-toggle="modal"
+										data-target=".delete-modal">
+										<i class="fa fa-trash" aria-hidden="true"></i>
+									</button>
+								</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+
+					</table>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Edit keyword modal -->
+	<div class="modal fade edit-modal" id="edit-modal" tabindex="-1"
+		role="dialog" aria-labelledby="mySmallModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+
+				<div class="modal-body text-center">
+					<div>
+						<input class="edit-keyword" type="text" />
+					</div>
+				</div>
+
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary edit-keyword">Save
+						changes</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<!-- Delete keyword modal -->
+	<div class="modal fade delete-modal" id="delete-modal" tabindex="-1"
+		role="dialog" aria-labelledby="mySmallModalLabel">
+		<div class="modal-dialog modal-sm" role="document">
+			<div class="modal-content">
+
+				<div class="modal-body">
+					<div>
+						Delete <label class="delete-keyword"></label>?
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary delete-keyword">Delete
+						Keyword</button>
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+</div>
+
+{% endblock %} {% block jsIncludes %} {{ super() }}
+<script type="text/javascript"	src="{{ url_for('static',filename='vendor/js/utils.js') }}"></script>
+<script type="text/javascript"	src="{{ url_for('static',filename='vendor/js/subscribers.js') }}"></script>
+
+{% endblock %}
