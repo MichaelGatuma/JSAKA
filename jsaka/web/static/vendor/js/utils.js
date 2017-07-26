@@ -57,8 +57,9 @@ Set.prototype.isSubset = function(set) {
 	}, this);
 };
 
-Set.prototype.iterator = function(){
-	return this.values;
+Set.prototype.empty = function(){
+	this.values = [];
+	this.numberOfValues = 0;
 };
 Set.prototype.print = function() {
 	console.log(this.values.join(' '));
@@ -72,6 +73,7 @@ function HashTable(size) {
 	this.numberOfValues = 0;
 	this.size = size;
 }
+
 
 HashTable.prototype.add = function(key, value) {
 	var hash = this.calculateHash(key);

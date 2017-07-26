@@ -107,7 +107,7 @@ $(document).ready(function(){
 		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) subscribeSiteSet.add(event.target.id);
 		else subscribeSiteSet.remove(event.target.id);
-		subscribeSiteSet.print();
+		
 	});
 
 	
@@ -115,10 +115,10 @@ $(document).ready(function(){
 	$(".subscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		
 		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) unSubscribeSiteSet.add(event.target.id);
 		else unSubscribeSiteSet.remove(event.target.id);
+		
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -127,8 +127,8 @@ $(document).ready(function(){
 			var siteName=sitesMap.search(value);
 			$(".subscribed-sites").append("<li id="+value+">"+siteName+"</li>");
 			$(".nonsubscribed-sites li#"+value).remove();
-			unSubscribeSiteSet.remove(value);
-			subscribeSiteSet.add(value);
+			unSubscribeSiteSet.empty();
+			subscribeSiteSet.empty();
 		});
 	});
 
@@ -139,9 +139,8 @@ $(document).ready(function(){
 			var siteName=sitesMap.search(value);
 			$(".subscribed-sites li#"+value).remove();
 			$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
-			
-			//unSubscribeSiteSet.add(value);
-			//subscribeSiteSet.remove(value);
+			unSubscribeSiteSet.empty();
+			subscribeSiteSet.empty();
 		});
 	});
 
