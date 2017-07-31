@@ -114,10 +114,10 @@ $(document).ready(function(){
 	$(".nonsubscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		var bool=$(event.target).hasClass("select-item");
+		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) subscribeSiteSet.add(event.target.id);
 		else subscribeSiteSet.remove(event.target.id);
-		
+		subscribeSiteSet.print();
 	});
 
 	
@@ -125,10 +125,10 @@ $(document).ready(function(){
 	$(".subscribed-sites").click(function (event) {
 		$(event.target).toggleClass("select-item");
 		$(event.target).toggleClass("item-list"); 
-		var bool=$(event.target).hasClass("select-item");
+		
+		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) unSubscribeSiteSet.add(event.target.id);
 		else unSubscribeSiteSet.remove(event.target.id);
-		
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -137,8 +137,8 @@ $(document).ready(function(){
 			var siteName=sitesMap.search(value);
 			$(".subscribed-sites").append("<li id="+value+">"+siteName+"</li>");
 			$(".nonsubscribed-sites li#"+value).remove();
-			unSubscribeSiteSet.empty();
-			subscribeSiteSet.empty();
+			unSubscribeSiteSet.remove(value);
+			subscribeSiteSet.add(value);
 		});
 	});
 
@@ -149,60 +149,13 @@ $(document).ready(function(){
 			var siteName=sitesMap.search(value);
 			$(".subscribed-sites li#"+value).remove();
 			$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
-			unSubscribeSiteSet.empty();
-			subscribeSiteSet.empty();
-		});
-	});
-	
-	
-	//add event to list of nonsubscribe keywords list.
-	$(".nonsubscribed-keywords").click(function (event) {
-		$(event.target).toggleClass("select-item");
-		$(event.target).toggleClass("item-list"); 
-		var bool=$(event.target).hasClass("select-item");
-		if(bool) subscribeKeywordSet.add(event.target.id);
-		else unsubscribeKeywordSet.remove(event.target.id);
-		subscribeKeywordSet.print();
-	});
-
-	
-	//add event to list of unsubscribe site.
-	$(".subscribed-keywords").click(function (event) {
-		$(event.target).toggleClass("select-item");
-		$(event.target).toggleClass("item-list"); 
-		var bool=$(event.target).hasClass("select-item");
-		if(bool) unsubscribeKeywordSet.add(event.target.id);
-		else subscribeKeywordSet.remove(event.target.id);
-		unsubscribeKeywordSet.print();
-	});
-	
-	//add event to subscribe btn to add selected sites to subscription list
-	$(".keyword-subscribe-btn").click(function (event) {
-		jQuery.each(subscribeKeywordSet.values,function(index, value){
-			var keywordName=keywordsMap.search(value);
-			$(".nonsubscribed-keywords #"+value).remove();
-			$(".subscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
-			unsubscribeKeywordSet.empty();
-			subscribeKeywordSet.empty();
-		});
-	});
-
-	
-	//add event to unsubscribe btn to remove selected keyword(s) from subscription list
-	$(".keyword-unsubscribe-btn").click(function (event) {
-		jQuery.each(unsubscribeKeywordSet.values,function(index, value){
-			var keywordName=keywordsMap.search(value);
-			console.log("The value "+value);
-			$(".subscribed-sites li#"+value).remove();
-			$(".subscribed-keywords li#"+value).remove();
-			$(".nonsubscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
-			unsubscribeKeywordSet.empty();
-			subscribeKeywordSet.empty();
+			
+			//unSubscribeSiteSet.add(value);
+			//subscribeSiteSet.remove(value);
 		});
 	});
 
 });
-
 
 
 
