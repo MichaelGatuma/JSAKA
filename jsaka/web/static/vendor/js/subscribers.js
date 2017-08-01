@@ -2,11 +2,7 @@ var selectedKey=''
 var subscribeSiteSet=new Set();
 var unSubscribeSiteSet=new Set();
 var sitesMap=new HashTable(3);
-sitesMap.add(10,"site 1");
-sitesMap.add(20,"site 2");
-sitesMap.add(30,"site 3");
-sitesMap.add(40,"site 4");
-sitesMap.add(50,"site 5");
+
 
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
@@ -17,7 +13,11 @@ keywordsMap.add(3,"keyword 3");
 keywordsMap.add(4,"keyword 4");
 keywordsMap.add(5,"keyword 5");
 
+
+
 $(document).ready(function(){
+
+	fetchAllSites();
 	
 	addBtnEvents();
 	//add event on edit button for selected item
@@ -154,6 +154,8 @@ $(document).ready(function(){
 			//subscribeSiteSet.remove(value);
 		});
 	});
+	
+	
 
 });
 
@@ -178,7 +180,7 @@ function addBtnEvents(){
 
 
 function fetchAllKeywords(){
-	
+
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use
         url: '/getAllKeywords/', // the url where we want to POST
@@ -221,6 +223,34 @@ function populateContentTable(data) {
   	}
 	$('table#contentItems').append(trHTML);
 	addBtnEvents();
+}
+
+
+
+function fetchAllSites(){
+
+	console.log("Fetching sites");
+	$.ajax({
+        type: 'GET', // define the type of HTTP verb we want to use
+        url: '/getAllSites/', // the url where we want to POST
+        dataType: 'json', // what type of data do we expect back from the server
+        encode: true,
+        success: function (data, textStatus, jqXHR) {
+        	console.log(data);
+        	for(var i in data){
+        		sitesMap.add(i,data[i]);
+        		$(".nonsubscribed-sites").append("<li id="+i+">"+data[i]+"</li>");
+        	}
+
+        },
+        error: function (data, textStatus, jqXHR) {
+
+        	 $(".nonsubscribed-sites").append("<li>We faced problems while loading available sites. Kindly reload</li>");
+
+        }
+
+    });
+	
 }
 
 
