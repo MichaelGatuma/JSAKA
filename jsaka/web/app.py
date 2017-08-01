@@ -115,10 +115,12 @@ def fetchAllSites():
             siteList[site[0]] = site[2]
         else:
             siteList[site[0]] = site[1]
+    if(len(siteList)==0):
+        siteList[0] = "There are no sites being scrapped"
     dbUtil.closeDbConnection()
     return  siteList       
 
-@app.route('/getAllNames/', methods=['GET'])
+@app.route('/getAllSites/', methods=['GET'])
 def getAllSites():
     return jsonify(fetchAllSites())
     

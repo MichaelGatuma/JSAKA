@@ -2,22 +2,19 @@ var selectedKey=''
 var subscribeSiteSet=new Set();
 var unSubscribeSiteSet=new Set();
 var sitesMap=new HashTable(3);
-sitesMap.add(10,"site 1");
-sitesMap.add(20,"site 2");
-sitesMap.add(30,"site 3");
-sitesMap.add(40,"site 4");
-sitesMap.add(50,"site 5");
+
 
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
 var keywordsMap=new HashTable(3);
-keywordsMap.add(1,"keyword 1");
-keywordsMap.add(2,"keyword 2");
-keywordsMap.add(3,"keyword 3");
-keywordsMap.add(4,"keyword 4");
-keywordsMap.add(5,"keyword 5");
+
+
+
 
 $(document).ready(function(){
+
+	fetchAllSites();
+	fetchAllKeywords();
 	
 	addBtnEvents();
 	//add event on edit button for selected item
@@ -154,7 +151,59 @@ $(document).ready(function(){
 			//subscribeSiteSet.remove(value);
 		});
 	});
+	
+	
 
+	
+	//add event to list of nonsubscribe keywords list.
+	$(".nonsubscribed-keywords").click(function (event) {
+		$(event.target).toggleClass("select-item");
+		$(event.target).toggleClass("item-list"); 
+		var bool=$(event.target).hasClass("select-item");
+		if(bool) subscribeKeywordSet.add(event.target.id);
+		else unsubscribeKeywordSet.remove(event.target.id);
+		subscribeKeywordSet.print();
+	});
+
+	
+	//add event to list of unsubscribe site.
+	$(".subscribed-keywords").click(function (event) {
+		$(event.target).toggleClass("select-item");
+		$(event.target).toggleClass("item-list"); 
+		var bool=$(event.target).hasClass("select-item");
+		if(bool) unsubscribeKeywordSet.add(event.target.id);
+		else subscribeKeywordSet.remove(event.target.id);
+		unsubscribeKeywordSet.print();
+	});
+	
+	//add event to subscribe btn to add selected sites to subscription list
+	$(".keyword-subscribe-btn").click(function (event) {
+		jQuery.each(subscribeKeywordSet.values,function(index, value){
+			var keywordName=keywordsMap.search(value);
+			$(".nonsubscribed-keywords #"+value).remove();
+			$(".subscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+			unsubscribeKeywordSet.empty();
+			subscribeKeywordSet.empty();
+		});
+	});
+
+	
+	//add event to unsubscribe btn to remove selected keyword(s) from subscription list
+	$(".keyword-unsubscribe-btn").click(function (event) {
+		jQuery.each(unsubscribeKeywordSet.values,function(index, value){
+			var keywordName=keywordsMap.search(value);
+			$(".subscribed-keywords li#"+value).remove();
+			$(".nonsubscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+			unsubscribeKeywordSet.empty();
+			subscribeKeywordSet.empty();
+		});
+	});
+
+	
+	
+
+	
+	
 });
 
 
@@ -177,6 +226,8 @@ function addBtnEvents(){
 }
 
 
+
+
 function fetchAllKeywords(){
 	
 	$.ajax({
@@ -185,14 +236,15 @@ function fetchAllKeywords(){
         dataType: 'json', // what type of data do we expect back from the server
         encode: true,
         success: function (data, textStatus, jqXHR) {
-            $('table#contentItems').find("tr:gt(0)").remove();
-            console.log("the status gotten: " + textStatus);
-            populateContentTable(data);
+        	for(var i in data){
+        		keywordsMap.add('keyword-'+i,data[i]);
+        		
+        		$(".nonsubscribed-keywords").append("<li id=keyword-"+i+">"+data[i]+"</li>");
+        	}
         },
         error: function (data, textStatus, jqXHR) {
 
-            $('table#contentItems').find("tr:gt(0)").remove();
-            $('table#contentItems').append("<tr style='width: 100%;'><td colspan=7 style='color:red;text-align: center;'>" + data.responseText + "</td></tr>");
+        	 $(".nonsubscribed-keywords").append("<li>We faced problems while loading available keywords. Kindly reload page</li>");
 
         }
 
@@ -200,27 +252,30 @@ function fetchAllKeywords(){
 	
 }
 
+function fetchAllSites(){
 
+	console.log("Fetching sites");
+	$.ajax({
+        type: 'GET', // define the type of HTTP verb we want to use
+        url: '/getAllSites/', // the url where we want to POST
+        dataType: 'json', // what type of data do we expect back from the server
+        encode: true,
+        success: function (data, textStatus, jqXHR) {
+        	console.log(data);
+        	for(var i in data){
+        		sitesMap.add('site-'+i,data[i]);
+        		$(".nonsubscribed-sites").append("<li id=site-"+i+">"+data[i]+"</li>");
+        	}
 
-/*populates html table with content if any from sever*/
-function populateContentTable(data) {
+        },
+        error: function (data, textStatus, jqXHR) {
+
+        	 $(".nonsubscribed-sites").append("<li>We faced problems while loading available sites. Kindly reload page</li>");
+
+        }
+
+    });
 	
-	for(var i in data){
-  	  console.log(i); // alerts key
-  	console.log(data[i]); //alerts key's value
-  	  var trHTML;
-  	trHTML +='<tr><td id=\''+i+'-keyword\'>' + data[i] + '</td>'
-  	+	'<td><button type="button" id=\''+i+'\' class="btn btn-info keyword" data-toggle="modal" style="margin-right:4px;" data-target=".edit-modal">'
-	+	'<i class="fa fa-pencil" aria-hidden="true"></i>'
-	+'</button>'
-
-	+'<button type="button" id=\''+i+'\'	class="btn btn-primary keyword" data-toggle="modal" data-target=".delete-modal">'
-		+'<i class="fa fa-trash" aria-hidden="true"></i>'
-	+'</button></td></tr>'
-  	  
-  	}
-	$('table#contentItems').append(trHTML);
-	addBtnEvents();
 }
 
 

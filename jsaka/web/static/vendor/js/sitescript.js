@@ -53,12 +53,12 @@ function addBtnEvents(){
 	
 }
 
-
 function fetchAllnames(){
+
 	
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use
-        url: '/getAllNames/', // the url where we want to POST
+        url: '/getAllSites/', // the url where we want to POST
         dataType: 'json', // what type of data do we expect back from the server
         encode: true,
         success: function (data, textStatus, jqXHR) {
