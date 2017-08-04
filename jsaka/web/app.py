@@ -9,6 +9,7 @@ from utils.DBUtils import dbConnection
 from flask import request
 from flask import jsonify
 from meld.meldapp import app
+from model.Dao import  Keywords
 
 app = Flask(__name__)
 
@@ -20,32 +21,19 @@ def index():
     Fetches all keywords in the database and retunrs a dictionary of keywords
 '''
 
-def fetchAllKeyWords():
-    dbUtil = dbConnection()
-    cur = dbUtil.getCursor() 
-    cur.execute("select keyword_id,keyword from keyword")
-    keyWordList = {}
-    keywords = cur.fetchall()
-    for keyword in keywords:
-        keyWordList[keyword[0]] = keyword[1]
-    dbUtil.closeDbConnection()
-    return  keyWordList       
 
 @app.route('/getAllKeywords/', methods=['GET'])
 def getAllKeywords():
-    return jsonify(fetchAllKeyWords())
+    keywords=Keywords()
+    return jsonify(keywords.fetchAllKeyWords())
     
-        
 
 
 @app.route("/")
 @app.route("/home/")
 def home():
-    dbUtil = dbConnection()
-    cur = dbUtil.getCursor()
-    dbUtil.commit() 
-    cur.execute("select keyword_id,keyword from keyword")
-    keyWordList = fetchAllKeyWords()    
+    keywords=Keywords()
+    keyWordList = keywords.fetchAllKeyWords()    
     return  render_template('home.html', keyWordList=keyWordList)
 
 @app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
@@ -53,26 +41,18 @@ def editKeyword(keyword=None, keyword_id=None):
     if keyword == None or id == None:
         return  ("No keyword selected", 501)  
     else:
-        print(keyword)
-        dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
-        try:
-            cur.execute("update keyword set keyword=? where keyword_id=?", (keyword, keyword_id)) 
-            dbUtil.commit()
-        except lite.IntegrityError:
-            return  ("Keyword already exists", 501)
-    return  "Keyword Updated Successfully"
-
+        keywords=Keywords()
+        return keywords.updateKeyword(keyword, keyword_id)
+       
 @app.route('/delete-keyword/<keyword_id>/', methods=['DELETE'])
 def deleteKeyword(keyword_id=None):
+    
     if keyword_id == None:
         return  ("No keyword specified", 501)
     else:
-        dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
-        cur.execute("delete from keyword where keyword_id=?", (keyword_id,)) 
-        dbUtil.commit()
-    return  "Keyword Deleted Successfully"
+        keywords=Keywords()
+        return keywords.deleteKeyword(keyword_id)
+    
  
 @app.route('/add-keyword/', methods=['POST'])
 def addKeyword():
@@ -82,16 +62,7 @@ def addKeyword():
         print("No keyword")
         return  ("No keyword specified", 501)
     else:
-        print("keyword received then:")
-        print("keyword received %s" % keyword)
-        dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
-        try:
-            cur.execute("insert into keyword(keyword) values(?)", (keyword,)) 
-            dbUtil.commit()
-        except lite.IntegrityError:
-            return  ("Keyword already exists", 501)
-    return  "Keyword created Successfully"
+        return  addKeyword(keyword)
     
 
 
@@ -239,24 +210,13 @@ def deleteSubscriber(keyword_id=None):
         dbUtil.commit()
     return  "Keyword Deleted Successfully"
  
-@app.route('/add-keyword/', methods=['POST'])
+@app.route('/add-subscriber/', methods=['POST'])
 def addSubscriber():
-    print("Add keyword invoked")
-    keyword = request.form['keyword']
-    if keyword == None:
-        print("No keyword")
-        return  ("No keyword specified", 501)
-    else:
-        print("keyword received then:")
-        print("keyword received %s" % keyword)
-        dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
-        try:
-            cur.execute("insert into keyword(keyword) values(?)", (keyword,)) 
-            dbUtil.commit()
-        except lite.IntegrityError:
-            return  ("Keyword already exists", 501)
-    return  "Keyword created Successfully"
+    email=request.form['email']
+    keywords = request.form['sites']
+    keywords = request.form['keywords']
+    
+    return  "Keyword Deleted Successfully"
     
 
 

@@ -7,6 +7,10 @@ var sitesMap=new HashTable(3);
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
 var keywordsMap=new HashTable(3);
+
+var finalSubscribedKeywords=new Set();
+var finalSubscribedSites=new Set();
+
 var siteKeywordMap=new HashTable(3);
 
 
@@ -132,12 +136,13 @@ $(document).ready(function(){
 	
 	//add event to subscribe btn to add selected sites to subscription list
 	$(".site-subscribe-btn").click(function (event) {
+		
 		jQuery.each(subscribeSiteSet.values,function(index, value){
 			var siteName=sitesMap.search(value);
 			$(".subscribed-sites").append("<li id="+value+">"+siteName+"</li>");
 			$(".nonsubscribed-sites li#"+value).remove();
 			unSubscribeSiteSet.remove(value);
-			subscribeSiteSet.add(value);
+			
 		});
 		hideShowKeywordSection();
 	});
@@ -150,7 +155,7 @@ $(document).ready(function(){
 			$(".subscribed-sites li#"+value).remove();
 			$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
 			
-			unSubscribeSiteSet.add(value);
+			
 			subscribeSiteSet.remove(value);
 		});
 		hideShowKeywordSection();
@@ -166,7 +171,7 @@ $(document).ready(function(){
 		var bool=$(event.target).hasClass("select-item");
 		if(bool) subscribeKeywordSet.add(event.target.id);
 		else unsubscribeKeywordSet.remove(event.target.id);
-		subscribeKeywordSet.print();
+		
 	});
 
 	
@@ -177,17 +182,17 @@ $(document).ready(function(){
 		var bool=$(event.target).hasClass("select-item");
 		if(bool) unsubscribeKeywordSet.add(event.target.id);
 		else subscribeKeywordSet.remove(event.target.id);
-		unsubscribeKeywordSet.print();
+		
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
 	$(".keyword-subscribe-btn").click(function (event) {
+		subscribeKeywordSet.print();
 		jQuery.each(subscribeKeywordSet.values,function(index, value){
 			var keywordName=keywordsMap.search(value);
 			$(".nonsubscribed-keywords #"+value).remove();
 			$(".subscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
-			unsubscribeKeywordSet.empty();
-			subscribeKeywordSet.empty();
+			unsubscribeKeywordSet.remove(value);
 		});
 	});
 
@@ -198,25 +203,58 @@ $(document).ready(function(){
 			var keywordName=keywordsMap.search(value);
 			$(".subscribed-keywords li#"+value).remove();
 			$(".nonsubscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
-			unsubscribeKeywordSet.empty();
-			subscribeKeywordSet.empty();
+			subscribeKeywordSet.remove(value);
 		});
 		
 	});
 
 	
 	$(".new-subsription-btn").click(function (event) {
+		
 		var style=$("#site-keyword").css("display");
 		if(style!=='none') {
+			console.log("here one");
 			$("#site-keyword").css("display","none");
-			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Add new");
+			
+			var email=$("#subscriber-email").val();
+			console.log("email "+ email);
+			var formData = {
+		            "email": email,
+		            "sites": subscribeSiteSet.values,
+		            "keywords": subscribeKeywordSet.values
+		        };
+			console.log("Form data "+formData)
+			$.ajax({
+	            type: 'POST', // define the type of HTTP verb we want to use 
+	            url: '/add-subscriber/', // the url where we want to POST 
+	            data: formData, // our data object
+	            encode: true,
+	            success: function (data, textStatus, jqXHR) {
+	                console.log("submit new sub Successfully");
+	                $("div.alert").addClass("alert-success");
+	                $("p.messageFeedback").text("Created successfully");
+	                closeAlert();
+	               
+	            },
+	            error: function (response, request) {
+	            	$("div.alert").removeClass("alert-success");
+	            	$("div.alert").addClass("alert-danger");
+	                var parsed_data = response.responseText;
+	                $("p.messageFeedback").text(parsed_data);
+	                closeAlert();
+	            }
+
+	        });
+			
+			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  New subscription");
 		}else {
+			console.log("here two");
 			$("#site-keyword").css("display","block");
 			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Save subscription");
+			
 		}
 	});
 
-	
 	
 });
 
