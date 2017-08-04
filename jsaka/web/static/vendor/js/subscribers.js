@@ -225,16 +225,26 @@ $(document).ready(function(){
 // hide keywords section is no site is selected
 
 function hideShowKeywordSection(){
-	console.log("The length "+subscribeSiteSet.length());
+	
 	if(subscribeSiteSet.length()!=0){
 		$(".keywordSection").css("display","");
 	}else{
-		var ids=$(".nonsubscribed-keywords li.select-item").get();
-		console.log(ids);
+		
+		var ids=$(".subscribed-keywords li").get();
+		for(x=0;x<ids.length;x++){
+			var id=$(ids[x]).attr('id');
+			var keywordName=keywordsMap.search(id);
+			$(".nonsubscribed-keywords").append("<li id="+id+">"+keywordName+"</li>");
+			$(".subscribed-keywords #"+id).remove();
+			
+		}
+		
+		ids=$(".nonsubscribed-keywords li.select-item").get();
 		for(x=0;x<ids.length;x++){
 			var id=$(ids[x]).attr('id');
 			subscribeKeywordSet.remove(id);
 		}
+		
 		$(".nonsubscribed-keywords li").removeClass("select-item");
 		$(".nonsubscribed-keywords li").removeClass("item-list");
 		$(".keywordSection").css("display","none");
