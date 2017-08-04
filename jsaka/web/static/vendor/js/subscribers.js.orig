@@ -7,19 +7,14 @@ var sitesMap=new HashTable(3);
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
 var keywordsMap=new HashTable(3);
-
-
-
+var siteKeywordMap=new HashTable(3);
 
 
 
 $(document).ready(function(){
 
 	fetchAllSites();
-<<<<<<< HEAD
 	fetchAllKeywords();
-=======
->>>>>>> a475a28d3b194dc7887b1a68b5aa4a0ce94b9bff
 	
 	addBtnEvents();
 	//add event on edit button for selected item
@@ -131,6 +126,22 @@ $(document).ready(function(){
 		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) unSubscribeSiteSet.add(event.target.id);
 		else unSubscribeSiteSet.remove(event.target.id);
+		
+<<<<<<< HEAD
+=======
+		
+		
+		
+		
+>>>>>>> 71f5d281f760d979c6af91364f52c9619a6fe738
+		if(unSubscribeSiteSet.length()!=0){
+			$(".keywordSection").css("display","");
+		}else{
+			$(".keywordSection").css("display","none");
+		    $(".keywordSection").fadeTo(300, 500).slideUp(500, function () {
+		    $(".keywordSection").slideUp(500);
+		    });
+		}
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -158,7 +169,6 @@ $(document).ready(function(){
 	});
 	
 	
-<<<<<<< HEAD
 
 	
 	//add event to list of nonsubscribe keywords list.
@@ -192,8 +202,6 @@ $(document).ready(function(){
 			subscribeKeywordSet.empty();
 		});
 	});
-=======
->>>>>>> a475a28d3b194dc7887b1a68b5aa4a0ce94b9bff
 
 	
 	//add event to unsubscribe btn to remove selected keyword(s) from subscription list
@@ -208,7 +216,16 @@ $(document).ready(function(){
 	});
 
 	
-	
+	$(".new-subsription-btn").click(function (event) {
+		var style=$("#site-keyword").css("display");
+		if(style!=='none') {
+			$("#site-keyword").css("display","none");
+			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Add new");
+		}else {
+			$("#site-keyword").css("display","block");
+			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Save subscription");
+		}
+	});
 
 	
 	
@@ -237,7 +254,7 @@ function addBtnEvents(){
 
 
 function fetchAllKeywords(){
-
+	
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use
         url: '/getAllKeywords/', // the url where we want to POST
@@ -288,37 +305,9 @@ function fetchAllSites(){
 
 
 
-function fetchAllSites(){
-
-	console.log("Fetching sites");
-	$.ajax({
-        type: 'GET', // define the type of HTTP verb we want to use
-        url: '/getAllSites/', // the url where we want to POST
-        dataType: 'json', // what type of data do we expect back from the server
-        encode: true,
-        success: function (data, textStatus, jqXHR) {
-        	console.log(data);
-        	for(var i in data){
-        		sitesMap.add(i,data[i]);
-        		$(".nonsubscribed-sites").append("<li id="+i+">"+data[i]+"</li>");
-        	}
-
-        },
-        error: function (data, textStatus, jqXHR) {
-
-        	 $(".nonsubscribed-sites").append("<li>We faced problems while loading available sites. Kindly reload</li>");
-
-        }
-
-    });
-	
-}
-
-
-
 function  closeAlert() {
     $("#alerter").css('display', 'block');
-    $("#alerter").fadeTo(3000, 500).slideUp(500, function () {
-    $("#alerter").slideUp(500);
+    $("#alerter").fadeTo(3000, 500).slideUp(50, function () {
+    $("#alerter").slideUp(50);
     });
 }

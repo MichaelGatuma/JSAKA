@@ -126,15 +126,8 @@ $(document).ready(function(){
 		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) unSubscribeSiteSet.add(event.target.id);
 		else unSubscribeSiteSet.remove(event.target.id);
+		hideShowKeywordSection();
 		
-		if(unSubscribeSiteSet.length()!=0){
-			$(".keywordSection").css("display","");
-		}else{
-			$(".keywordSection").css("display","none");
-		    $(".keywordSection").fadeTo(300, 500).slideUp(500, function () {
-		    $(".keywordSection").slideUp(500);
-		    });
-		}
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -146,6 +139,7 @@ $(document).ready(function(){
 			unSubscribeSiteSet.remove(value);
 			subscribeSiteSet.add(value);
 		});
+		hideShowKeywordSection();
 	});
 
 	
@@ -156,9 +150,10 @@ $(document).ready(function(){
 			$(".subscribed-sites li#"+value).remove();
 			$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
 			
-			//unSubscribeSiteSet.add(value);
-			//subscribeSiteSet.remove(value);
+			unSubscribeSiteSet.add(value);
+			subscribeSiteSet.remove(value);
 		});
+		hideShowKeywordSection();
 	});
 	
 	
@@ -206,6 +201,7 @@ $(document).ready(function(){
 			unsubscribeKeywordSet.empty();
 			subscribeKeywordSet.empty();
 		});
+		
 	});
 
 	
@@ -226,7 +222,27 @@ $(document).ready(function(){
 
 
 
+// hide keywords section is no site is selected
 
+function hideShowKeywordSection(){
+	console.log("The length "+subscribeSiteSet.length());
+	if(subscribeSiteSet.length()!=0){
+		$(".keywordSection").css("display","");
+	}else{
+		var ids=$(".nonsubscribed-keywords li.select-item").get();
+		console.log(ids);
+		for(x=0;x<ids.length;x++){
+			var id=$(ids[x]).attr('id');
+			subscribeKeywordSet.remove(id);
+		}
+		$(".nonsubscribed-keywords li").removeClass("select-item");
+		$(".nonsubscribed-keywords li").removeClass("item-list");
+		$(".keywordSection").css("display","none");
+	    $(".keywordSection").fadeTo(300, 500).slideUp(500, function () {
+	    $(".keywordSection").slideUp(500);
+	    });
+	}
+}
 
 
 // add events for edit and delete buttons from the subscriptions table
