@@ -7,7 +7,7 @@ var sitesMap=new HashTable(3);
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
 var keywordsMap=new HashTable(3);
-
+var siteKeywordMap=new HashTable(3);
 
 
 
@@ -126,6 +126,15 @@ $(document).ready(function(){
 		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) unSubscribeSiteSet.add(event.target.id);
 		else unSubscribeSiteSet.remove(event.target.id);
+		
+		if(unSubscribeSiteSet.length()!=0){
+			$(".keywordSection").css("display","");
+		}else{
+			$(".keywordSection").css("display","none");
+		    $(".keywordSection").fadeTo(300, 500).slideUp(500, function () {
+		    $(".keywordSection").slideUp(500);
+		    });
+		}
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -200,7 +209,16 @@ $(document).ready(function(){
 	});
 
 	
-	
+	$(".new-subsription-btn").click(function (event) {
+		var style=$("#site-keyword").css("display");
+		if(style!=='none') {
+			$("#site-keyword").css("display","none");
+			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Add new");
+		}else {
+			$("#site-keyword").css("display","block");
+			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Save subscription");
+		}
+	});
 
 	
 	
@@ -282,7 +300,7 @@ function fetchAllSites(){
 
 function  closeAlert() {
     $("#alerter").css('display', 'block');
-    $("#alerter").fadeTo(3000, 500).slideUp(500, function () {
-    $("#alerter").slideUp(500);
+    $("#alerter").fadeTo(3000, 500).slideUp(50, function () {
+    $("#alerter").slideUp(50);
     });
 }
