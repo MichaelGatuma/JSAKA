@@ -8,6 +8,7 @@ import sqlite3 as lite
 from utils.DBUtils import dbConnection
 from flask import request
 from flask import jsonify
+from meld.meldapp import app
 
 app = Flask(__name__)
 
@@ -124,7 +125,14 @@ def fetchAllSites():
 def getAllSites():
     return jsonify(fetchAllSites())
     
-        
+@app.route('/getSiteKeywordMap/', methods=['GET'])
+def getSiteKeywordMap():
+    dbUtil = dbConnection()
+    cur = dbUtil.getCursor() 
+    cur.execute("select site_id,name,alias from site")
+    siteKeywordMap = {}
+    keywordList= []
+    sites = cur.fetchall()
 
 @app.route("/site/")
 def site():

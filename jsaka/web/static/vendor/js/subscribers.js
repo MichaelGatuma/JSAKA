@@ -7,7 +7,7 @@ var sitesMap=new HashTable(3);
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
 var keywordsMap=new HashTable(3);
-
+var siteKeywordMap=new HashTable(3);
 
 
 
@@ -126,6 +126,19 @@ $(document).ready(function(){
 		var bool=$("#"+event.target.id).hasClass("select-item");
 		if(bool) unSubscribeSiteSet.add(event.target.id);
 		else unSubscribeSiteSet.remove(event.target.id);
+		
+		
+		
+		
+		
+		if(unSubscribeSiteSet.length()!=0){
+			$(".keywordSection").css("display","");
+		}else{
+			$(".keywordSection").css("display","none");
+		    $(".keywordSection").fadeTo(300, 500).slideUp(500, function () {
+		    $(".keywordSection").slideUp(500);
+		    });
+		}
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -282,7 +295,7 @@ function fetchAllSites(){
 
 function  closeAlert() {
     $("#alerter").css('display', 'block');
-    $("#alerter").fadeTo(3000, 500).slideUp(500, function () {
-    $("#alerter").slideUp(500);
+    $("#alerter").fadeTo(3000, 500).slideUp(50, function () {
+    $("#alerter").slideUp(50);
     });
 }

@@ -61,6 +61,9 @@ Set.prototype.empty = function(){
 	this.values = [];
 	this.numberOfValues = 0;
 };
+Set.prototype.length = function() {
+	return this.numberOfValues;
+};
 Set.prototype.print = function() {
 	console.log(this.values.join(' '));
 };
