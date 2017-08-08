@@ -58,15 +58,35 @@ class Keywords():
         return  "Keyword created Successfully"    
     
 class Subscription():
-    def __init__(self, params):
+    def __init__(self):
         '''
         Constructor
         '''
         
     def addSubscription(self,subscription):
-        sqlQuery="insert into "
-        
-        
+        sqlIsertUserMail="insert into subscriber(email) values(?)"
+        sqlFetchEmailId="select subscriber_id from subscriber where email='?'"
+        sqlInsertSubscription='''insert into site_keyword(subscriber_id,site_id,keyword_id) 
+        values(?,?,?)
+        '''
+        dbUtil = dbConnection()
+        cur = dbUtil.getCursor()
+        email=(subscription.getMail(),)
+        print("the email in add subscription %s",email)
+        try:
+            cur.execute(sqlIsertUserMail,email) 
+            dbUtil.commit()
+            cur.execute(sqlFetchEmailId,(subscription.getMail())) 
+            print("the email in id %d ",sqlFetchEmailId)
+            mailId = cur.fetchone()
+            for site in subscription.getSite():
+                print("saving site")
+                for keyword in subscription.getKeywords():
+                    print("saving keywords")
+                    cur.execute(sqlInsertSubscription,(mailId,site,keyword)) 
+                    cur.commit()
+        except lite.IntegrityError:
+            return  ("Unable to save subscription", 501)
         
         
     

@@ -215,13 +215,28 @@ $(document).ready(function(){
 		if(style!=='none') {
 			console.log("here one");
 			$("#site-keyword").css("display","none");
+			console.log(subscribeKeywordSet.values);
+			var keywordsToSend=new Set(3);
+			jQuery.each(subscribeKeywordSet.values,function(index, value){
+				var keyWrd=value.substring(value.indexOf('-')+1,value.indexOf('-')+2);
+				keywordsToSend.add(keyWrd);
+			});
+			
+			var sitesToSend=new Set(3);
+			jQuery.each(subscribeSiteSet.values,function(index, value){
+				var siteToSnd=value.substring(value.indexOf('-')+1,value.indexOf('-')+2);
+				sitesToSend.add(siteToSnd);
+			});
 			
 			var email=$("#subscriber-email").val();
 			console.log("email "+ email);
+			sitesS=JSON.stringify(sitesToSend.values);
+			keywordS=JSON.stringify(keywordsToSend.values);
+			
 			var formData = {
 		            "email": email,
-		            "sites": subscribeSiteSet.values,
-		            "keywords": subscribeKeywordSet.values
+		            "sites": sitesS,
+		            "keywords": keywordS
 		        };
 			console.log("Form data "+formData)
 			$.ajax({

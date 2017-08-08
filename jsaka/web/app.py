@@ -9,8 +9,9 @@ from utils.DBUtils import dbConnection
 from flask import request
 from flask import jsonify
 from meld.meldapp import app
-from model.Dao import  Keywords
-
+from web.model.dao import  Keywords
+from web.model.dao import Subscription
+from web.model.dto import Subscription as subscriptioDto
 app = Flask(__name__)
 
 @app.route('/index/')
@@ -213,9 +214,13 @@ def deleteSubscriber(keyword_id=None):
 @app.route('/add-subscriber/', methods=['POST'])
 def addSubscriber():
     email=request.form['email']
-    keywords = request.form['sites']
+    sites = request.form['sites']
     keywords = request.form['keywords']
-    
+    print(sites)
+    print(keywords)
+    subscription = subscriptioDto(email,sites,keywords)
+    subDao=Subscription()
+    subDao.addSubscription(subscription)
     return  "Keyword Deleted Successfully"
     
 
