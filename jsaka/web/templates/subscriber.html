@@ -229,9 +229,9 @@ ul.item-list li:HOVER {
 								<th>Control</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody id="subscription-table">
 							{% for sub in subscriptionList.keys() %}
-							<tr>
+							<tr id={{sub}}>
 								<td class="sub-mail">{{ subscriptionList[sub]['email'] }}</td>
 								<td>
 									<table class="statsTb">
@@ -251,12 +251,12 @@ ul.item-list li:HOVER {
 									</table>
 								</td>
 								<td>
-									<button type="button" id="{{key}}" class="btn btn-info keyword"
+									<button type="button"  class="btn btn-info subscription edit-sub"
 										data-toggle="modal" data-target=".edit-modal">
 										<i class="fa fa-pencil" aria-hidden="true"></i>
 									</button>
-									<button type="button" id="{{key}}"
-										class="btn btn-primary keyword" data-toggle="modal"
+									<button type="button"
+										class="btn btn-primary subscription delete-sub" data-toggle="modal"
 										data-target=".delete-modal">
 										<i class="fa fa-trash" aria-hidden="true"></i>
 									</button>
@@ -303,13 +303,13 @@ ul.item-list li:HOVER {
 
 				<div class="modal-body">
 					<div>
-						Delete <label class="delete-keyword"></label>?
+						Delete subscriber <label class="delete-subscription"></label>
 					</div>
 				</div>
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary delete-keyword">Delete
+					<button type="button" class="btn btn-primary delete-subscription">Delete
 						Keyword</button>
 				</div>
 

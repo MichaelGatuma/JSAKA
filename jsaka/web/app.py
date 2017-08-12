@@ -57,10 +57,8 @@ def deleteKeyword(keyword_id=None):
  
 @app.route('/add-keyword/', methods=['POST'])
 def addKeyword():
-    print("Add keyword invoked")
     keyword = request.form['keyword']
     if keyword == None:
-        print("No keyword")
         return  ("No keyword specified", 501)
     else:
         return  addKeyword(keyword)
@@ -77,7 +75,6 @@ def addKeyword():
 '''
 
 def fetchAllSites():
-    print("Fetched sited----------> 1")
     dbUtil = dbConnection()
     cur = dbUtil.getCursor() 
     cur.execute("select site_id,name,alias from site")
@@ -131,51 +128,12 @@ def editSite(name=None, site_id=None):
 # Subscription manage methods  ------------->>>>>
 
 
-''' 
-    Fetches all Subscribers in the database and returns a dictionary of Subscibers
-'''
 
-def fetchAllSubscribers():
-    dbUtil = dbConnection()
-    cur = dbUtil.getCursor() 
-    
-    subscriberDict = {}
-    cur.execute("select * from subscriber")
-    subscibers = cur.fetchall()
-    cur.execute("select * from site_keyword")
-    subscriptions = cur.fetchall()
-    
-    
-    for subsc in subscibers: #Create a map of each subscriber and their subscription details(stats)
-        subscriber={}
-        subscriber['email'] = subsc[1]
-        siteKeywordMap={}
-        sitesId=[]
-        uniqueSitesId=set()
-        keyWordsId=[]
-        for sub in subscriptions: #Get all sites and keywords subscriber is subscribed to
-            if sub[0]==subsc[0]:
-                sitesId.append(sub[1])
-                uniqueSitesId.add(sub[1])
-                keyWordsId.append(sub[2])
-        for x in uniqueSitesId: # map keywords per site the subscriber is subscribed to
-            kWords=[]
-            for y in range(0,len(keyWordsId)):
-                if sitesId[y]==x:
-                    kWords.append(keyWordsId[y])
-            siteKeywordMap[x]=kWords
-                      
-        subscriber['subs']= siteKeywordMap
-        subscriber['totalSites']=len(uniqueSitesId)
-        subscriber['totalKeywords']=len(keyWordsId)
-        subscriberDict[subsc[0]]=subscriber
-        
-    dbUtil.closeDbConnection()
-    return  subscriberDict       
 
 @app.route('/getAllSubscribers/', methods=['GET'])
 def getAllSubscribers():
-    subscriberDict=fetchAllSubscribers()
+    subDao=Subscription()
+    subscriberDict=subDao.fetchAllSubscribers()
     return jsonify(subscriberDict)
     
         
@@ -183,7 +141,8 @@ def getAllSubscribers():
 
 @app.route("/subscription/")
 def getSubscription():
-    return  render_template('subscriber.html', subscriptionList=fetchAllSubscribers())
+    subDao=Subscription()
+    return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscribers())
 
 @app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
 def editSubscriber(keyword=None, keyword_id=None):
@@ -200,16 +159,13 @@ def editSubscriber(keyword=None, keyword_id=None):
             return  ("Keyword already exists", 501)
     return  "Keyword Updated Successfully"
 
-@app.route('/delete-keyword/<keyword_id>/', methods=['DELETE'])
-def deleteSubscriber(keyword_id=None):
-    if keyword_id == None:
-        return  ("No keyword specified", 501)
-    else:
-        dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
-        cur.execute("delete from keyword where keyword_id=?", (keyword_id,)) 
-        dbUtil.commit()
-    return  "Keyword Deleted Successfully"
+@app.route('/delete-subscription/<subscriber_id>/', methods=['DELETE'])
+def deleteSubscriber(subscriber_id=None):
+    if subscriber_id == None:
+        return  ("No Subscriber specified", 501)
+    subDao=Subscription()
+    returnVal=subDao.deleteSubscription(subscriber_id)
+    return  returnVal
  
 @app.route('/add-subscriber/', methods=['POST'])
 def addSubscriber():
@@ -223,10 +179,6 @@ def addSubscriber():
     returnVal=subDao.addSubscription(subscription)
     return  returnVal
     
-
-
-
-
 
 
     

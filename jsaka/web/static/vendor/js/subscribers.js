@@ -1,4 +1,4 @@
-var selectedKey=''
+var selectedSubscriptionKey
 var subscribeSiteSet=new Set();
 var unSubscribeSiteSet=new Set();
 var sitesMap=new HashTable(3);
@@ -52,9 +52,9 @@ $(document).ready(function(){
 	});
 	
 	//add event on delete button for selected item
-	$("button.delete-keyword").click(function (event) {
+	$("button.delete-subscription").click(function (event) {
 		$("div#delete-modal").modal('hide');
-		var delUrl='/delete-keyword/'+selectedKey+'/';
+		var delUrl='/delete-subscription/'+selectedSubscriptionKey+'/';
 		$.ajax({
             type: 'DELETE', // define the type of HTTP verb we want to use 
             url: delUrl, // the url where we want to POST 
@@ -65,7 +65,7 @@ $(document).ready(function(){
                 $("div.alert").addClass("alert-success");
                 $("p.messageFeedback").text("Delete successfully");
                 closeAlert();
-                fetchAllKeywords();
+                location.reload();
             },
             error: function (response, request) {
             	$("div.alert").removeClass("alert-success");
@@ -249,7 +249,7 @@ $(document).ready(function(){
 	                $("div.alert").addClass("alert-success");
 	                $("p.messageFeedback").text("Created successfully");
 	                closeAlert();
-	               
+	                location.reload();
 	            },
 	            error: function (response, request) {
 	            	$("div.alert").removeClass("alert-success");
@@ -310,16 +310,26 @@ function hideShowKeywordSection(){
 
 // add events for edit and delete buttons from the subscriptions table
 function addBtnEvents(){
-	 $("button.keyword").click(function (event) {
-	    	console.log("Clicked id "+event.target.id);
-	    	selectedKey=event.target.id;
-	    	var keywordEl='td#'+selectedKey+'-keyword';
-	    	console.log("keyword selector"+keywordEl)
-	    	$('input.edit-keyword').val($(keywordEl).html());
-	    	$('label.delete-keyword').html($(keywordEl).html());
+	 
+	 $("button.subscription").click(function (event) {
+	    	
+		    selectedSubscriptionKey=$(event.target).parent().parent().attr('id');
+	    	var isDelete=$(event.target).hasClass("delete-sub");
+	    	var isEdit=$(event.target).hasClass("edit-sub");
+	  
+	    	if(isEdit){
+	    
+	    	}else if(isDelete){
+	    		console.log("tr#"+selectedSubscriptionKey+" td");
+	    		elemnt="tr#"+selectedSubscriptionKey+" td";
+	    		var subMail=$(elemnt).html();
+	    		console.log("mail "+subMail);
+	    		$("label.delete-subscription").html(subMail);
+	    	}else{
+	    		
+	    	}
 	    	
 	    });
-	
 }
 
 
@@ -374,8 +384,6 @@ function fetchAllSites(){
     });
 	
 }
-
-
 
 function  closeAlert() {
     $("#alerter").css('display', 'block');
