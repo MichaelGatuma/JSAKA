@@ -65,28 +65,43 @@ class Subscription():
         
     def addSubscription(self,subscription):
         sqlIsertUserMail="insert into subscriber(email) values(?)"
-        sqlFetchEmailId="select subscriber_id from subscriber where email='?'"
+        sqlFetchEmailId="select subscriber_id from subscriber where email=?"
         sqlInsertSubscription='''insert into site_keyword(subscriber_id,site_id,keyword_id) 
         values(?,?,?)
         '''
         dbUtil = dbConnection()
         cur = dbUtil.getCursor()
         email=(subscription.getMail(),)
-        print("the email in add subscription %s",email)
+        print(subscription.getMail())
+        print(email[0])
         try:
-            cur.execute(sqlIsertUserMail,email) 
+            try:
+                cur.execute(sqlIsertUserMail,email) 
+            except lite.IntegrityError:
+                return("Email already exists", 501)
             dbUtil.commit()
-            cur.execute(sqlFetchEmailId,(subscription.getMail())) 
-            print("the email in id %d ",sqlFetchEmailId)
+            cur.execute(sqlFetchEmailId,(email[0],)) 
             mailId = cur.fetchone()
-            for site in subscription.getSite():
-                print("saving site")
-                for keyword in subscription.getKeywords():
-                    print("saving keywords")
-                    cur.execute(sqlInsertSubscription,(mailId,site,keyword)) 
-                    cur.commit()
+            print("Mail id")
+            print(mailId)
+            s=subscription.getSite()
+            s=str(s).replace('\"', '\'')
+            s=str(s).replace('[', '')
+            s=str(s).replace(']', '')
+            s=str(s).replace('\'', '')
+            print(s)
+            for site in s:
+                print(site)
+                v=subscription.getKeywords()
+                v=str(v).replace('\"', '\'')
+                v=str(v).replace('[', '')
+                v=str(v).replace(']', '')
+                v=str(v).replace('\'', '')
+                for keyword in v.split(','):
+                    cur.execute(sqlInsertSubscription,(mailId[0],site,keyword)) 
+                    dbUtil.commit()
+            return  ("Subscription added successfully")
         except lite.IntegrityError:
             return  ("Unable to save subscription", 501)
-        
         
     

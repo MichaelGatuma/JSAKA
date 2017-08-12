@@ -220,8 +220,8 @@ def addSubscriber():
     print(keywords)
     subscription = subscriptioDto(email,sites,keywords)
     subDao=Subscription()
-    subDao.addSubscription(subscription)
-    return  "Keyword Deleted Successfully"
+    returnVal=subDao.addSubscription(subscription)
+    return  returnVal
     
 
 
