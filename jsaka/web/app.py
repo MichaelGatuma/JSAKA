@@ -144,6 +144,8 @@ def getSubscription():
     subDao=Subscription()
     return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscribers())
 
+
+
 @app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
 def editSubscriber(keyword=None, keyword_id=None):
     if keyword == None or id == None:

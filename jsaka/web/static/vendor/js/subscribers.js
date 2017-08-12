@@ -2,7 +2,7 @@ var selectedSubscriptionKey
 var subscribeSiteSet=new Set();
 var unSubscribeSiteSet=new Set();
 var sitesMap=new HashTable(3);
-
+var allSubscriptions; //object
 
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
@@ -19,6 +19,7 @@ $(document).ready(function(){
 
 	fetchAllSites();
 	fetchAllKeywords();
+	fetchAllSubscriptions();
 	
 	addBtnEvents();
 	//add event on edit button for selected item
@@ -212,10 +213,13 @@ $(document).ready(function(){
 	$(".new-subsription-btn").click(function (event) {
 		
 		var style=$("#site-keyword").css("display");
-		if(style!=='none') {
+		var hasEditClass=$("#site-keyword").hasClass("edit");
+		console.log("Display "+style);
+		console.log("Has edit class "+hasEditClass);
+		if(style!=='none' && !hasEditClass) {
 			console.log("here one");
 			$("#site-keyword").css("display","none");
-			console.log(subscribeKeywordSet.values);
+			
 			var keywordsToSend=new Set(3);
 			jQuery.each(subscribeKeywordSet.values,function(index, value){
 				var keyWrd=value.substring(value.indexOf('-')+1,value.indexOf('-')+2);
@@ -238,14 +242,14 @@ $(document).ready(function(){
 		            "sites": sitesS,
 		            "keywords": keywordS
 		        };
-			console.log("Form data "+formData)
+			
 			$.ajax({
 	            type: 'POST', // define the type of HTTP verb we want to use 
 	            url: '/add-subscriber/', // the url where we want to POST 
 	            data: formData, // our data object
 	            encode: true,
 	            success: function (data, textStatus, jqXHR) {
-	                console.log("submit new sub Successfully");
+	              
 	                $("div.alert").addClass("alert-success");
 	                $("p.messageFeedback").text("Created successfully");
 	                closeAlert();
@@ -262,17 +266,79 @@ $(document).ready(function(){
 	        });
 			
 			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  New subscription");
-		}else {
-			console.log("here two");
+		}else if(style==='none' && !hasEditClass){
+			
 			$("#site-keyword").css("display","block");
 			$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Save subscription");
 			
+		}else{
+			var keywordsToSend=new Set(3);
+			jQuery.each(subscribeKeywordSet.values,function(index, value){
+				var keyWrd=value.substring(value.indexOf('-')+1,value.indexOf('-')+2);
+				keywordsToSend.add(keyWrd);
+			});
+			
+			var sitesToSend=new Set(3);
+			jQuery.each(subscribeSiteSet.values,function(index, value){
+				var siteToSnd=value.substring(value.indexOf('-')+1,value.indexOf('-')+2);
+				sitesToSend.add(siteToSnd);
+			});
+			
+			var email=$("#subscriber-email").val();
+			console.log("email "+ email);
+			sitesS=JSON.stringify(sitesToSend.values);
+			keywordS=JSON.stringify(keywordsToSend.values);
+			
+			var formData = {
+		            "email": email,
+		            "sites": sitesS,
+		            "keywords": keywordS
+		        };
+			
+			$.ajax({
+	            type: 'POST', // define the type of HTTP verb we want to use 
+	            url: '/add-subscriber/', // the url where we want to POST 
+	            data: formData, // our data object
+	            encode: true,
+	            success: function (data, textStatus, jqXHR) {
+	              
+	                $("div.alert").addClass("alert-success");
+	                $("p.messageFeedback").text("Created successfully");
+	                closeAlert();
+	                location.reload();
+	            },
+	            error: function (response, request) {
+	            	$("div.alert").removeClass("alert-success");
+	            	$("div.alert").addClass("alert-danger");
+	                var parsed_data = response.responseText;
+	                $("p.messageFeedback").text(parsed_data);
+	                closeAlert();
+	            }
+
+	        });
 		}
 	});
 
 	
 });
 
+
+//Fetch all subscriptions and store on cache:
+function fetchAllSubscriptions(){
+	$.ajax({
+        type: 'GET', // define the type of HTTP verb we want to use 
+        url: '/getAllSubscribers/', // the url where we want to POST 
+        dataType: 'json', // our data object
+        encode: true,
+        success: function (data, textStatus, jqXHR) {
+        	allSubscriptions=data;
+        },
+        error: function (response, request) {
+        	console.log("error occured fetching subscriptions")
+        }
+
+    });
+}
 
 
 // hide keywords section is no site is selected
@@ -311,14 +377,48 @@ function hideShowKeywordSection(){
 // add events for edit and delete buttons from the subscriptions table
 function addBtnEvents(){
 	 
-	 $("button.subscription").click(function (event) {
-	    	
+	 $("button.subscription-control").click(function (event) {
+		 console.log("Subscriptions are "+allSubscriptions);
 		    selectedSubscriptionKey=$(event.target).parent().parent().attr('id');
 	    	var isDelete=$(event.target).hasClass("delete-sub");
 	    	var isEdit=$(event.target).hasClass("edit-sub");
 	  
 	    	if(isEdit){
-	    
+	    		$("#site-keyword").css("display","block");
+	    		$("#site-keyword").addClass("edit");
+	    		$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Update subscription");
+	    		
+
+	    		subscribeSiteSet.empty();
+	      		unSubscribeSiteSet.empty();
+	      		subscribeKeywordSet.empty();
+	      		unsubscribeKeywordSet.empty();
+	      		
+	      		$(".subscribed-sites").empty();
+				$(".nonsubscribed-sites").empty();
+				$(".nonsubscribed-keywords").empty();
+				$(".subscribed-keywords").empty();
+				var subMailVal=allSubscriptions[selectedSubscriptionKey]["email"];
+				$("#subscriber-email").val(subMailVal);
+				
+				var siteId;
+				for(siteId in allSubscriptions[selectedSubscriptionKey]["subs"]){
+					
+					console.log("site id "+siteId);
+					$(".subscribed-sites").append("<li id=site-"+siteId+">"+sitesMap.search("site-"+siteId)+"</li>");
+		      		subscribeSiteSet.add(siteId);
+		      		
+					var keywordId;
+					for(keywordId in allSubscriptions[selectedSubscriptionKey]["subs"][siteId]){
+						console.log("keywordId "+keywordId);
+						var ky=allSubscriptions[selectedSubscriptionKey]["subs"][siteId][keywordId];
+						subscribeKeywordSet.add(ky);
+			        	$(".subscribed-keywords").append("<li id=keyword-"+keywordId+">"+keywordsMap.search("keyword-"+ky)+"</li>");
+					}
+				}
+				hideShowKeywordSection();
+				
+	    		
 	    	}else if(isDelete){
 	    		console.log("tr#"+selectedSubscriptionKey+" td");
 	    		elemnt="tr#"+selectedSubscriptionKey+" td";

@@ -91,7 +91,7 @@ class Subscription():
             s=str(s).replace(']', '')
             s=str(s).replace('\'', '')
             print(s)
-            for site in s:
+            for site in s.split(','):
                 print(site)
                 v=subscription.getKeywords()
                 v=str(v).replace('\"', '\'')
@@ -129,8 +129,10 @@ class Subscription():
             for sub in subscriptions: #Get all sites and keywords subscriber is subscribed to  
                 if sub[0]==subsc[0]:
                     sitesId.append(sub[1])
-                    uniqueSitesId.add(sub[1])
-                    keyWordsId.append(sub[2])
+                    if(sub[1]!=None and sub[1]!=""):
+                        uniqueSitesId.add(sub[1])
+                    if(sub[2]!=None and sub[2]!=""):
+                        keyWordsId.append(sub[2])
             for x in uniqueSitesId: # map keywords per site the subscriber is subscribed to
                 kWords=[]
                 for y in range(0,len(keyWordsId)):
