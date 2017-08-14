@@ -52,7 +52,7 @@ class Keywords():
         dbUtil = dbConnection()
         cur = dbUtil.getCursor()
         try:
-            cur.execute("insert into keyword(keyword) values(?)", (keyword)) 
+            cur.execute("insert into keyword(keyword) values(?)", (keyword,)) 
             dbUtil.commit()
         except lite.IntegrityError:
             return  ("Keyword already exists", 501)

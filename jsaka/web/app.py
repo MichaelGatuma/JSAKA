@@ -61,7 +61,8 @@ def addKeyword():
     if keyword == None:
         return  ("No keyword specified", 501)
     else:
-        return  addKeyword(keyword)
+        keywords=Keywords()
+        return  keywords.addKeyword(keyword)
     
 
 
