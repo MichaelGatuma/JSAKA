@@ -176,7 +176,7 @@ def addSubscriber():
     keywords = request.form['keywords']
     print(sites)
     print(keywords)
-    subscription = subscriptioDto(email,sites,keywords)
+    subscription = subscriptioDto(email,sites,keywords,None)
     subDao=Subscription()
     returnVal=subDao.addSubscription(subscription)
     return  returnVal
