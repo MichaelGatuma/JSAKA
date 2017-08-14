@@ -1,19 +1,28 @@
 var selectedSubscriptionKey
-var subscribeSiteSet=new Set();
-var unSubscribeSiteSet=new Set();
+
 var sitesMap=new HashTable(3);
 var allSubscriptions; //object
+var allKeywords;
+var allSites;
 
+//these acts as placeholders for items during selection of sites and keywords to subscribe and unsubscribe before persistence
+var subscribeSiteSet=new Set();
+var unSubscribeSiteSet=new Set();
 var subscribeKeywordSet=new Set();
 var unsubscribeKeywordSet=new Set();
+
 var keywordsMap=new HashTable(3);
 
 var finalSubscribedKeywords=new Set();
 var finalSubscribedSites=new Set();
-
+//holds keywors each site is subscribed to
 var siteKeywordMap=new HashTable(3);
 
-
+//contains the current subscribed items in a set
+var currentSubscribedSites=new Set();
+var currentSubscribedKeywords=new Set();
+var currentNonSubscribedSites=new Set();
+var currentNonSubscribedKeywords=new Set();
 
 $(document).ready(function(){
 
@@ -139,8 +148,15 @@ $(document).ready(function(){
 	$(".site-subscribe-btn").click(function (event) {
 		
 		jQuery.each(subscribeSiteSet.values,function(index, value){
-			var siteName=sitesMap.search(value);
-			$(".subscribed-sites").append("<li id="+value+">"+siteName+"</li>");
+			var siteName=sitesMap.search(value);	
+			if(!currentSubscribedSites.contains(value)){
+				$(".subscribed-sites").append("<li id="+value+">"+siteName+"</li>");
+				currentSubscribedSites.add(value);
+				currentNonSubscribedSites.remove(value);
+			}
+			
+
+			
 			$(".nonsubscribed-sites li#"+value).remove();
 			unSubscribeSiteSet.remove(value);
 			
@@ -153,8 +169,14 @@ $(document).ready(function(){
 	$(".site-unsubscribe-btn").click(function (event) {
 		jQuery.each(unSubscribeSiteSet.values,function(index, value){
 			var siteName=sitesMap.search(value);
-			$(".subscribed-sites li#"+value).remove();
-			$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
+			$(".subscribed-sites li#"+value).remove();			
+			
+			if(!currentNonSubscribedSites.contains(value)){
+				$(".nonsubscribed-sites").append("<li id="+value+">"+siteName+"</li>");
+				currentSubscribedSites.remove(value);
+				currentNonSubscribedSites.add(value);
+			}
+			
 			
 			
 			subscribeSiteSet.remove(value);
@@ -192,7 +214,14 @@ $(document).ready(function(){
 		jQuery.each(subscribeKeywordSet.values,function(index, value){
 			var keywordName=keywordsMap.search(value);
 			$(".nonsubscribed-keywords #"+value).remove();
-			$(".subscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+			
+			console.log(currentSubscribedKeywords.contains(value));
+			if(!currentSubscribedKeywords.contains(value)){
+				$(".subscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+				currentSubscribedKeywords.add(value);
+				currentNonSubscribedKeywords.remove(value);
+			}
+					
 			unsubscribeKeywordSet.remove(value);
 		});
 	});
@@ -203,7 +232,14 @@ $(document).ready(function(){
 		jQuery.each(unsubscribeKeywordSet.values,function(index, value){
 			var keywordName=keywordsMap.search(value);
 			$(".subscribed-keywords li#"+value).remove();
-			$(".nonsubscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+			
+			console.log(currentNonSubscribedKeywords.contains(value));
+			if(!currentNonSubscribedKeywords.contains(value)){
+				$(".nonsubscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
+				currentSubscribedKeywords.remove(value);
+				currentNonSubscribedKeywords.add(value);
+			}
+			
 			subscribeKeywordSet.remove(value);
 		});
 		
@@ -296,8 +332,8 @@ $(document).ready(function(){
 		        };
 			
 			$.ajax({
-	            type: 'POST', // define the type of HTTP verb we want to use 
-	            url: '/add-subscriber/', // the url where we want to POST 
+	            type: 'PUT', // define the type of HTTP verb we want to use 
+	            url: '/update-subscriber/'+selectedSubscriptionKey, // the url where we want to POST 
 	            data: formData, // our data object
 	            encode: true,
 	            success: function (data, textStatus, jqXHR) {
@@ -355,7 +391,8 @@ function hideShowKeywordSection(){
 			var keywordName=keywordsMap.search(id);
 			$(".nonsubscribed-keywords").append("<li id="+id+">"+keywordName+"</li>");
 			$(".subscribed-keywords #"+id).remove();
-			
+			currentSubscribedKeywords.remove(id);
+			currentNonSubscribedKeywords.add(id);
 		}
 		
 		ids=$(".nonsubscribed-keywords li.select-item").get();
@@ -378,7 +415,6 @@ function hideShowKeywordSection(){
 function addBtnEvents(){
 	 
 	 $("button.subscription-control").click(function (event) {
-		 console.log("Subscriptions are "+allSubscriptions);
 		    selectedSubscriptionKey=$(event.target).parent().parent().attr('id');
 	    	var isDelete=$(event.target).hasClass("delete-sub");
 	    	var isEdit=$(event.target).hasClass("edit-sub");
@@ -401,21 +437,37 @@ function addBtnEvents(){
 				var subMailVal=allSubscriptions[selectedSubscriptionKey]["email"];
 				$("#subscriber-email").val(subMailVal);
 				
+				var siteListArr=[]
+				var keywordListArr=[]
+				var keywordsAddedToList=new Set();
+				
 				var siteId;
 				for(siteId in allSubscriptions[selectedSubscriptionKey]["subs"]){
+					siteListArr.push(siteId);
+					currentSubscribedSites.add("site-"+siteId);
 					
-					console.log("site id "+siteId);
+					
 					$(".subscribed-sites").append("<li id=site-"+siteId+">"+sitesMap.search("site-"+siteId)+"</li>");
-		      		subscribeSiteSet.add(siteId);
+		      		subscribeSiteSet.add("site-"+siteId);
 		      		
 					var keywordId;
 					for(keywordId in allSubscriptions[selectedSubscriptionKey]["subs"][siteId]){
-						console.log("keywordId "+keywordId);
+						
+						
 						var ky=allSubscriptions[selectedSubscriptionKey]["subs"][siteId][keywordId];
-						subscribeKeywordSet.add(ky);
-			        	$(".subscribed-keywords").append("<li id=keyword-"+keywordId+">"+keywordsMap.search("keyword-"+ky)+"</li>");
+						keywordListArr.push(ky);
+						subscribeKeywordSet.add("keyword-"+ky);
+						if(!(keywordsAddedToList.contains(ky))){
+							currentSubscribedKeywords.add("keyword-"+ky);
+							$(".subscribed-keywords").append("<li id=keyword-"+ky+">"+keywordsMap.search("keyword-"+ky)+"</li>");
+						}
+							
+						keywordsAddedToList.add(ky);
 					}
 				}
+				
+				fetchAllSites(allSites,siteListArr);
+				fetchAllKeywords(allKeywords,keywordListArr)
 				hideShowKeywordSection();
 				
 	    		
@@ -435,40 +487,80 @@ function addBtnEvents(){
 
 
 
-function fetchAllKeywords(){
+function fetchAllKeywords(keywordsList,toOmit){
+	if(keywordsList!=null){
+		for(var i in keywordsList){
+    		
+			var isContinue=false;
+    		console.log("length "+toOmit.length);
+			for(var x=0;x<toOmit.length;x++){
+				if(toOmit[x]==i){
+					isContinue=true;
+					continue;
+				}		
+			}
+			if(isContinue){
+				continue;
+			}
+			else {
+				currentNonSubscribedKeywords.add("keyword-"+i);
+				$(".nonsubscribed-keywords").append("<li id=keyword-"+i+">"+keywordsList[i]+"</li>");
+			}		
+				
+			
+    	}
+	}else{
+		$.ajax({
+	        type: 'GET', // define the type of HTTP verb we want to use
+	        url: '/getAllKeywords/', // the url where we want to POST
+	        dataType: 'json', // what type of data do we expect back from the server
+	        encode: true,
+	        success: function (data, textStatus, jqXHR) {
+	        	for(var i in data){
+	        		allKeywords=data;
+	        		keywordsMap.add('keyword-'+i,data[i]);
+	        		
+	        		$(".nonsubscribed-keywords").append("<li id=keyword-"+i+">"+data[i]+"</li>");
+	        	}
+	        },
+	        error: function (data, textStatus, jqXHR) {
+	        	
+	        	 $(".nonsubscribed-keywords").append("<li>We faced problems while loading available keywords. Kindly reload page</li>");
+
+	        }
+
+	    });
+	}
 	
-	$.ajax({
-        type: 'GET', // define the type of HTTP verb we want to use
-        url: '/getAllKeywords/', // the url where we want to POST
-        dataType: 'json', // what type of data do we expect back from the server
-        encode: true,
-        success: function (data, textStatus, jqXHR) {
-        	for(var i in data){
-        		keywordsMap.add('keyword-'+i,data[i]);
-        		
-        		$(".nonsubscribed-keywords").append("<li id=keyword-"+i+">"+data[i]+"</li>");
-        	}
-        },
-        error: function (data, textStatus, jqXHR) {
-
-        	 $(".nonsubscribed-keywords").append("<li>We faced problems while loading available keywords. Kindly reload page</li>");
-
-        }
-
-    });
 	
 }
 
-function fetchAllSites(){
-
-	console.log("Fetching sites");
+function fetchAllSites(siteList,toOmit){
+	if(siteList!=null){
+		for(var i in siteList){
+    		var isContinue=false;
+			for(var x=0;x<toOmit.length;x++){
+				if(toOmit[x]==i){
+					isContinue=true;
+					continue;
+				}		
+			}
+			if(isContinue) continue;
+			else {
+				$(".nonsubscribed-sites").append("<li id=site-"+i+">"+siteList[i]+"</li>");
+				currentNonSubscribedSites.add("site-"+i);
+	
+			}
+			
+    	}
+	}else{
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use
         url: '/getAllSites/', // the url where we want to POST
         dataType: 'json', // what type of data do we expect back from the server
         encode: true,
         success: function (data, textStatus, jqXHR) {
-        	console.log(data);
+        	allSites=data;
         	for(var i in data){
         		sitesMap.add('site-'+i,data[i]);
         		$(".nonsubscribed-sites").append("<li id=site-"+i+">"+data[i]+"</li>");
@@ -482,7 +574,7 @@ function fetchAllSites(){
         }
 
     });
-	
+	}
 }
 
 function  closeAlert() {

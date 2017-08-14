@@ -101,13 +101,13 @@ class Subscription():
                 for keyword in v.split(','):
                     cur.execute(sqlInsertSubscription,(mailId[0],site,keyword)) 
                     dbUtil.commit()
-            return  ("Subscription added successfully")
+            return  ("Subscription saved successfully")
         except lite.IntegrityError:
             return  ("Unable to save subscription", 501)
         
-        ''' 
-            Fetches all Subscribers in the database and returns a dictionary of Subscibers
-        '''
+    ''' 
+    Fetches all Subscribers in the database and returns a dictionary of Subscibers
+    '''
         
     def fetchAllSubscribers(self):
         dbUtil = dbConnection()
@@ -158,5 +158,10 @@ class Subscription():
             return ("Failed to delete subscription", 501)
         return  "Keyword Deleted Successfully"
  
-        
     
+    
+    def updateSubscription(self,subscription):
+        
+        self.deleteSubscription(subscription.getSubId())
+        return self.addSubscription(subscription)
+        

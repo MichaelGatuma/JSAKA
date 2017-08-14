@@ -182,7 +182,18 @@ def addSubscriber():
     return  returnVal
     
 
-
+@app.route('/update-subscriber/<subId>/', methods=['PUT'])
+def updateSubscriber(subId=None):
+    if (subId==None):
+        return("No subscriber selected selected", 501)  
+    email=request.form['email']
+    sites = request.form['sites']
+    keywords = request.form['keywords']
+   
+    subscription = subscriptioDto(email,sites,keywords,subId)
+    subDao=Subscription()
+    returnVal=subDao.updateSubscription(subscription)
+    return  returnVal
     
     
 if __name__ == "__main__":
