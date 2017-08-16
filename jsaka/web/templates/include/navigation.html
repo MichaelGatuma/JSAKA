@@ -1,10 +1,44 @@
-<div class="col-sm-2 left-menu">
+<style>
+            
+            .sidenav { 
+                background-color: #111; /* Black*/
+                border-radius: 5px;
+            }
+
+            /* The navigation menu links */
+            .sidenav a {
+/*                 padding: 8px 8px 8px 32px;  */
+                text-decoration: none;
+                 font-size: 16px; 
+                color: white;
+                 display: block;  
+                
+                 
+                 padding-bottom: 8px;
+            }
+
+            /* When you mouse over the navigation links, change their color */
+            .sidenav a:hover, .offcanvas a:focus{
+                color: #e6e6e6;
+                font-weight: bold;
+            }
+       
+        </style>
+        
+<div class="col-sm-2 sidenav" id="mySidenav">
 			
-			
-			
-			<ul>
-				<li><a href="/home/">Home</a></li>
-				<li><a href="/site/">Manage Sites</a></li>
-				<li><a href="/subscription/">Manage Subscibers</a></li>
-			</ul>
+
+            <a href="/home/">
+            <i class="fa fa-key" style="color: #ff33cc;" aria-hidden="true"></i> Manage Keywords
+            </a>
+            
+            <a href="/site/">
+            <i class="fa fa-sitemap" style="color: #00cc00;" aria-hidden="true"></i> Manage Sites
+            </a>
+            
+            <a href="/subscription/">
+            <i class="fa fa-users" style="color: #ff7800;" aria-hidden="true"></i> Manage Subscibers
+            </a>
+     
+        
 		</div>
