@@ -4,46 +4,50 @@ Created on Jun 15, 2017
 @author: duncan
 '''
 from flask import Flask, render_template
-import sqlite3 as lite
-from utils.DBUtils import dbConnection
 from flask import request
 from flask import jsonify
 from meld.meldapp import app
-from web.model.dao import  Keywords
+from web.model.dao import Keyword
+from web.model.dao import Site
 from web.model.dao import Subscription
 from web.model.dto import Subscription as subscriptioDto
+
 app = Flask(__name__)
 
 @app.route('/index/')
 def index():
     return render_template("index.html")
 
+
+
+# keyword manage endpoints
+
+@app.route("/")
+@app.route("/keyword/")
+def keyword():
+    keywords=Keyword()
+    keyWordList = keywords.fetchAllKeyWords()    
+    return  render_template('home.html', keyWordList=keyWordList)
+
+
 ''' 
     Fetches all keywords in the database and retunrs a dictionary of keywords
 '''
 
-
 @app.route('/getAllKeywords/', methods=['GET'])
 def getAllKeywords():
-    keywords=Keywords()
+    keywords=Keyword()
     return jsonify(keywords.fetchAllKeyWords())
     
-
-
-@app.route("/")
-@app.route("/home/")
-def home():
-    keywords=Keywords()
-    keyWordList = keywords.fetchAllKeyWords()    
-    return  render_template('home.html', keyWordList=keyWordList)
 
 @app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
 def editKeyword(keyword=None, keyword_id=None):
     if keyword == None or id == None:
         return  ("No keyword selected", 501)  
     else:
-        keywords=Keywords()
+        keywords=Keyword()
         return keywords.updateKeyword(keyword, keyword_id)
+       
        
 @app.route('/delete-keyword/<keyword_id>/', methods=['DELETE'])
 def deleteKeyword(keyword_id=None):
@@ -51,9 +55,10 @@ def deleteKeyword(keyword_id=None):
     if keyword_id == None:
         return  ("No keyword specified", 501)
     else:
-        keywords=Keywords()
+        keywords=Keyword()
         return keywords.deleteKeyword(keyword_id)
     
+ 
  
 @app.route('/add-keyword/', methods=['POST'])
 def addKeyword():
@@ -61,46 +66,30 @@ def addKeyword():
     if keyword == None:
         return  ("No keyword specified", 501)
     else:
-        keywords=Keywords()
+        keywords=Keyword()
         return  keywords.addKeyword(keyword)
     
 
 
 
-# Site manage methods
-
-
+# Site manage endpoints
 
 ''' 
     Fetches all Site in the database and returns a dictionary of keywords
 '''
 
-def fetchAllSites():
-    dbUtil = dbConnection()
-    cur = dbUtil.getCursor() 
-    cur.execute("select site_id,name,alias from site")
-    siteList = {}
-    sites = cur.fetchall()
-    for site in sites:
-        if len(str(site[2]).strip())!=0 and site[2] is not None:          
-            siteList[site[0]] = site[2]
-        else:
-            siteList[site[0]] = site[1]
-    if(len(siteList)==0):
-        siteList[0] = "There are no sites being scrapped"
-    dbUtil.closeDbConnection()
-    return  siteList       
-
 @app.route('/getAllSites/', methods=['GET'])
 def getAllSites():
-    return jsonify(fetchAllSites())
+    site=Site()
+    return jsonify(site.fetchAllSites())
     
 
  
 
 @app.route("/site/")
 def site():
-    nameList = fetchAllSites()    
+    site=Site()
+    nameList = site.fetchAllSites()    
     return  render_template('Site.html', nameList=nameList)
 
 @app.route('/edit-name/<name>/<site_id>/', methods=['PUT'])
@@ -108,21 +97,13 @@ def editSite(name=None, site_id=None):
     if name == None or site_id == None:
         return  ("No keyword selected", 501)  
     else:
-        dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
-        try:
-            cur.execute("update site set alias=? where site_id=?", (name, site_id)) 
-            dbUtil.commit()
-        except lite.IntegrityError:
-            return  ("Name already exists", 501)
-    return  "Name Updated Successfully"
-
-        
+        site=Site() 
+        return site.updateSite(name, site_id)
+    
 
 
-# Subscription manage methods  ------------->>>>>
 
-
+# Subscription manage endpoints  ------------->>>>>
 
 
 @app.route('/getAllSubscribers/', methods=['GET'])
@@ -141,20 +122,6 @@ def getSubscription():
 
 
 
-@app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
-def editSubscriber(keyword=None, keyword_id=None):
-    if keyword == None or id == None:
-        return  ("No keyword selected", 501)  
-    else:
-        print(keyword)
-        dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
-        try:
-            cur.execute("update keyword set keyword=? where keyword_id=?", (keyword, keyword_id)) 
-            dbUtil.commit()
-        except lite.IntegrityError:
-            return  ("Keyword already exists", 501)
-    return  "Keyword Updated Successfully"
 
 @app.route('/delete-subscription/<subscriber_id>/', methods=['DELETE'])
 def deleteSubscriber(subscriber_id=None):
@@ -169,8 +136,6 @@ def addSubscriber():
     email=request.form['email']
     sites = request.form['sites']
     keywords = request.form['keywords']
-    print(sites)
-    print(keywords)
     subscription = subscriptioDto(email,sites,keywords,None)
     subDao=Subscription()
     returnVal=subDao.addSubscription(subscription)

@@ -9,11 +9,10 @@ import sqlite3 as lite
 
 
 
-class Keywords():
+class Keyword():
     '''
-    classdocs
+    Keyword class
     '''
-
 
     def __init__(self):
         '''
@@ -57,6 +56,8 @@ class Keywords():
         except lite.IntegrityError:
             return  ("Keyword already exists", 501)
         return  "Keyword created Successfully"    
+    
+    
     
 class Subscription():
     def __init__(self):
@@ -164,4 +165,47 @@ class Subscription():
         
         self.deleteSubscription(subscription.getSubId())
         return self.addSubscription(subscription)
+    
+    
+   
+    
+    
+class Site():
+    
+    def __init__(self):
+        '''
+        Constructor
+        '''
+    
+    def fetchAllSites(self):
+        dbUtil = dbConnection()
+        cur = dbUtil.getCursor() 
+        cur.execute("select site_id,name,alias from site")
+        siteList = {}
+        sites = cur.fetchall()
+        for site in sites:
+            if len(str(site[2]).strip())!=0 and site[2] is not None:          
+                siteList[site[0]] = site[2]
+            else:
+                siteList[site[0]] = site[1]
+        if(len(siteList)==0):
+            siteList[0] = "There are no sites being scrapped"
+        dbUtil.closeDbConnection()
+        return  siteList       
+    
+    
+    def updateSite(self, newName=None, site_id=None):
+        if newName == None or site_id == None:
+            return  ("No keyword selected", 501)  
+        else:
+            dbUtil = dbConnection()
+            cur = dbUtil.getCursor()
+            try:
+                cur.execute("update site set alias=? where site_id=?", (newName, site_id)) 
+                dbUtil.commit()
+            except lite.IntegrityError:
+                return  ("Name already exists", 501)
+        return  "Name Updated Successfully"
+
+    
         
