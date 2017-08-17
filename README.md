@@ -9,6 +9,6 @@ Keyword manager
 
 Subscription Manager
 
-![alt text](jsaka/screenshots/Manage\ Subs.png)
+![alt text](jsaka/screenshots/Manage_Subs.png)
 
 
