@@ -1,0 +1,8 @@
+## backend
+sqlite
+scrapy
+Flask
+
+## frontend
+Jquery
+Bootstrap
