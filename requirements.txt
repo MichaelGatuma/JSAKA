@@ -1,8 +1,4 @@
-## backend
-sqlite
-scrapy
-Flask
+Flask==0.12.2
+Jinja2==2.9.6
+Scrapy==1.4.0
 
-## frontend
-Jquery
-Bootstrap

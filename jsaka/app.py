@@ -6,11 +6,10 @@ Created on Jun 15, 2017
 from flask import Flask, render_template
 from flask import request
 from flask import jsonify
-from meld.meldapp import app
-from web.model.dao import Keyword
-from web.model.dao import Site
-from web.model.dao import Subscription
-from web.model.dto import Subscription as subscriptioDto
+from model.dao import Keyword
+from model.dao import Site
+from model.dao import Subscription
+from model.dto import Subscription as subscriptioDto
 
 app = Flask(__name__)
 
@@ -157,5 +156,5 @@ def updateSubscriber(subId=None):
     
     
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port=8090)
+    app.run(host='0.0.0.0', port=8090)
     
