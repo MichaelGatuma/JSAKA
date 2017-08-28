@@ -53,11 +53,11 @@ The install the projects dependencies usinf the requirements.txt file in JSAKA b
 Run:
   pip install uwsgi
   
-# Configring Nginx
+# Configuring Nginx
 
 add the following directive to nginx conf file:
 
-  server {
+    server {
         listen 8080;
         server_name 0.0.0.0;
 
