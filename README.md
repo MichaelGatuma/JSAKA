@@ -11,51 +11,51 @@ Steps:
 
 If you dont have the epel repo in your machine, run:
   
-  sudo yum install epel-release
+    sudo yum install epel-release
 
 Install nginx web and reverse proxy server:
   
-  sudo yum install nginx
+    sudo yum install nginx
  
 # Setup pip:
 
-  sudo yum install python-pip python-devel gcc
+    sudo yum install python-pip python-devel gcc
 
 # install and create python Virtual Environment
 
 installation:
 
-  sudo pip install virtualenv
+    sudo pip install virtualenv
 
 Creating virtual env with virtualenv tool:
 
-  mkdir ~/myproject
-  cd ~/myproject
-  virtualenv myprojectenv
+    mkdir ~/myproject
+    cd ~/myproject
+    virtualenv myprojectenv
 
 The above will create a python virtual env in your project folder created (myprojectenv).
 The above copies files for your default python interpreter to the virtual environment.
 If you have multiple instances of python interpreter on your machine, you can specify the version to use as:
 
-  virtaulenv --python=/location/to/python/touse myprojectenv
-  eg: virtualenv --python=/usr/local/bin/python2.7 myprojectenv
+    virtaulenv --python=/location/to/python/touse myprojectenv
+    eg: virtualenv --python=/usr/local/bin/python2.7 myprojectenv
 
 # Activate and install project dependencies:
 
 Activate the environment as follows:
   
-  source myprojectenv/bin/activate
+    source myprojectenv/bin/activate
 
 Now copy all sources from JSAKA into the project folder (myprojectenv).
 The install the projects dependencies usinf the requirements.txt file in JSAKA by running:
 
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
 # Installing uwsgi server
 
 Run:
 
-  pip install uwsgi
+     pip install uwsgi
   
 # Configuring Nginx
 
@@ -79,21 +79,21 @@ This can be cahnged by editing jsaka.ini configuration file. Also ensure the pat
 
 # Run JSAKA with uwsgi
 
-  uwsgi --ini jsaka.ini
+    uwsgi --ini jsaka.ini
   
 # Run Nginx
 
- type nginx on terminal as root.
+    type 'nginx' on terminal as root.
  
 
 
 # Screenshots
 Keyword manager
 
-![alt text](jsaka/screenshots/Keywords.png)
+![Manage Keywords](jsaka/screenshots/Keywords.png)
 
 Subscription Manager
 
-![alt text](jsaka/screenshots/Manage_Subs.png)
+![Manage subscriptions](jsaka/screenshots/Manage_Subs.png)
 
 
