@@ -10,9 +10,11 @@ Steps:
 
 
 If you dont have the epel repo in your machine, run:
+  
   sudo yum install epel-release
 
 Install nginx web and reverse proxy server:
+  
   sudo yum install nginx
  
 # Setup pip:
@@ -41,6 +43,7 @@ If you have multiple instances of python interpreter on your machine, you can sp
 # Activate and install project dependencies:
 
 Activate the environment as follows:
+  
   source myprojectenv/bin/activate
 
 Now copy all sources from JSAKA into the project folder (myprojectenv).
@@ -51,6 +54,7 @@ The install the projects dependencies usinf the requirements.txt file in JSAKA b
 # Installing uwsgi server
 
 Run:
+
   pip install uwsgi
   
 # Configuring Nginx
