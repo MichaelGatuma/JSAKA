@@ -1,6 +1,7 @@
 # JSAKA
-Highly Customizable Word Scrapper, with minimal foot print. Uses Scrapy for crawling and has a configuration panel to configure some crawlers behaviors.
-JSAKA uses scrapy framework to develop spiders, the scrapped data is then stored. The web interface allows you to configure keywords that one should be alerted via email once they are detected in the scrapped data.
+
+Highly Customizable Word Scrapper, with minimal foot print. Allows crawlers and spiders addition using whatever technique in prefered, be it scrapy, requests and beautiful soup, selnium, etc for crawling and has a configuration panel to configure some crawlers behaviors.
+The web interface allows you to configure keywords that one should be alerted via email once they are detected in the scrapped data.
 
 # Deploying using nginx and uwsgi (Centos)
 
