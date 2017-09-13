@@ -148,7 +148,6 @@ local.properties
 .cache-main
 .scala_dependencies
 .worksheet
-scrapy.cfg
 cred.txt
 /Python Snippets/
 /Python Snippets/
