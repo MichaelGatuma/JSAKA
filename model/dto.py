@@ -21,14 +21,14 @@ class Subscriber(object):
 
 class Subscription():
     
-    def __init__(self,email,sites,keywords,subId):
+    def __init__(self, email, sites, keywords, subId):
         '''
         Constructor
         '''
-        self.subId=subId
-        self.email=email
-        self.sites=sites
-        self.keywords=keywords
+        self.subId = subId
+        self.email = email
+        self.sites = sites
+        self.keywords = keywords
     
     def getSubId(self):
         return self.subId

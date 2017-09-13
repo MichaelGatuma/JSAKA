@@ -4,12 +4,14 @@ Created on Jun 15, 2017
 @author: duncan
 '''
 from flask import Flask, render_template
-from flask import request
 from flask import jsonify
+from flask import request
+
 from model.dao import Keyword
 from model.dao import Site
 from model.dao import Subscription
 from model.dto import Subscription as subscriptioDto
+
 
 app = Flask(__name__)
 
@@ -24,7 +26,7 @@ def index():
 @app.route("/")
 @app.route("/keyword/")
 def keyword():
-    keywords=Keyword()
+    keywords = Keyword()
     keyWordList = keywords.fetchAllKeyWords()    
     return  render_template('home.html', keyWordList=keyWordList)
 
@@ -35,7 +37,7 @@ def keyword():
 
 @app.route('/getAllKeywords/', methods=['GET'])
 def getAllKeywords():
-    keywords=Keyword()
+    keywords = Keyword()
     return jsonify(keywords.fetchAllKeyWords())
     
 
@@ -44,7 +46,7 @@ def editKeyword(keyword=None, keyword_id=None):
     if keyword == None or id == None:
         return  ("No keyword selected", 501)  
     else:
-        keywords=Keyword()
+        keywords = Keyword()
         return keywords.updateKeyword(keyword, keyword_id)
        
        
@@ -54,7 +56,7 @@ def deleteKeyword(keyword_id=None):
     if keyword_id == None:
         return  ("No keyword specified", 501)
     else:
-        keywords=Keyword()
+        keywords = Keyword()
         return keywords.deleteKeyword(keyword_id)
     
  
@@ -65,7 +67,7 @@ def addKeyword():
     if keyword == None:
         return  ("No keyword specified", 501)
     else:
-        keywords=Keyword()
+        keywords = Keyword()
         return  keywords.addKeyword(keyword)
     
 
@@ -79,7 +81,7 @@ def addKeyword():
 
 @app.route('/getAllSites/', methods=['GET'])
 def getAllSites():
-    site=Site()
+    site = Site()
     return jsonify(site.fetchAllSites())
     
 
@@ -87,7 +89,7 @@ def getAllSites():
 
 @app.route("/site/")
 def site():
-    site=Site()
+    site = Site()
     nameList = site.fetchAllSites()    
     return  render_template('Site.html', nameList=nameList)
 
@@ -96,7 +98,7 @@ def editSite(name=None, site_id=None):
     if name == None or site_id == None:
         return  ("No keyword selected", 501)  
     else:
-        site=Site() 
+        site = Site() 
         return site.updateSite(name, site_id)
     
 
@@ -107,8 +109,8 @@ def editSite(name=None, site_id=None):
 
 @app.route('/getAllSubscribers/', methods=['GET'])
 def getAllSubscribers():
-    subDao=Subscription()
-    subscriberDict=subDao.fetchAllSubscribers()
+    subDao = Subscription()
+    subscriberDict = subDao.fetchAllSubscribers()
     return jsonify(subscriberDict)
     
         
@@ -116,7 +118,7 @@ def getAllSubscribers():
 
 @app.route("/subscription/")
 def getSubscription():
-    subDao=Subscription()
+    subDao = Subscription()
     return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscribers())
 
 
@@ -126,32 +128,32 @@ def getSubscription():
 def deleteSubscriber(subscriber_id=None):
     if subscriber_id == None:
         return  ("No Subscriber specified", 501)
-    subDao=Subscription()
-    returnVal=subDao.deleteSubscription(subscriber_id)
+    subDao = Subscription()
+    returnVal = subDao.deleteSubscription(subscriber_id)
     return  returnVal
  
 @app.route('/add-subscriber/', methods=['POST'])
 def addSubscriber():
-    email=request.form['email']
+    email = request.form['email']
     sites = request.form['sites']
     keywords = request.form['keywords']
-    subscription = subscriptioDto(email,sites,keywords,None)
-    subDao=Subscription()
-    returnVal=subDao.addSubscription(subscription)
+    subscription = subscriptioDto(email, sites, keywords, None)
+    subDao = Subscription()
+    returnVal = subDao.addSubscription(subscription)
     return  returnVal
     
 
 @app.route('/update-subscriber/<subId>/', methods=['PUT'])
 def updateSubscriber(subId=None):
-    if (subId==None):
+    if (subId == None):
         return("No subscriber selected selected", 501)  
-    email=request.form['email']
+    email = request.form['email']
     sites = request.form['sites']
     keywords = request.form['keywords']
    
-    subscription = subscriptioDto(email,sites,keywords,subId)
-    subDao=Subscription()
-    returnVal=subDao.updateSubscription(subscription)
+    subscription = subscriptioDto(email, sites, keywords, subId)
+    subDao = Subscription()
+    returnVal = subDao.updateSubscription(subscription)
     return  returnVal
     
     
