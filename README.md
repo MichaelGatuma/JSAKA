@@ -91,10 +91,10 @@ This can be cahnged by editing jsaka.ini configuration file. Also ensure the pat
 # Screenshots
 Keyword manager
 
-![Manage Keywords](jsaka/screenshots/Keywords.png)
+![Manage Keywords](screenshots/Keywords.png)
 
 Subscription Manager
 
-![Manage subscriptions](jsaka/screenshots/Manage_Subs.png)
+![Manage subscriptions](screenshots/Manage_Subs.png)
 
 
