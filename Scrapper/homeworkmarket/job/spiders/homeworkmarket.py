@@ -7,6 +7,7 @@ from job.items import jobName
 
 
 
+
 class HomeworkmarketSpider(scrapy.Spider):
     name = 'homeworkmarket'
     allowed_domains = ["job.com"]
