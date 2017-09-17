@@ -43,6 +43,8 @@ class JobsFilter(object):
             self.dbUtil.commit()
         except:
             pass
+        
+        
     def process_item(self, item, spider):
           
         try: 
@@ -53,7 +55,7 @@ class JobsFilter(object):
             logger.error(e)
         return item
   
-    
+  
     def close_spider(self, spider):
         self.exporter.finish_exporting()
         credFile = open("cred.txt", "r")
@@ -104,8 +106,7 @@ class JobsFilter(object):
             self.dbUtil.closeDbConnection()
         except Exception as e:
             print(e)
-        
-
+            
     
     def unMar(self, stri):
         x = str(stri)
@@ -117,12 +118,8 @@ class JobsFilter(object):
                 decValue = decValue + chr(ord(valRv[y]) - y)
         return decValue
     
-    
-    
-    
-    
-    
-    
+
+
 
 class HomeWorkMarket(object):
 
