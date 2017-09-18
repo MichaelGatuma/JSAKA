@@ -48,7 +48,7 @@ class JobsFilter(object):
     def process_item(self, item, spider):
           
         try: 
-            self.cur.execute("insert into jobs(name,time_created,site_id) values('%s',datetime('now'),1)" % item['name'])
+            self.cur.execute("insert into jobs(detail,time_created,site_id) values('%s',datetime('now'),1)" % item['name'])
             self.dbUtil.commit()
             self.exporter.export_item(item)
         except Exception as e: 
@@ -75,7 +75,7 @@ class JobsFilter(object):
             keyWordList.append(keyword[0])
             print (keyword[0])  
         
-        self.cur.execute("select name,job_id from jobs where status=0")
+        self.cur.execute("select detail,job_id from jobs where status=0")
         jobs = self.cur.fetchall()
         jobsList = []
         jobIdList = set()

@@ -1,6 +1,6 @@
 # JSAKA
 
-Highly Customizable Word Scrapper, with minimal foot print. Allows crawlers and spiders addition using whatever technique in prefered, be it scrapy, requests and beautiful soup, selnium, etc for crawling and has a configuration panel to configure some crawlers behaviors.
+Highly Customizable Word Scrapper, with minimal foot print. Allows crawlers and spiders addition using whatever technique is prefered, be it scrapy, requests and beautiful soup, selnium webdriver, etc for crawling and has a configuration panel to configure some crawlers activities.
 The web interface allows you to configure keywords that one should be alerted via email once they are detected in the scrapped data.
 
 # Deploying using nginx and uwsgi (Centos)
