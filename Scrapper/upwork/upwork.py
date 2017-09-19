@@ -118,6 +118,7 @@ class upwork:
                 elem.send_keys(keywrd)
                 elem.send_keys(Keys.RETURN)
                 elems= WebDriverWait(self.driver, 20).until(lambda x: x.find_elements_by_css_selector(".job-title-link"))
+                self.driver.save_screenshot("/tmp/upwrk.png")
                 for num,e in enumerate(elems):    
                     self.driver.execute_script("document.querySelectorAll('div.description div span.ng-hide')[%d].setAttribute('style', 'display:block !important')" %num)
                 
