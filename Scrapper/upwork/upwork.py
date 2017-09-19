@@ -14,7 +14,8 @@ from selenium.common.exceptions import TimeoutException
 from utils.DBUtils import dbConnection
 from mock.mock import self
 from items import upwork_item
-
+from random import randint
+from Useragent import agent_list
 
 class upwork:
     
@@ -26,7 +27,24 @@ class upwork:
         self.chrome_options.add_argument("--headless") 
         self.chrome_options.add_argument("--window-size=1437,760")
         self.chrome_options.add_argument('--no-sandbox')
-        self.chrome_options.add_argument("--user-agent=Mozilla/5.0 (X11; Fedora; Linux x86_64; rv:54.0) Gecko/20100101 Firefox/54.0")
+        #get user agent
+        self.dbUtil = dbConnection()
+        self.cur = self.dbUtil.getCursor()
+        self.cur.execute("select user_agent from site where site_id=2")
+        data=self.cur.fetchall()
+        if data[0][0]==None or len(data[0][0])==0:
+            print("generating agent")
+            index=randint(0,len(agent_list)-1)
+            self.chrome_options.add_argument("--user-agent=%s" %agent_list[index])
+            print(agent_list[index])
+            self.cur.execute("update site set user_agent=? where site_id=2", (agent_list[index],))
+            self.dbUtil.commit()
+        else:
+            agnt=""
+            for agent in data:
+                agnt=agent[0]
+            self.chrome_options.add_argument("--user-agent=%s" %agnt)
+            print(agnt)
         self.driver = webdriver.Chrome(chrome_options=self.chrome_options)
         
         
@@ -65,7 +83,7 @@ class upwork:
             elem.click()
             self.driver.save_screenshot("/tmp/upwrk.png")
             sleep(1)
-            #look for the on the Browse Jobs option
+            #look for  the Browse Jobs option sub menu
 #             elems=self.driver.find_elements_by_css_selector("ul.sub-menu li.tile a.tile-title")
 #             print(elems)
 #             for e in elems:
@@ -133,6 +151,7 @@ class upwork:
                 self.dbUtil = dbConnection()
                 self.cur = self.dbUtil.getCursor()
                 self.cur.execute("delete  from cookie where site_id=2")
+                self.cur.execute("update site set user_agent=Null where  site_id=2")
                 self.dbUtil.commit()
                 sleep(60)
                 self.tear_down()
