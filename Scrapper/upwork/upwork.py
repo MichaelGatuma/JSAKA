@@ -14,8 +14,10 @@ from selenium.common.exceptions import TimeoutException
 from utils.DBUtils import dbConnection
 from mock.mock import self
 from items import upwork_item
+from items import dao
 from random import randint
 from Useragent import agent_list
+from scrapy import item
 
 class upwork:
     
@@ -153,7 +155,7 @@ class upwork:
                 self.cur.execute("delete  from cookie where site_id=2")
                 self.cur.execute("update site set user_agent=Null where  site_id=2")
                 self.dbUtil.commit()
-                sleep(60)
+                sleep(120)
                 self.tear_down()
                 self.__init__()
                 self.open_job_listing_page()
@@ -187,9 +189,8 @@ class upwork:
         self.cur.execute("insert into retry_counter(retry,site_id) values(0,2)")
         self.dbUtil.commit()  
         
+        
     def parse_page(self):
-        from decorator import append
-        #item=upwork_item()
         
         descriptions=self.driver.find_elements_by_css_selector("div.description div span.ng-hide span")
         titles=self.driver.find_elements_by_css_selector("div div h4 a.job-title-link")
@@ -233,7 +234,21 @@ class upwork:
                 continue
             processed_jobs_time_elapse.append(dec.text)
             
-        
+        fixed_pay_monitor=0    
+        for num,p_desc in enumerate(processed_descriptions):
+            item=upwork_item()
+            upw_dao=dao()
+            item.job_description=p_desc
+            item.title=processed_titles[num]
+            item.job_type=processed_jobs_type[num]
+            if(item.job_type.lower()=='Fixed-Price'.lower()):
+                item.job_payment=processed_jobs_payment[fixed_pay_monitor]
+                fixed_pay_monitor=fixed_pay_monitor+1
+            else:
+                item.job_payment='$$'
+            item.job_time_elapse=processed_jobs_time_elapse[num]
+            upw_dao.save_item(item)
+            
         
     def tear_down(self):
         logger.info("terminating upwork crawler, shutting down web driver")
