@@ -17,7 +17,9 @@ from items import upwork_item
 from items import dao
 from random import randint
 from Useragent import agent_list
-from scrapy import item
+from selenium.webdriver.common.action_chains import ActionChains
+from docutils.nodes import footer
+
 
 class upwork:
     
@@ -25,10 +27,12 @@ class upwork:
         logger.info("initializing upwork crawler")
         self.init_url="https://www.upwork.com"
         #self.init_url="http://139.59.4.7:8080/"
-        self.chrome_options = webdriver.ChromeOptions()
-        self.chrome_options.add_argument("--headless") 
-        self.chrome_options.add_argument("--window-size=1437,760")
-        self.chrome_options.add_argument('--no-sandbox')
+        #self.chrome_options = webdriver.ChromeOptions()
+        #self.chrome_options.add_argument("--headless") 
+        #self.chrome_options.add_argument("--window-size=1437,760")
+        #self.chrome_options.add_argument("--proxy-server=localhost:8080")
+        #self.chrome_options.add_argument("--remote-debugging-port=9222")
+        #self.chrome_options.add_argument('--no-sandbox')
         #get user agent
         self.dbUtil = dbConnection()
         self.cur = self.dbUtil.getCursor()
@@ -37,18 +41,18 @@ class upwork:
         if data[0][0]==None or len(data[0][0])==0:
             print("generating agent")
             index=randint(0,len(agent_list)-1)
-            self.chrome_options.add_argument("--user-agent=%s" %agent_list[index])
+            #self.chrome_options.add_argument("--user-agent=%s" %agent_list[index])
             print(agent_list[index])
-            self.cur.execute("update site set user_agent=? where site_id=2", (agent_list[index],))
+            #self.cur.execute("update site set user_agent=? where site_id=2", (agent_list[index],))
             self.dbUtil.commit()
         else:
             agnt=""
             for agent in data:
                 agnt=agent[0]
-            self.chrome_options.add_argument("--user-agent=%s" %agnt)
+            #self.chrome_options.add_argument("--user-agent=%s" %agnt)
             print(agnt)
-        self.driver = webdriver.Chrome(chrome_options=self.chrome_options)
-        
+        #self.driver = webdriver.Chrome(chrome_options=self.chrome_options)
+        self.driver = webdriver.Firefox()
         
         try:
             self.dbUtil = dbConnection()
@@ -56,21 +60,21 @@ class upwork:
             print("Creating upwork db record")
             self.cur.execute("insert into site(site_id,name) select 2,'Upwork' WHERE NOT EXISTS(SELECT 1 FROM site WHERE site_id = 2 AND name = 'Upwork');  ")
             self.dbUtil.commit()
-            self.cur.execute("select name,value,group_key from cookie where site_id=2")
-            data = self.cur.fetchall()
-            self.dbUtil.commit()
-            logger.info("Cookies; The length: %d" %len(data))
-            if len(data)!=0:
-                logger.info("cookies exist")
-                group_set=set()
-                for d in data:
-                    group_set.add(d[2])
-                for g_key in group_set:
-                    cookies_dict={}
-                    for d in data:   
-                        if(d[2]==g_key):          
-                            cookies_dict[d[0]]=d[1]
-                    self.driver.add_cookie(cookies_dict)
+#             self.cur.execute("select name,value,group_key from cookie where site_id=2")
+#             data = self.cur.fetchall()
+#             self.dbUtil.commit()
+#             logger.info("Cookies; The length: %d" %len(data))
+#             if len(data)!=0:
+#                 logger.info("cookies exist")
+#                 group_set=set()
+#                 for d in data:
+#                     group_set.add(d[2])
+#                 for g_key in group_set:
+#                     cookies_dict={}
+#                     for d in data:   
+#                         if(d[2]==g_key):          
+#                             cookies_dict[d[0]]=d[1]
+#                     self.driver.add_cookie(cookies_dict)
                 
         except Exception as e:
             logger.error(e, exc_info=True)
@@ -80,6 +84,13 @@ class upwork:
         logger.info("Making get request to %s " %self.init_url)
         try:
             self.driver.get(self.init_url)
+            cookies_dict=self.driver.get_cookies()
+            print("\n")
+            print("headers")
+            print("\n")
+            print("Cookies gotten on initial request")
+            cookies_dict=self.driver.get_cookies()
+            print(cookies_dict)
             #click on the browse button
             elem = WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("ul.site-links li.ng-isolate-scope a"))
             elem.click()
@@ -97,23 +108,23 @@ class upwork:
             self.driver.execute_script("document.querySelector('ul.sub-menu li.tile:nth-child(3)').classList.add('active')")
             WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("a[href='/o/jobs/browse/c/web-mobile-software-dev/']")).click()
             self.driver.save_screenshot("/tmp/upwrk.png")
-            self.dbUtil = dbConnection()
-            self.cur = self.dbUtil.getCursor()
-            logger.info("searching for cookies")
-            self.cur.execute("select * from cookie where site_id=2")
-            data = self.cur.fetchall()
-            self.dbUtil.commit()
-            logger.info("Cookies; The length: %d" %len(data))
-            if len(data)==0:
-                logger.info("cookies do not exist, fetching cookies as: ")
-                
-                cookies_dict={}
-                cookies_dict=self.driver.get_cookies()
-                for count in range(0,len(cookies_dict)):
-                    dict=cookies_dict[count]
-                    for key,val in dict.iteritems():
-                        self.cur.execute("insert into cookie(name,value,site_id,group_key) values('%s','%s',%d,%d)" %(key,val,2,count))
-                        self.dbUtil.commit()
+#             self.dbUtil = dbConnection()
+#             self.cur = self.dbUtil.getCursor()
+#             logger.info("searching for cookies")
+#             self.cur.execute("select * from cookie where site_id=2")
+#             data = self.cur.fetchall()
+#             self.dbUtil.commit()
+#             logger.info("Cookies; The length: %d" %len(data))
+#             if len(data)==0:
+#                 logger.info("cookies do not exist, fetching cookies as: ")
+#                 
+#                 cookies_dict={}
+#                 cookies_dict=self.driver.get_cookies()
+#                 for count in range(0,len(cookies_dict)):
+#                     dict=cookies_dict[count]
+#                     for key,val in dict.iteritems():
+#                         self.cur.execute("insert into cookie(name,value,site_id,group_key) values('%s','%s',%d,%d)" %(key,val,2,count))
+#                         self.dbUtil.commit()
                   
         except (NoSuchElementException, TimeoutException) as e:
             self.driver.save_screenshot("/tmp/upwrk.png")
@@ -127,22 +138,57 @@ class upwork:
         
         
     def search_jobs(self,keywords_to_scrap):
-        keywords_to_scrap={1:'article'}
+        from __builtin__ import str
+        #keywords_to_scrap={1:'website'}
         self.driver.save_screenshot("/tmp/upwrk.png")
         try:
-            elem = WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("#eoFreelancerSearchInput"))
-            elem.clear()
-            logger.info("Searching keywords in job listing\n")
             for key,keywrd in keywords_to_scrap.iteritems():
+                elem = WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("#eoFreelancerSearchInput"))
+                elem.clear()
+                logger.info("Searching keywords in job listing\n")
                 logger.info("filtering for %s " %keywrd)
+                sleep(20)
                 elem.send_keys(keywrd)
                 elem.send_keys(Keys.RETURN)
-                elems= WebDriverWait(self.driver, 20).until(lambda x: x.find_elements_by_css_selector(".job-title-link"))
-                self.driver.save_screenshot("/tmp/upwrk.png")
-                for num,e in enumerate(elems):    
-                    self.driver.execute_script("document.querySelectorAll('div.description div span.ng-hide')[%d].setAttribute('style', 'display:block !important')" %num)
                 
-                self.parse_page()
+                #parse first page
+                self.parse_page(key)
+                self.dbUtil = dbConnection()
+                self.cur = self.dbUtil.getCursor()
+                logger.info("fetching pagination info for keyword %s" %keywrd)
+                self.cur.execute("select page_limit from setting where site_id=2 and keyword_id=?" ,(key,))
+                data = self.cur.fetchall()
+                page_limit=1
+                # Navigate through the pagination from results  returned after search
+                for row in data:
+                    if(row[0]==None or row[0]==0):
+                        pass
+                    else:
+                        logger.info("Number of pages to navigate %d" %row[0])
+                        page_limit=row[0]
+                
+                if page_limit>1:
+                    print("Scrolling to page two")
+                    visitated_links=[]
+                    for i in range(page_limit):
+                        #self.driver.execute_script("document.querySelector('footer > div').style.height = '50px'")
+                        pagination_list=self.driver.find_elements_by_css_selector("div ul.pagination li a")
+#                         for num,next_page in enumerate(pagination_list): 
+#                             self.driver.execute_script("document.querySelectorAll('.pagination li')[%d].setAttribute('style', 'display:inline-block !important')" %num)
+                        for next_page in pagination_list:
+                            
+                            if (len(next_page.text.strip())==0 or next_page.text.strip()=='1'):
+                                pass
+                            else:
+                                print("Next page text %s" %str(next_page.text))
+                                print("Will compare with %s "%str(i+1))
+                                if next_page.text==str(i+1) and next_page.text not in visitated_links:
+                                    logger.info("Scrolling to page %s" %str(next_page.text))     
+                                    visitated_links.append(next_page.text)
+                                    next_page.click()
+                                    sleep(120)
+                                    self.parse_page(key)
+                                    break       
         except TimeoutException, e:
             logger.info("Could not open job listing page to search for keywords")
             counter=self._get_counter()
@@ -152,7 +198,7 @@ class upwork:
                 logger.info("retrying")
                 self.dbUtil = dbConnection()
                 self.cur = self.dbUtil.getCursor()
-                self.cur.execute("delete  from cookie where site_id=2")
+                #self.cur.execute("delete  from cookie where site_id=2")
                 self.cur.execute("update site set user_agent=Null where  site_id=2")
                 self.dbUtil.commit()
                 sleep(120)
@@ -190,69 +236,77 @@ class upwork:
         self.dbUtil.commit()  
         
         
-    def parse_page(self):
+    def parse_page(self,keyword_id):
         
-        descriptions=self.driver.find_elements_by_css_selector("div.description div span.ng-hide span")
-        titles=self.driver.find_elements_by_css_selector("div div h4 a.job-title-link")
-        jobs_type=self.driver.find_elements_by_css_selector("div div small strong.js-type")
-        jobs_payment=self.driver.find_elements_by_css_selector("div div span.js-budget span")
-        jobs_time_elapse=self.driver.find_elements_by_css_selector("div div small span.js-posted time")
+        self.driver.save_screenshot("/tmp/upwrk.png")
+        elems= WebDriverWait(self.driver, 20).until(lambda x: x.find_elements_by_css_selector(".job-title-link"))
         
-        processed_descriptions=[]
-        for dec in descriptions:
-            clss=dec.get_attribute("class")
-            if clss=="highlight" or len(dec.text)==0:
-                continue
-            print(dec.text)
-            processed_descriptions.append(dec.text)
-            
-        processed_titles=[]   
-        for dec in titles:
-            clss=dec.get_attribute("class")
-            if len(dec.text)==0:
-                continue
-            processed_titles.append(dec.text)   
+        sleep(15)
+        for num,e in enumerate(elems):    
+            self.driver.execute_script("document.querySelectorAll('div.description div span.ng-hide')[%d].setAttribute('style', 'display:block !important')" %num)
         
-        processed_jobs_type=[]
-        for dec in jobs_type:
-            clss=dec.get_attribute("class")
-            if len(dec.text)==0:
-                continue
-            processed_jobs_type.append(dec.text) 
-         
-        processed_jobs_payment=[]    
-        for dec in jobs_payment:
-            clss=dec.get_attribute("class")
-            if clss=="highlight" or len(dec.text)==0:
-                continue
-            processed_jobs_payment.append(dec.text) 
-            
-        processed_jobs_time_elapse=[]    
-        for dec in jobs_time_elapse:
-            clss=dec.get_attribute("class")
-            if len(dec.text)==0:
-                continue
-            processed_jobs_time_elapse.append(dec.text)
-            
-        fixed_pay_monitor=0    
-        for num,p_desc in enumerate(processed_descriptions):
-            item=upwork_item()
-            upw_dao=dao()
-            item.job_description=p_desc
-            item.title=processed_titles[num]
-            item.job_type=processed_jobs_type[num]
-            if(item.job_type.lower()=='Fixed-Price'.lower()):
-                item.job_payment=processed_jobs_payment[fixed_pay_monitor]
-                fixed_pay_monitor=fixed_pay_monitor+1
-            else:
-                item.job_payment='$$'
-            item.job_time_elapse=processed_jobs_time_elapse[num]
-            upw_dao.save_item(item)
+#         descriptions=self.driver.find_elements_by_css_selector("div.description div span.ng-hide span")
+#         titles=self.driver.find_elements_by_css_selector("div div h4 a.job-title-link")
+#         jobs_type=self.driver.find_elements_by_css_selector("div div small strong.js-type")
+#         jobs_payment=self.driver.find_elements_by_css_selector("div div span.js-budget span")
+#         jobs_time_elapse=self.driver.find_elements_by_css_selector("div div small span.js-posted time")
+#         
+#         processed_descriptions=[]
+#         for dec in descriptions:
+#             clss=dec.get_attribute("class")
+#             if clss=="highlight" or len(dec.text)==0:
+#                 continue
+#             print(dec.text)
+#             processed_descriptions.append(dec.text)
+#             
+#         processed_titles=[]   
+#         for dec in titles:
+#             clss=dec.get_attribute("class")
+#             if len(dec.text)==0:
+#                 continue
+#             processed_titles.append(dec.text)   
+#         
+#         processed_jobs_type=[]
+#         for dec in jobs_type:
+#             clss=dec.get_attribute("class")
+#             if len(dec.text)==0:
+#                 continue
+#             processed_jobs_type.append(dec.text) 
+#          
+#         processed_jobs_payment=[]    
+#         for dec in jobs_payment:
+#             clss=dec.get_attribute("class")
+#             if clss=="highlight" or len(dec.text)==0:
+#                 continue
+#             processed_jobs_payment.append(dec.text) 
+#             
+#         processed_jobs_time_elapse=[]    
+#         for dec in jobs_time_elapse:
+#             clss=dec.get_attribute("class")
+#             if len(dec.text)==0:
+#                 continue
+#             processed_jobs_time_elapse.append(dec.text)
+#             
+#         fixed_pay_monitor=0    
+#         for num,p_desc in enumerate(processed_descriptions):
+#             item=upwork_item()
+#             upw_dao=dao()
+#             item.job_description=p_desc
+#             item.title=processed_titles[num]
+#             item.job_type=processed_jobs_type[num]
+#             if(item.job_type.lower()=='Fixed-Price'.lower()):
+#                 item.job_payment=processed_jobs_payment[fixed_pay_monitor]
+#                 fixed_pay_monitor=fixed_pay_monitor+1
+#             else:
+#                 item.job_payment='$$'
+#             item.job_time_elapse=processed_jobs_time_elapse[num]
+#             item.keyword_id=keyword_id
+#             upw_dao.save_item(item)
             
         
     def tear_down(self):
         logger.info("terminating upwork crawler, shutting down web driver")
-        self.driver.quit()
+        #self.driver.quit()
        
        
     def get_subscribed_keywords(self):

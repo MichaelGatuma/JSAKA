@@ -5,6 +5,12 @@ Created on Sep 17, 2017
 '''
 
 from utils.DBUtils import dbConnection
+from sqlite3 import IntegrityError
+from mock.mock import self
+import logging
+
+logging.basicConfig(filename='/tmp/upwork.log', filemode='w', level=logging.DEBUG, format='%(asctime)s %(message)s')
+logger = logging.getLogger(__name__)
 
 class upwork_item:
     
@@ -14,19 +20,22 @@ class upwork_item:
         self.job_payment=""
         self.job_type=""
         self.title=""
+        self.keyword_id=""
 
 class dao:
     
     def save_item(self,upwork_item):
         other_info="Job type: %s, Job pay: %s" %(upwork_item.job_type,upwork_item.job_payment)
-        
-        print("insert into jobs(detail,time_created,site_id,title,other_info) values('%s',datetime('now'),2,'%s','%s')" 
-                         %(upwork_item.job_description,upwork_item.title,other_info) )
-        
         dbUtil = dbConnection()
         cur = dbUtil.getCursor()
-        cur.execute("insert into jobs(detail,time_created,site_id,title,other_info) values(?,datetime('now'),2,?,?)" ,
-                         (upwork_item.job_description,upwork_item.title,other_info) )
-        dbUtil.commit()   
+        try:
+            cur.execute("insert into jobs(detail,time_created,site_id,title,other_info,keyword_id) values(?,datetime('now'),2,?,?,?)" ,
+                             (upwork_item.job_description,upwork_item.title,other_info,upwork_item.keyword_id) )
+               
+        except IntegrityError,e:
+            logger.error(e, exc_info=True)
+        
+        finally:
+            dbUtil.commit()
         
         
