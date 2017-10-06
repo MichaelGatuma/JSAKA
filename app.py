@@ -36,13 +36,13 @@ def keyword():
 '''
 
 @app.route('/getAllKeywords/', methods=['GET'])
-def getAllKeywords():
+def get_all_keywords():
     keywords = Keyword()
     return jsonify(keywords.fetchAllKeyWords())
     
 
 @app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
-def editKeyword(keyword=None, keyword_id=None):
+def edit_keyword(keyword=None, keyword_id=None):
     if keyword == None or id == None:
         return  ("No keyword selected", 501)  
     else:
@@ -51,7 +51,7 @@ def editKeyword(keyword=None, keyword_id=None):
        
        
 @app.route('/delete-keyword/<keyword_id>/', methods=['DELETE'])
-def deleteKeyword(keyword_id=None):
+def delete_keyword(keyword_id=None):
     
     if keyword_id == None:
         return  ("No keyword specified", 501)
@@ -62,7 +62,7 @@ def deleteKeyword(keyword_id=None):
  
  
 @app.route('/add-keyword/', methods=['POST'])
-def addKeyword():
+def add_keyword():
     keyword = request.form['keyword']
     if keyword == None:
         return  ("No keyword specified", 501)
@@ -80,7 +80,7 @@ def addKeyword():
 '''
 
 @app.route('/getAllSites/', methods=['GET'])
-def getAllSites():
+def get_allSites():
     site = Site()
     return jsonify(site.fetchAllSites())
     
@@ -94,7 +94,7 @@ def site():
     return  render_template('Site.html', nameList=nameList)
 
 @app.route('/edit-name/<name>/<site_id>/', methods=['PUT'])
-def editSite(name=None, site_id=None):
+def edit_site(name=None, site_id=None):
     if name == None or site_id == None:
         return  ("No keyword selected", 501)  
     else:
@@ -108,7 +108,7 @@ def editSite(name=None, site_id=None):
 
 
 @app.route('/getAllSubscribers/', methods=['GET'])
-def getAllSubscribers():
+def get_allSubscribers():
     subDao = Subscription()
     subscriberDict = subDao.fetchAllSubscribers()
     return jsonify(subscriberDict)
@@ -117,7 +117,7 @@ def getAllSubscribers():
 
 
 @app.route("/subscription/")
-def getSubscription():
+def get_subscription():
     subDao = Subscription()
     return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscribers())
 
@@ -125,7 +125,7 @@ def getSubscription():
 
 
 @app.route('/delete-subscription/<subscriber_id>/', methods=['DELETE'])
-def deleteSubscriber(subscriber_id=None):
+def delete_subscriber(subscriber_id=None):
     if subscriber_id == None:
         return  ("No Subscriber specified", 501)
     subDao = Subscription()
@@ -133,7 +133,7 @@ def deleteSubscriber(subscriber_id=None):
     return  returnVal
  
 @app.route('/add-subscriber/', methods=['POST'])
-def addSubscriber():
+def add_subscriber():
     email = request.form['email']
     sites = request.form['sites']
     keywords = request.form['keywords']
@@ -144,7 +144,7 @@ def addSubscriber():
     
 
 @app.route('/update-subscriber/<subId>/', methods=['PUT'])
-def updateSubscriber(subId=None):
+def update_subscriber(subId=None):
     if (subId == None):
         return("No subscriber selected selected", 501)  
     email = request.form['email']
@@ -157,6 +157,23 @@ def updateSubscriber(subId=None):
     return  returnVal
     
     
+# Settings manage endpoints  ------------->>>>>    
+
+@app.route("/settings/")
+def get_settings():
+    keywords = Keyword()
+    keyWordList = keywords.fetchAllKeyWords()    
+    return  render_template('settings.html', keyWordList=keyWordList)
+
+  
+    
+# Jobs manage endpoints  ------------->>>>>    
+
+@app.route("/jobs/")
+def get_jobs():
+    return  render_template('jobs.html')
+
+ 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8090)
     
