@@ -11,7 +11,7 @@ from model.dao import Keyword
 from model.dao import Site
 from model.dao import Subscription
 from model.dto import Subscription as subscriptioDto
-
+from model.dao import Settings
 
 app = Flask(__name__)
 
@@ -159,14 +159,18 @@ def update_subscriber(subId=None):
     
 # Settings manage endpoints  ------------->>>>>    
 
+@app.route("/get-settings/")
+def fetch_all_settings():
+    setting_dao = Settings()
+    settings_list = setting_dao.fetchAllSettings()
+    return jsonify(settings_list)
+    
+
 @app.route("/settings/")
 def get_settings():
-    keywords = Keyword()
-    keyWordList = keywords.fetchAllKeyWords()    
-    return  render_template('settings.html', keyWordList=keyWordList)
+    return  render_template('settings.html')
 
-  
-    
+
 # Jobs manage endpoints  ------------->>>>>    
 
 @app.route("/jobs/")
