@@ -8,6 +8,8 @@ JSAKA::Spider settings
 
 {% block content %}
 
+<link href="https://fonts.googleapis.com/css?family=Slabo+27px" rel="stylesheet"> 
+
 <style>
 td, th, .modal {
 	text-align: center;
@@ -25,9 +27,23 @@ ul li{
 	width: 50%;
 }
 
+ul.listing{
+	background-color: #f2f2f2;
+	margin-bottom: 10px;
+}
+
+.listing-header {
+	border-bottom: 2px solid #ff9900;
+	margin-left: 10px;
+	margin-right: 10px;
+	font-family: 'Slabo', serif;
+	font-weight: bold; 
+	font-size: 15px%;
+}
 
 
 </style>
+
 
 {% include "include/jumbotron.html" %}
 
@@ -75,28 +91,34 @@ ul li{
 				    <br/>
 					
 					<div class="text-center">
-						<ul>
+						<ul style="margin-bottom: 15px;">
 						
-						<li><div>Keyword</div></li><li>
-							<div>Control</div></li>
+						<li><div class="listing-header">Keyword</div></li><li>
+							<div class="listing-header">Control</div></li>
 						</ul>
 						
-						<ul>
+						
 							{% for key,val in keyWordList.items() %}
 							
-							<li>
+							<ul class="listing">
+								<li >
+								
+									<label style="font-weight: normal;" id="{{key}}-keyword">{{ val }}</label>
+								</li><li ">
+									<button type="button" id="{{key}}" class="btn btn-info keyword"
+										data-toggle="modal" data-target=".edit-modal">
+										<i class="fa fa-sliders" aria-hidden="true"></i>
+									</button>
+								
+								</li>
+							</ul>
+							<div style="display: none;">
+								<p>We are here, right</p>
+							</div>
 							
-								<label id="{{key}}-keyword">{{ val }}</label>
-							</li><li style="margin-bottom: 10px;">
-								<button type="button" id="{{key}}" class="btn btn-info keyword"
-									data-toggle="modal" data-target=".edit-modal">
-									<i class="fa fa-sliders" aria-hidden="true"></i>
-								</button>
-							
-							</li>
 							
 							{% endfor %}
-						</ul>
+						
 								
 					</div>	    
 				  </div>
