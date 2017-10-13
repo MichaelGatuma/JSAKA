@@ -27,6 +27,24 @@ ul li{
 	width: 50%;
 }
 
+.setting-panel {
+	display: inline-block;
+	border: 1px solid #3399ff;
+	border-top: 2px solid #fff;
+	text-align: center; 
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+}
+
+.setting-label {	
+	display: inline-block;
+
+}
+
+.setting-label label {
+	font-weight: normal;
+}
+
 ul.listing{
 	background-color: #f2f2f2;
 	margin-bottom: 10px;
@@ -41,6 +59,9 @@ ul.listing{
 	font-size: 15px%;
 }
 
+.slabo {
+	font-family: 'Slabo', serif;
+}
 
 </style>
 
@@ -69,7 +90,7 @@ ul.listing{
 			<div class="panel panel-default">
 				<!-- Default panel contents -->
 				<div class="panel-heading" style="text-align: center; ">
-					Configure Crawler behaviour
+					 Crawler Settings
 				</div>
 				<div style="padding-left: 5px;">
 				
@@ -81,23 +102,49 @@ ul.listing{
 				<div class="tab-content">
 				 
 				  <div id="global" class="tab-pane fade in active">
-				    <h4>Global setting</h4>
+		
 				    
 				    
 				  </div>
 				  
 				  <div id="per-keyword" class="tab-pane fade">
-				    <h4>Per Keyword setting</h4>
+			
 				    <br/>
 					
+				<div class="row">
+					<div class="col-sm-6">
+						<form class="form-horizontal" action="#">
+								<div class="form-group">
+									<label class="col-sm-2 control-label slabo" for="subscriber-sel">Subscriber</label>
+									<div class="col-sm-10">
+										<select  id="subscriber-sel" class="form-control">
+										  
+										</select>
+									</div>
+								</div>
+							</form>
+					</div>
+				
+					<div class="col-sm-6">
+								<form class="form-horizontal" action="#">
+								<div class="form-group">
+									<label class="col-sm-2 control-label slabo" for="site-sel">Site</label>
+									<div class="col-sm-10">
+										<select id="site-sel" class="col-sm-10 form-control">
+										  
+										</select>
+									</div>
+							</div>
+						</form>
+					</div>
+				</div>
 					<div class="text-center keywords-list-sec">
 						<ul style="margin-bottom: 15px;">
-						
 						<li><div class="listing-header">Keyword</div></li><li>
 							<div class="listing-header">Control</div></li>
 						</ul>
 						
-						
+						<!-- Keyword listing goes here-->
 								
 					</div>	    
 				  </div>
@@ -117,6 +164,7 @@ ul.listing{
 
 {% block jsIncludes %}
 {{ super() }}
+<script type="text/javascript"	src="{{ url_for('static',filename='vendor/js/utils.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static',filename='vendor/js/settings.js') }}"></script>
 
 {% endblock %}

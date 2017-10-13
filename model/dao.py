@@ -215,11 +215,14 @@ class Settings():
     def fetchAllSettings(self):
         dbUtil = dbConnection()
         cur = dbUtil.getCursor() 
-        cur.execute("select * from setting inner join site on setting.site_id=site.site_id inner join keyword on keyword.keyword_id=setting.keyword_id")
+        cur.execute('''select * from setting 
+                        inner join site on setting.site_id=site.site_id 
+                        inner join keyword on keyword.keyword_id=setting.keyword_id
+                        inner join subscriber on setting.subscriber_id = subscriber.subscriber_id;''')
         setting_map = {}
         settings = cur.fetchall()
         for setting in settings:
-            setting_map[setting[1]]=setting
+            setting_map[setting[0]]=setting
         if(len(setting_map) == 0):
             setting_map[0] = "There are no settings set up"
         dbUtil.closeDbConnection()

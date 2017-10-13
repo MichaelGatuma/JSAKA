@@ -5,9 +5,7 @@
 
 $(document).ready(function(){
 	fetchAllSettings();
-//	addBtnEvents();
-   
-	//url: 'updateContentById?contentId=' + contentId, 
+		//url: 'updateContentById?contentId=' + contentId, 
 	
 //	$("button.edit-name").click(function (event) {
 //		$("div#edit-modal").modal('hide');
@@ -68,38 +66,95 @@ function fetchAllSettings(){
 /*populates html table with content if any from sever*/
 function populateContentTable(data) {
 	$('div.keywords-list-sec').find("ul:gt(0)").remove();
-	console.log("is array: "+ Array.isArray(data[2]));
-	console.log("The data: "+data[2]);
+	
+	var siteSet=new Set();
+	var subscriberSet= new Set();
+	var trHTML='';
+	
+	var noOfPages='<div class="col-sm-4 setting-label"><label>No of pages: </label></div>'
+					+'<div style="margin-bottom: 4px;" class="col-sm-6">'
+						+'<div class="input-group number-spinner">'
+							+'<span class="input-group-btn">'
+								+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
+							+'</span>'
+							+'<input type="text" class="form-control text-center" value="1">'
+							+'<span class="input-group-btn">'
+								+'<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
+							+'</span>'
+						+'</div>'
+					+'</div>'
+					
+	var minimumAlerts='<div class="col-sm-4 setting-label"><label>Minimum Jobs alerts: </label></div>'
+		+'<div style="margin-bottom: 4px;" class="col-sm-6">'
+			+'<div class="input-group number-spinner">'
+				+'<span class="input-group-btn">'
+					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
+				+'</span>'
+				+'<input type="text" class="form-control text-center" value="1">'
+				+'<span class="input-group-btn">'
+					+'<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
+				+'</span>'
+			+'</div>'
+		+'</div>'			
+
+	
+	
 	for(var key in data){
-  	  
 		var setting=data[key];
-	  	var trHTML ='<ul class="listing"><li><label style="font-weight: normal;">'+setting[11]+'</label></li><li ">'
-									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info keyword"'
+	    trHTML +='<ul class="listing"><li><label style="font-weight: normal;">'+setting[11]+'</label></li><li>'
+									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info setting-btn"'
 									+		'data-toggle="modal" data-target=".edit-modal">'
 									+	'<i class="fa fa-sliders" aria-hidden="true"></i>'
-										'</button>'
+									+	'</button>'
 							+		'</li>'
 							+	'</ul>'
-							+	'<div style="display: none;">'
-							+	'	<p>We are here, right</p>'
+							+	'<div id='+setting[0]+'-panel class="container" style="display: none" >'
+							+	'<div class="row setting-panel text-center">'
+								+	noOfPages
+								+	minimumAlerts
+							+	'</div>'
 							+	'</div>';
-  	}
+	    siteSet.add(setting[7]);
+	  	subscriberSet.add(setting[13]);	
+	}
+
+	jQuery.each(subscriberSet.values,function(index, value){
+		$('select#subscriber-sel').append('<option>'+value+'</option>');
+		$('select#site-sel').append('<option>'+siteSet.values[index]+'</option>');
+	});
+	
 	$('div.keywords-list-sec').append(trHTML);
-	//addBtnEvents();
+	addBtnEvents();
 }
+
 
 function addBtnEvents(){
-	 $("button.name").click(function (event) {
-	    	console.log("Clicked id "+event.target.id);
-	    	selectedKey=event.target.id;
-	    	var nameEl='td#'+selectedKey+'-name';
-	    	console.log("name selector"+nameEl)
-	    	$('input.edit-name').val($(nameEl).html());
-	    
-	    });
 	
+	 $("button.setting-btn").click(function (event) {
+		    
+	    	var selectedKey=event.target.id;
+	    	var settingPanel='div#'+selectedKey+'-panel';
+	    	//$(settingPanel).val($(nameEl).html());
+	    	$(settingPanel).toggle();
+	    });	
+	 
+	 $(document).on('click', '.number-spinner button', function () {    
+			var btn = $(this),
+				oldValue = btn.closest('.number-spinner').find('input').val().trim(),
+				newVal = 0;
+			
+			if (btn.attr('data-dir') == 'up') {
+				newVal = parseInt(oldValue) + 1;
+			} else {
+				if (oldValue > 1) {
+					newVal = parseInt(oldValue) - 1;
+				} else {
+					newVal = 1;
+				}
+			}
+			btn.closest('.number-spinner').find('input').val(newVal);
+		});
 }
-
 
 
 function  closeAlert() {
