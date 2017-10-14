@@ -69,25 +69,35 @@ function populateContentTable(data) {
 	
 	var siteSet=new Set();
 	var subscriberSet= new Set();
-	var trHTML='';
+	
 
 	
-	var noOfPages='<div class="col-sm-4  col-sm-offset-2  setting-label"><label>No of pages: </label></div>'
-					+'<div style="margin-bottom: 4px;" class="col-sm-5">'
-						+'<div class="input-group number-spinner">'
-							+'<span class="input-group-btn">'
-								+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
-							+'</span>'
-							+'<input type="text" class="form-control text-center spinner-input"  value="1">'
-							+'<span class="input-group-btn" style="float:left;">'
-								+'<button class="btn btn-default"  data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
-							+'</span>'
-						+'</div>'
-					+'</div>'
-					
-	var minimumAlerts='<div class="col-sm-4  col-sm-offset-2 setting-label" style="clear: left;"><label>Minimum Jobs alerts: </label></div>'
+	
+
+	
+			
+			
+	for(var key in data){
+		
+		var setting=data[key];
+		
+		var noOfPages='<div class="col-sm-4  col-sm-offset-2  setting-label"><label>No of pages: </label></div>'
+			+'<div style="margin-bottom: 4px;" class="col-sm-5">'
+				+'<div class="input-group pages-number-spinner-'+setting[0]+'">'
+					+'<span class="input-group-btn">'
+						+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
+					+'</span>'
+					+'<input type="text" class="form-control text-center spinner-input"  value="1">'
+					+'<span class="input-group-btn" style="float:left;">'
+						+'<button class="btn btn-default"  data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
+					+'</span>'
+				+'</div>'
+			+'</div>'
+			
+			
+		var minimumAlerts='<div class="col-sm-4  col-sm-offset-2 setting-label" style="clear: left;"><label>Minimum Jobs alerts: </label></div>'
 		+'<div style="margin-bottom: 4px;" class="col-sm-5">'
-			+'<div class="input-group number-spinner">'
+			+'<div class="input-group alerts-number-spinner-'+setting[0]+'">'
 				+'<span class="input-group-btn">'
 					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
 				+'</span>'
@@ -97,21 +107,14 @@ function populateContentTable(data) {
 				+'</span>'
 			+'</div>'
 		+'</div>'			
-
-	
-			
-			
-	for(var key in data){
-		var setting=data[key];
-		
 		
 		var controlButtons='<div style="clear: left;" class="col-sm-12 text-center">'
 			+	'<button type="button" id="'+setting[0]+'-edit" class="btn btn-success  setting-btn"'
 			+		'data-toggle="modal" data-target=".edit-modal">'
-			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Edit'
+			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Save'
 			+	'</button>'
 			
-			+	'<button type="button" id="'+setting[0]+'-cancel" class="btn btn-warning  setting-btn"'
+			+	'<button type="button" class="btn btn-warning  setting-btn"'
 			+		'data-toggle="modal" data-target=".edit-modal">'
 			+	'<i class="fa fa-stop" aria-hidden="true"></i> Cancel'
 			+	'</button>'
@@ -121,7 +124,7 @@ function populateContentTable(data) {
 		
 		
 		
-	    trHTML +='<ul class="listing"><li><label style="font-weight: normal;">'+setting[11]+'</label></li><li>'
+		var trHTML ='<ul class="listing"><li><label style="font-weight: normal;">'+setting[13]+'</label></li><li>'
 									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info setting-btn"'
 									+		'data-toggle="modal" data-target=".edit-modal">'
 									+	'<i class="fa fa-sliders" aria-hidden="true"></i>'
@@ -135,8 +138,29 @@ function populateContentTable(data) {
 								+	controlButtons
 							+	'</div>'
 							+	'</div>';
+		
 	    siteSet.add(setting[7]);
-	  	subscriberSet.add(setting[13]);	
+	  	subscriberSet.add(setting[15]);	
+	  	
+	  	$('div.keywords-list-sec').append(trHTML);
+	  	
+	  	//setting[3] <-- this is no of pages per keyword
+	  	//setting[10] <-- per site
+	  	console.log("Per keyword limit "+setting[3]+" Per site limit "+setting[10]);
+	  	if(setting[3]===undefined  || setting[3]===null || String(setting[3]).trim()===''){
+	  		addClickEventToKeywordSubSettingPagesBtn(setting[10],setting[0]);
+	  	}else {
+	  		addClickEventToKeywordSubSettingPagesBtn(setting[3],setting[0]);
+	  	}
+	  	
+	  	console.log("Per keyword2 limit "+setting[5]+" Per site2 limit "+setting[11]);
+	  	if(setting[5]===undefined  || setting[5]===null || String(setting[5]).trim()===''){
+	  		addClickEventToKeywordSubSettingAlertsBtn(setting[11],setting[0]);
+	  	}else {
+	  		addClickEventToKeywordSubSettingAlertsBtn(setting[5],setting[0]);
+	  	}
+	  	
+	  	
 	}
 
 	jQuery.each(subscriberSet.values,function(index, value){
@@ -144,12 +168,64 @@ function populateContentTable(data) {
 		$('select#site-sel').append('<option>'+siteSet.values[index]+'</option>');
 	});
 	
-	$('div.keywords-list-sec').append(trHTML);
-	addBtnEvents();
+	
+	addClickEventToKeywordSettingBtn();
 }
 
 
-function addBtnEvents(){
+function addClickEventToKeywordSubSettingPagesBtn(maximunPageNo,id){
+
+	$(document).on('click', '.pages-number-spinner-'+id+' button', function () {
+
+		var btn = $(this),
+			oldValue = btn.closest('.pages-number-spinner-'+id+'').find('input').val().trim(), //get current value in input box
+			newVal = 1;
+		
+		if (btn.attr('data-dir') == 'up') {
+			if(oldValue==maximunPageNo){
+				newVal=maximunPageNo;
+			}else if(oldValue>maximunPageNo){
+				oldValue=maximunPageNo;
+			}else newVal = parseInt(oldValue) + 1;
+		} else {
+			if (oldValue > 1) {
+				newVal = parseInt(oldValue) - 1;
+			} else {
+				newVal = 1;
+			}
+		}
+		btn.closest('.pages-number-spinner-'+id+'').find('input').val(newVal);
+	});
+	
+}
+
+
+function addClickEventToKeywordSubSettingAlertsBtn(minimuJobsAlert,id){
+	$(document).on('click', '.alerts-number-spinner-'+id+' button', function () {    
+		var btn = $(this),
+			oldValue = btn.closest('.alerts-number-spinner-'+id+'').find('input').val().trim(), //get current value in input box
+			newVal = 1;
+		
+		if (btn.attr('data-dir') == 'up') {
+			if(oldValue==minimuJobsAlert){
+				newVal=minimuJobsAlert;
+			}else if(oldValue>minimuJobsAlert){
+				oldValue=minimuJobsAlert;
+			}else newVal = parseInt(oldValue) + 1;
+		} else {
+			if (oldValue > 1) {
+				newVal = parseInt(oldValue) - 1;
+			} else {
+				newVal = 1;
+			}
+		}
+		btn.closest('.alerts-number-spinner-'+id+'').find('input').val(newVal);
+	});
+
+}
+
+
+function addClickEventToKeywordSettingBtn(){
 	
 	 $("button.setting-btn").click(function (event) {
 		    
@@ -159,22 +235,7 @@ function addBtnEvents(){
 	    	$(settingPanel).toggle();
 	    });	
 	 
-	 $(document).on('click', '.number-spinner button', function () {    
-			var btn = $(this),
-				oldValue = btn.closest('.number-spinner').find('input').val().trim(),
-				newVal = 0;
-			
-			if (btn.attr('data-dir') == 'up') {
-				newVal = parseInt(oldValue) + 1;
-			} else {
-				if (oldValue > 1) {
-					newVal = parseInt(oldValue) - 1;
-				} else {
-					newVal = 1;
-				}
-			}
-			btn.closest('.number-spinner').find('input').val(newVal);
-		});
+	 
 }
 
 

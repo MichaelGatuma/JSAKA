@@ -223,8 +223,6 @@ class Settings():
         settings = cur.fetchall()
         for setting in settings:
             setting_map[setting[0]]=setting
-        if(len(setting_map) == 0):
-            setting_map[0] = "There are no settings set up"
         dbUtil.closeDbConnection()
         return  setting_map  
     
