@@ -70,9 +70,10 @@ function populateContentTable(data) {
 	var siteSet=new Set();
 	var subscriberSet= new Set();
 	var trHTML='';
+
 	
 	var noOfPages='<div class="col-sm-4 setting-label"><label>No of pages: </label></div>'
-					+'<div style="margin-bottom: 4px;" class="col-sm-6">'
+					+'<div style="margin-bottom: 4px;" class="col-sm-8">'
 						+'<div class="input-group number-spinner">'
 							+'<span class="input-group-btn">'
 								+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
@@ -85,7 +86,7 @@ function populateContentTable(data) {
 					+'</div>'
 					
 	var minimumAlerts='<div class="col-sm-4 setting-label"><label>Minimum Jobs alerts: </label></div>'
-		+'<div style="margin-bottom: 4px;" class="col-sm-6">'
+		+'<div style="margin-bottom: 4px;" class="col-sm-8">'
 			+'<div class="input-group number-spinner">'
 				+'<span class="input-group-btn">'
 					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
@@ -98,9 +99,29 @@ function populateContentTable(data) {
 		+'</div>'			
 
 	
-	
+			
+			
 	for(var key in data){
 		var setting=data[key];
+		
+		
+		var controlButtons='<div class="text-center">'
+			+	'<button type="button" id="'+setting[0]+'-edit" class="btn btn-info  setting-btn"'
+			+		'data-toggle="modal" data-target=".edit-modal">'
+			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Edit'
+			+	'</button>'
+			
+			+	'<button type="button" id="'+setting[0]+'-cancel" class="btn btn-info  setting-btn"'
+			+		'data-toggle="modal" data-target=".edit-modal">'
+			+	'<i class="fa fa-stop" aria-hidden="true"></i> Cancel'
+			+	'</button>'
+			
+			
+			+'</div>'
+		
+		
+		
+		
 	    trHTML +='<ul class="listing"><li><label style="font-weight: normal;">'+setting[11]+'</label></li><li>'
 									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info setting-btn"'
 									+		'data-toggle="modal" data-target=".edit-modal">'
@@ -108,10 +129,11 @@ function populateContentTable(data) {
 									+	'</button>'
 							+		'</li>'
 							+	'</ul>'
-							+	'<div id='+setting[0]+'-panel class="container" style="display: none" >'
+							+	'<div id='+setting[0]+'-panel class="container-fluid" style="display: none" >'
 							+	'<div class="row setting-panel text-center">'
 								+	noOfPages
 								+	minimumAlerts
+								+	controlButtons
 							+	'</div>'
 							+	'</div>';
 	    siteSet.add(setting[7]);
