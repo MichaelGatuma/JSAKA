@@ -70,37 +70,57 @@ function populateContentTable(data) {
 	var siteSet=new Set();
 	var subscriberSet= new Set();
 	var trHTML='';
+
 	
-	var noOfPages='<div class="col-sm-4 setting-label"><label>No of pages: </label></div>'
-					+'<div style="margin-bottom: 4px;" class="col-sm-6">'
+	var noOfPages='<div class="col-sm-4  col-sm-offset-2  setting-label"><label>No of pages: </label></div>'
+					+'<div style="margin-bottom: 4px;" class="col-sm-5">'
 						+'<div class="input-group number-spinner">'
 							+'<span class="input-group-btn">'
 								+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
 							+'</span>'
-							+'<input type="text" class="form-control text-center" value="1">'
-							+'<span class="input-group-btn">'
-								+'<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
+							+'<input type="text" class="form-control text-center spinner-input"  value="1">'
+							+'<span class="input-group-btn" style="float:left;">'
+								+'<button class="btn btn-default"  data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
 							+'</span>'
 						+'</div>'
 					+'</div>'
 					
-	var minimumAlerts='<div class="col-sm-4 setting-label"><label>Minimum Jobs alerts: </label></div>'
-		+'<div style="margin-bottom: 4px;" class="col-sm-6">'
+	var minimumAlerts='<div class="col-sm-4  col-sm-offset-2 setting-label" style="clear: left;"><label>Minimum Jobs alerts: </label></div>'
+		+'<div style="margin-bottom: 4px;" class="col-sm-5">'
 			+'<div class="input-group number-spinner">'
 				+'<span class="input-group-btn">'
 					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
 				+'</span>'
-				+'<input type="text" class="form-control text-center" value="1">'
-				+'<span class="input-group-btn">'
+				+'<input type="text" class="form-control text-center  spinner-input" value="1">'
+				+'<span class="input-group-btn" style="float:left;">'
 					+'<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
 				+'</span>'
 			+'</div>'
 		+'</div>'			
 
 	
-	
+			
+			
 	for(var key in data){
 		var setting=data[key];
+		
+		
+		var controlButtons='<div style="clear: left;" class="col-sm-12 text-center">'
+			+	'<button type="button" id="'+setting[0]+'-edit" class="btn btn-success  setting-btn"'
+			+		'data-toggle="modal" data-target=".edit-modal">'
+			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Edit'
+			+	'</button>'
+			
+			+	'<button type="button" id="'+setting[0]+'-cancel" class="btn btn-warning  setting-btn"'
+			+		'data-toggle="modal" data-target=".edit-modal">'
+			+	'<i class="fa fa-stop" aria-hidden="true"></i> Cancel'
+			+	'</button>'
+			
+			
+			+'</div>'
+		
+		
+		
 	    trHTML +='<ul class="listing"><li><label style="font-weight: normal;">'+setting[11]+'</label></li><li>'
 									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info setting-btn"'
 									+		'data-toggle="modal" data-target=".edit-modal">'
@@ -108,10 +128,11 @@ function populateContentTable(data) {
 									+	'</button>'
 							+		'</li>'
 							+	'</ul>'
-							+	'<div id='+setting[0]+'-panel class="container" style="display: none" >'
+							+	'<div id='+setting[0]+'-panel class="container-fluid" style="display: none" >'
 							+	'<div class="row setting-panel text-center">'
 								+	noOfPages
 								+	minimumAlerts
+								+	controlButtons
 							+	'</div>'
 							+	'</div>';
 	    siteSet.add(setting[7]);
