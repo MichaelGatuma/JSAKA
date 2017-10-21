@@ -123,3 +123,57 @@ HashTable.prototype.print = function() {
 	}
 	console.log(string.trim());
 };
+
+
+
+
+
+
+/**
+ * Hash Map Data structure.
+ */
+function HashMap(size) {
+	this.values = {};
+	this.numberOfValues = 0;
+	this.size = size;
+}
+
+
+HashMap.prototype.add = function(key, value) {
+
+	if (!this.values.hasOwnProperty(key)) {
+		this.numberOfValues++;
+	}
+	this.values[key] = value;
+};
+
+HashMap.prototype.remove = function(key) {
+	if (this.values.hasOwnProperty(key)) {
+		delete this.values[key];
+		this.numberOfValues--;
+	}
+};
+
+
+HashMap.prototype.search = function(key) {
+	if (this.values.hasOwnProperty(key)) {
+		return this.values[key];
+	} else {
+		return null;
+	}
+};
+
+HashMap.prototype.length = function() {
+	return this.numberOfValues;
+};
+
+HashMap.prototype.print = function() {
+	var string = '';
+	for ( var value in this.values) {
+		for ( var key in this.values[value]) {
+			string += this.values[value][key] + ' ';
+		}
+	}
+	console.log(string.trim());
+};
+

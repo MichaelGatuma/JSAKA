@@ -86,11 +86,13 @@ ul.listing{
 
 	<div class="row">
 	
-		<div class="alert  alert-dismissible fade in col-sm-12 text-center" id="alerter" style="display: none">
+		<div class="alert  alert-dismissible fade in col-sm-12 text-center" id="alerter" >
 			<strong>
 				<p class="messageFeedback"></p>
 			</strong>
 		</div>
+		
+		
 		
 		{% include "include/navigation.html" %}
 
@@ -103,6 +105,13 @@ ul.listing{
 					 Crawler Settings
 				</div>
 				<div style="padding-left: 5px;">
+				
+				<div class="text-center load-settings-spinner">
+					<p>
+						<span>Loading settings </span>
+						<i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>
+					</p>
+				</div>
 				
 				<ul class="nav nav-tabs">
 				  <li class="active"><a data-toggle="tab" href="#global">Global</a></li>
