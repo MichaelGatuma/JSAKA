@@ -3,6 +3,9 @@
  */
 
 var settingData=null;
+var currentSelectedSubscriber=null;
+var currentSelectedSite=null;
+var count=0;
 
 $(document).ready(function(){
 	fetchAllSettings();
@@ -43,7 +46,6 @@ $(document).ready(function(){
 
 
 
-
 //Fetch all subscriptions and store on cache:
 function fetchAllSettings(){
 	console.log("Fetching settings");
@@ -59,125 +61,80 @@ function fetchAllSettings(){
         	for(var key in data){
         		var setting=data[key];
         		if(setting[14]!=undefined || setting[14]!=null){  //choose random subscriber to be default in settings listing
-        			populateSettingTableTag(setting[14],data);
+        			currentSelectedSite=setting[1];
+        			currentSelectedSubscriber=setting[14];
+        			populateSettingTableTag(setting[14],setting[1],data);
         			break;
         		}
         	}
         	
         },
         error: function (response, request) {
-        	console.log("error occured fetching settings");
+        	//console.log("error occured fetching settings");
         }
     });
 	
 }
 
 
-/*populates html table with content if any from sever*/
-function populateTableContent(setting) {
-			var noOfPages='<div class="col-sm-4  col-sm-offset-2  setting-label"><label>No of pages: </label></div>'
-			+'<div style="margin-bottom: 4px;" class="col-sm-5">'
-				+'<div class="input-group pages-number-spinner-'+setting[0]+'">'
-					+'<span class="input-group-btn">'
-						+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
-					+'</span>'
-					+'<input type="text"  disabled class="form-control text-center spinner-input"  value="1">'
-					+'<span class="input-group-btn" style="float:left;">'
-						+'<button class="btn btn-default"  data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
-					+'</span>'
-				+'</div>'
-			+'</div>'
-			
-		var minimumAlerts='<div class="col-sm-4  col-sm-offset-2 setting-label" style="clear: left;"><label>Minimum Jobs alerts: </label></div>'
-		+'<div style="margin-bottom: 4px;" class="col-sm-5">'
-			+'<div class="input-group alerts-number-spinner-'+setting[0]+'">'
-				+'<span class="input-group-btn">'
-					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
-				+'</span>'
-				+'<input type="text" disabled class="form-control text-center  spinner-input" value="1">'
-				+'<span class="input-group-btn" style="float:left;">'
-					+'<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
-				+'</span>'
-			+'</div>'
-		+'</div>'			
-		
-		var controlButtons='<div style="clear: left;" class="col-sm-12 text-center">'
-			+	'<button type="button" id="'+setting[0]+'-edit" class="btn btn-success  setting-btn"'
-			+		'data-toggle="modal" data-target=".edit-modal">'
-			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Save'
-			+	'</button>'
-			
-			+	'<button type="button" class="btn btn-warning  setting-btn"'
-			+		'data-toggle="modal" data-target=".edit-modal">'
-			+	'<i class="fa fa-stop" aria-hidden="true"></i> Cancel'
-			+	'</button>'
-			
-			
-			+'</div>'
-		
-		var trHTML ='<ul class="listing"><li><label style="font-weight: normal;">'+setting[13]+'</label></li><li>'
-									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info setting-btn"'
-									+		'data-toggle="modal" data-target=".edit-modal">'
-									+	'<i class="fa fa-sliders" aria-hidden="true"></i>'
-									+	'</button>'
-							+		'</li>'
-							+	'</ul>'
-							+	'<div id='+setting[0]+'-panel class="container-fluid" style="display: none" >'
-							+	'<div class="row setting-panel text-center">'
-								+	noOfPages
-								+	minimumAlerts
-								+	controlButtons
-							+	'</div>'
-							+	'</div>';
-		
-	  	$('div.keywords-list-sec').append(trHTML);	
-	  	
-}
-
-
-function populateSettingTableTag(id,data){
-	var subscriberIdsAddedToSelectTag=new Set();
+function populateSettingTableTag(subscriberId,siteId,data){
+	var keywordIdsAlreadyAddedInListing=new Set();
 	$('div.keywords-list-sec').find("ul:gt(0)").remove();
+	$('div.keywords-list-sec').find("div:gt(0)").remove();
+	$('#subscriber-sel').find("option:gt(0)").remove();
+	$('#site-sel').find("option:gt(0)").remove();
 	
 	for(var key in data){
-		var setting=data[key];
 		
-		subscriberIdsAddedToSelectTag.print();
-		console.log(setting[14]);
-		if(setting[14]==id){
-			if(!subscriberIdsAddedToSelectTag.contains(setting[14])){
-				populateSelectTag(setting,true);
-				subscriberIdsAddedToSelectTag.contains(setting[14]);
-			}
-			subscriberIdsAddedToSelectTag.add(setting[14]);
-			populateTableContent(setting);		
-			setValuesToSubAddButtonsSettingsMenu(setting);
-			
+		var setting=data[key];
+
+		if(setting[14]==subscriberId){
+			populateSubscriberSelectTag(setting,true);
 		}else{
-			if(!subscriberIdsAddedToSelectTag.contains(setting[14])){
-				populateSelectTag(setting,false);
-				subscriberIdsAddedToSelectTag.contains(setting[14]);
-			}
-			subscriberIdsAddedToSelectTag.add(setting[14]);
-			
+			populateSubscriberSelectTag(setting,false);
+		}
+		
+		//populate sited to select tag.
+		if(setting[1]==siteId){
+			populateSiteSelectTag(setting,true);
+		}else{
+			populateSiteSelectTag(setting,false);
+		}
+		
+		//make kewords listing
+		if(!keywordIdsAlreadyAddedInListing.contains(setting[12]) &&  setting[14]==subscriberId && setting[1]==siteId){
+			populateTableContent(setting);
+			setValuesToSubAddButtonsSettingsMenu(setting);
+			keywordIdsAlreadyAddedInListing.add(setting[12]);
 		}
 		
 	}
+
 	addClickEventToKeywordSettingBtn();
 }
 
 
-function populateSelectTag(setting,isDefault){
-	console.log("We are coming three");
+function populateSubscriberSelectTag (setting,isDefault){
+	$('select#subscriber-sel option#subscriber-'+setting[14]+'').remove();
 	if(isDefault){
-
-		$('select#subscriber-sel').append('<option selected value='+setting[14]+'>'+setting[15]+'</option>');
-		$('select#site-sel').append('<option selected value='+setting[6]+'>'+setting[7]+'</option>');
+		$('select#subscriber-sel').append('<option id=subscriber-'+setting[14]+' selected value='+setting[14]+'>'+setting[15]+'</option>');
 	}else{
-		$('select#subscriber-sel').append('<option value='+setting[14]+'>'+setting[15]+'</option>');
-		$('select#site-sel').append('<option value='+setting[6]+'>'+setting[7]+'</option>');
+		$('select#subscriber-sel').append('<option id=subscriber-'+setting[14]+' value='+setting[14]+'>'+setting[15]+'</option>');
+		
 	}
 			
+}
+
+
+function populateSiteSelectTag(setting,isDefault){
+	$('select#site-sel option#site-'+setting[6]+'').remove();
+	if(isDefault){
+		$('select#site-sel').append('<option id=site-'+setting[6]+' selected value='+setting[6]+'>'+setting[7]+'</option>');
+	}else{
+		$('select#site-sel').append('<option id=site-'+setting[6]+' value='+setting[6]+'>'+setting[7]+'</option>');
+		
+	}
+	
 }
 
 
@@ -206,7 +163,7 @@ function addClickEventToKeywordSubSettingPagesBtn(maximunPageNo,id){
 
 	$(document).on('click', '.pages-number-spinner-'+id+' button', function () {
 
-		var btn = $(this),
+		var btn = $(this);
 			oldValue = btn.closest('.pages-number-spinner-'+id+'').find('input').val().trim(), //get current value in input box
 			newVal = 1;
 		
@@ -268,6 +225,83 @@ function addClickEventToKeywordSettingBtn(){
 	 
 }
 
+/*populates html table with content if any from sever*/
+function populateTableContent(setting) {
+	console.log("Populating table content "+setting[14]+"");
+			var noOfPages='<div class="col-sm-4  col-sm-offset-2  setting-label"><label>No of pages: </label></div>'
+			+'<div style="margin-bottom: 4px;" class="col-sm-5">'
+				+'<div class="input-group pages-number-spinner-'+setting[0]+'">'
+					+'<span class="input-group-btn">'
+						+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
+					+'</span>'
+					+'<input type="text"  disabled class="form-control text-center spinner-input"  value="1">'
+					+'<span class="input-group-btn" style="float:left;">'
+						+'<button class="btn btn-default"  data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
+					+'</span>'
+				+'</div>'
+			+'</div>'
+			
+		var minimumAlerts='<div class="col-sm-4  col-sm-offset-2 setting-label" style="clear: left;"><label>Minimum Jobs alerts: </label></div>'
+		+'<div style="margin-bottom: 4px;" class="col-sm-5">'
+			+'<div class="input-group alerts-number-spinner-'+setting[0]+'">'
+				+'<span class="input-group-btn">'
+					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
+				+'</span>'
+				+'<input type="text" disabled class="form-control text-center  spinner-input" value="1">'
+				+'<span class="input-group-btn" style="float:left;">'
+					+'<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
+				+'</span>'
+			+'</div>'
+		+'</div>'			
+		
+		var controlButtons='<div style="clear: left;" class="col-sm-12 text-center">'
+			+	'<button type="button" id="'+setting[0]+'-edit" class="btn btn-success  setting-btn"'
+			+		'data-toggle="modal" data-target=".edit-modal">'
+			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Save'
+			+	'</button>'
+			
+			+	'<button type="button" class="btn btn-warning  setting-btn"'
+			+		'data-toggle="modal" data-target=".edit-modal">'
+			+	'<i class="fa fa-stop" aria-hidden="true"></i> Cancel'
+			+	'</button>'
+			
+			
+			+'</div>'
+		
+		var trHTML ='<ul class="listing"><li><label style="font-weight: normal;">'+setting[13]+'</label></li><li>'
+									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info setting-btn"'
+									+		'data-toggle="modal" data-target=".edit-modal">'
+									+	'<i class="fa fa-sliders" aria-hidden="true"></i>'
+									+	'</button>'
+							+		'</li>'
+							+	'</ul>'
+							+	'<div id='+setting[0]+'-panel class="container-fluid" style="display: none" >'
+							+	'<div class="row setting-panel text-center">'
+								+	noOfPages
+								+	minimumAlerts
+								+	controlButtons
+							+	'</div>'
+							+	'</div>';
+		
+	  	$('div.keywords-list-sec').append(trHTML);	
+	  	
+}
+
+
+
+$('#site-sel').on('change', function(event) {
+	currentSelectedSite=this.value;
+	populateSettingTableTag(currentSelectedSubscriber,this.value,settingData);
+	
+}); 
+
+
+$('#subscriber-sel').on('change', function(event) {
+	currentSelectedSubscriber=this.value;
+	populateSettingTableTag(this.value,currentSelectedSite,settingData);
+}); 
+
+
 
 function  closeAlert() {
     $("#alerter").css('display', 'block');
@@ -275,4 +309,5 @@ function  closeAlert() {
     $("#alerter").slideUp(500);
     });
 }
+
 
