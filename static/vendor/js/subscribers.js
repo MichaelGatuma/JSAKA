@@ -2,6 +2,7 @@ var selectedSubscriptionKey
 
 var sitesMap=new HashTable(3);
 var allSubscriptions; //object
+var subscriptionList;
 var allKeywords;
 var allSites;
 
@@ -30,7 +31,6 @@ $(document).ready(function(){
 	fetchAllKeywords();
 	fetchAllSubscriptions();
 	
-	addBtnEvents();
 	//add event on edit button for selected item
 	$("button.edit-keyword").click(function (event) {
 		$("div#edit-modal").modal('hide');
@@ -359,15 +359,15 @@ $(document).ready(function(){
 });
 
 
-//Fetch all subscriptions and store on cache:
+
 function fetchAllSubscriptions(){
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use 
-        url: '/getAllSubscribers/', // the url where we want to POST 
+        url: '/get_subscription_data/', // the url where we want to POST 
         dataType: 'json', // our data object
         encode: true,
         success: function (data, textStatus, jqXHR) {
-        	allSubscriptions=data;
+        	populateTableContent(data)
         },
         error: function (response, request) {
         	console.log("error occured fetching subscriptions")
@@ -415,7 +415,10 @@ function hideShowKeywordSection(){
 function addBtnEvents(){
 	 
 	 $("button.subscription-control").click(function (event) {
+		 console.log("Here 0");
 		    selectedSubscriptionKey=$(event.target).parent().parent().attr('id');
+		    var subscriberId=selectedSubscriptionKey.split("-")[0];
+		    var groupId=selectedSubscriptionKey.split("-")[1];
 	    	var isDelete=$(event.target).hasClass("delete-sub");
 	    	var isEdit=$(event.target).hasClass("edit-sub");
 	  
@@ -424,7 +427,7 @@ function addBtnEvents(){
 	    		$("#site-keyword").addClass("edit");
 	    		$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Update subscription");
 	    		
-
+	    		console.log("Here 1");
 	    		subscribeSiteSet.empty();
 	      		unSubscribeSiteSet.empty();
 	      		subscribeKeywordSet.empty();
@@ -434,15 +437,18 @@ function addBtnEvents(){
 				$(".nonsubscribed-sites").empty();
 				$(".nonsubscribed-keywords").empty();
 				$(".subscribed-keywords").empty();
-				var subMailVal=allSubscriptions[selectedSubscriptionKey]["email"];
+				
+				console.log("Here 2");
+				var subMailVal=subscriptionList[3][subscriberId];
 				$("#subscriber-email").val(subMailVal);
 				
 				var siteListArr=[]
 				var keywordListArr=[]
 				var keywordsAddedToList=new Set();
 				
+				console.log("Here 3");
 				var siteId;
-				for(siteId in allSubscriptions[selectedSubscriptionKey]["subs"]){
+				for(siteId in allSubscriptions[subscriberId][groupId]){
 					siteListArr.push(siteId);
 					currentSubscribedSites.add("site-"+siteId);
 					
@@ -451,10 +457,10 @@ function addBtnEvents(){
 		      		subscribeSiteSet.add("site-"+siteId);
 		      		
 					var keywordId;
-					for(keywordId in allSubscriptions[selectedSubscriptionKey]["subs"][siteId]){
+					for(keywordId in allSubscriptions[subscriberId][groupId][siteId]){
 						
 						
-						var ky=allSubscriptions[selectedSubscriptionKey]["subs"][siteId][keywordId];
+						var ky=allSubscriptions[subscriberId][groupId][siteId][keywordId];
 						keywordListArr.push(ky);
 						subscribeKeywordSet.add("keyword-"+ky);
 						if(!(keywordsAddedToList.contains(ky))){
@@ -576,6 +582,68 @@ function fetchAllSites(siteList,toOmit){
     });
 	}
 }
+
+
+
+function populateTableContent(subscriptionsList) {
+	subscriptionList=subscriptionsList;
+	var subsc=subscriptionsList[0];
+	allSubscriptions=subsc;
+	console.log("Play");
+	console.log(subsc);
+	jQuery.each(subsc,function(subscriberId, subscriptions){
+		
+		jQuery.each(subscriptions,function(group_id, site_maps){
+			var noOfSites = 0;
+			var i;
+
+			for (i in site_maps) {
+			    if (site_maps.hasOwnProperty(i)) {
+			    	noOfSites++;
+			    }
+			}
+			
+			var noOfKeywords=site_maps[i].length
+			
+			var mail='<td class="sub-mail">'+subscriptionsList[3][subscriberId]+'</td>';
+			
+			var stats='<td>'
+					+	'<table class="statsTb">'
+					+	'<thead>'
+					+		'<th>Sites</th>'
+					+		'<th>Keyword</th>'
+					+		'</thead>'
+					+		'<tbody>'
+					+			'<tr>'
+					+				'<td class="subs">'+noOfSites+'</td>'
+					+				'<td class="subs">'+noOfKeywords+'</td>'
+					+			'</tr>'
+					+		'</tbody>'
+					+	'</table>'
+					+	'</td>';
+				
+			var controtlButtons='<td>'
+						+	'<button type="button"  class="btn btn-info subscription-control edit-sub">'
+						+	'	<i class="fa fa-pencil" aria-hidden="true"></i>'
+						+	'</button> '
+						+	'<button type="button"'
+						+		'class="btn btn-primary subscription-control delete-sub" data-toggle="modal" data-target=".delete-modal">'
+						+		'<i class="fa fa-trash" aria-hidden="true"></i>'
+						+	'</button>'
+						+	'</td>';
+					
+
+				var trHTML ='<tr id="'+subscriberId+'-'+group_id+'">'+ mail + stats + controtlButtons+'</tr>';
+				
+			  	$('#subscription-table').append(trHTML);	
+			
+		});
+		
+	});
+	addBtnEvents();
+}
+
+
 
 function  closeAlert() {
     $("#alerter").css('display', 'block');

@@ -3,7 +3,8 @@ Created on Aug 7, 2017
 
 @author: duncan
 '''
-from email import email
+
+from mock.mock import self
 
 
 class Subscriber(object):
@@ -21,23 +22,14 @@ class Subscriber(object):
 
 class Subscription():
     
-    def __init__(self, email, sites, keywords, subId):
+    def __init__(self, subscriber_email, site_id, keyword_id, subscriber_id,page_limit,minimum_alert,subscription_group_id):
         '''
         Constructor
         '''
-        self.subId = subId
-        self.email = email
-        self.sites = sites
-        self.keywords = keywords
-    
-    def getSubId(self):
-        return self.subId
-    def getMail(self):
-        return self.email
-    def getSite(self):
-        return self.sites
-    def getKeywords(self):
-        return self.keywords
-    
-       
-    
+        self.subscriber_id = subscriber_id
+        self.site_id = site_id
+        self.keyword_id = keyword_id
+        self.page_limit=page_limit
+        self.minimum_alert=minimum_alert
+        self.subscription_group_id=subscription_group_id
+        self.subscriber_email=subscriber_email

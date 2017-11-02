@@ -119,10 +119,12 @@ def get_allSubscribers():
 @app.route("/subscription/")
 def get_subscription():
     subDao = Subscription()
-    return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscribers())
+    return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscriptions())
 
-
-
+@app.route("/get_subscription_data/")
+def get_subscriptions():
+    subDao = Subscription()
+    return  jsonify(subDao.fetchAllSubscriptions())
 
 @app.route('/delete-subscription/<subscriber_id>/', methods=['DELETE'])
 def delete_subscriber(subscriber_id=None):

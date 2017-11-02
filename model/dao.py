@@ -67,8 +67,9 @@ class Subscription():
     def addSubscription(self, subscription):
         sqlIsertUserMail = "insert into subscriber(email) values(?)"
         sqlFetchEmailId = "select subscriber_id from subscriber where email=?"
-        sqlInsertSubscription = '''insert into site_keyword(subscriber_id,site_id,keyword_id) 
-        values(?,?,?)
+        sqlIncrementGroupId="insert into group_id_sequence values(null)"
+        sqlInsertSubscription = '''insert into subscription(subscriber_id,site_id,keyword_id,page_limit,minimum_alert,subscription_group_id) 
+        values(?,?,?,1,1,(select max(Field1) from group_id_sequence))
         '''
         dbUtil = dbConnection()
         cur = dbUtil.getCursor()
@@ -79,18 +80,16 @@ class Subscription():
             try:
                 cur.execute(sqlIsertUserMail, email) 
             except lite.IntegrityError:
-                return("Email already exists", 501)
+                print("Email already exists")
+            cur.execute(sqlIncrementGroupId) 
             dbUtil.commit()
             cur.execute(sqlFetchEmailId, (email[0],)) 
             mailId = cur.fetchone()
-            print("Mail id")
-            print(mailId)
             s = subscription.getSite()
             s = str(s).replace('\"', '\'')
             s = str(s).replace('[', '')
             s = str(s).replace(']', '')
             s = str(s).replace('\'', '')
-            print(s)
             for site in s.split(','):
                 print(site)
                 v = subscription.getKeywords()
@@ -127,7 +126,7 @@ class Subscription():
             uniqueSitesId = set()
             keyWordsId = []
             for sub in subscriptions:  # Get all sites and keywords subscriber is subscribed to  
-                if sub[0] == subsc[0]:
+                if sub[1] == subsc[0]:
                     sitesId.append(sub[1])
                     if(sub[1] != None and sub[1] != ""):
                         uniqueSitesId.add(sub[1])
@@ -146,13 +145,63 @@ class Subscription():
         dbUtil.closeDbConnection()
         return  subscriberDict  
         
-    
-    def deleteSubscription(self, subscriber_id):
+        
+    def fetchAllSubscriptions(self):
+        subscriptions_list=[]
+        subscriber_map={}
+        site_id_name={}
+        subscriber_id_mail={}
+        keyword_id_name={}
+        dbUtil = dbConnection()
+        cur = dbUtil.getCursor() 
+        cur.execute('''select * from subscription s inner join keyword  k on k.keyword_id= s.keyword_id 
+                       inner join site site on site.site_id=s.site_id 
+                       inner join subscriber subsc on subsc.subscriber_id=s.subscriber_id''')
+        subscriptions = cur.fetchall()
+        for subsc in subscriptions:
+            try:
+                subscriber_group_map=subscriber_map[subsc[1]]
+                try:
+                    site_map=subscriber_group_map[subsc[6]]
+                    try:
+                        keyword_list=site_map[subsc[2]]
+                        keyword_list.append(subsc[3])
+                    except KeyError,e:
+                        site_map[subsc[2]]=[]
+                        keyword_list=site_map[subsc[2]]
+                        keyword_list.append(subsc[3])
+                except KeyError,e:
+                    subscriber_group_map[subsc[6]]={}
+                    site_map=subscriber_group_map[subsc[6]]
+                    site_map[subsc[2]]=[]
+                    keyword_list=site_map[subsc[2]]
+                    keyword_list.append(subsc[3])
+            except KeyError,e:
+                subscriber_map[subsc[1]]={}
+                subscriber_group_map=subscriber_map[subsc[1]]
+                subscriber_group_map[subsc[6]]={}
+                site_map=subscriber_group_map[subsc[6]]
+                site_map[subsc[2]]=[]
+                keyword_list=site_map[subsc[2]]
+                keyword_list.append(subsc[3])
+            
+            site_id_name[subsc[9]]=subsc[10]
+            keyword_id_name[subsc[7]]=subsc[8]
+            subscriber_id_mail[subsc[15]]=subsc[16]
+            
+        subscriptions_list.append(subscriber_map)
+        subscriptions_list.append(site_id_name)
+        subscriptions_list.append(keyword_id_name)
+        subscriptions_list.append(subscriber_id_mail)
+        print(subscriptions_list)
+        return subscriptions_list
+        
+        
+    def deleteSubscription(self, subscription_group_id):
         try:
             dbUtil = dbConnection()
             cur = dbUtil.getCursor()
-            cur.execute("delete from subscriber where subscriber_id=?", (subscriber_id,)) 
-            cur.execute("delete from site_keyword where subscriber_id=?", (subscriber_id,)) 
+            cur.execute("delete from subscription where subscription_group_id=?", (subscription_group_id,)) 
             dbUtil.commit()
         except lite.IntegrityError:
             return ("Failed to delete subscription", 501)
