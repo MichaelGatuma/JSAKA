@@ -2,6 +2,7 @@ var selectedSubscriptionKey
 
 var sitesMap=new HashTable(3);
 var allSubscriptions; //object
+var subscriptionList;
 var allKeywords;
 var allSites;
 
@@ -30,36 +31,6 @@ $(document).ready(function(){
 	fetchAllKeywords();
 	fetchAllSubscriptions();
 	
-	addBtnEvents();
-	//add event on edit button for selected item
-	$("button.edit-keyword").click(function (event) {
-		$("div#edit-modal").modal('hide');
-		var newKeyword=$("input.edit-keyword").val();
-		editUrl='/edit-keyword/'+newKeyword+'/'+selectedKey+'/';
-		$.ajax({
-            type: 'PUT', // define the type of HTTP verb we want to use
-            url: editUrl, // the url where we want to POST 
-            encode: true,
-            success: function (data, textStatus, jqXHR) {
-                console.log("submit Successfully");
-                $("div.alert").removeClass("alert-danger");
-                $("div.alert").addClass("alert-success");
-                $("p.messageFeedback").text("Edit successfull");
-                closeAlert();
-                fetchAllKeywords();
-            },
-            error: function (response, request) {
-            	$("div.alert").removeClass("alert-success");
-            	$("div.alert").addClass("alert-danger");
-                var parsed_data = response.responseText;
-                $("p.messageFeedback").text(parsed_data);
-                closeAlert();
-            }
-
-        });
-		
-		
-	});
 	
 	//add event on delete button for selected item
 	$("button.delete-subscription").click(function (event) {
@@ -88,59 +59,34 @@ $(document).ready(function(){
         });
 	});
 	
-	//add event on add button for new item
-	$("button.save-keyword").click(function (event) {
-		$("div#new-keyword-modal").modal('hide');
-		var newKeyword=$("input#new-keyword").val();
-		var formData = {
-            "keyword":newKeyword
-        };
-		
-		$.ajax({
-            type: 'POST', // define the type of HTTP verb we want to use 
-            url: '/add-keyword/', // the url where we want to POST 
-            data: formData, // our data object
-            encode: true,
-            success: function (data, textStatus, jqXHR) {
-                console.log("submit Successfully");
-                $("div.alert").addClass("alert-success");
-                $("p.messageFeedback").text("Created successfully");
-                closeAlert();
-                fetchAllKeywords();
-            },
-            error: function (response, request) {
-            	$("div.alert").removeClass("alert-success");
-            	$("div.alert").addClass("alert-danger");
-                var parsed_data = response.responseText;
-                $("p.messageFeedback").text(parsed_data);
-                closeAlert();
-            }
-
-        });
-		
-		
-	});
+	
 	
 	//add event to list of subscribe site.
 	$(".nonsubscribed-sites").click(function (event) {
-		$(event.target).toggleClass("select-item");
-		$(event.target).toggleClass("item-list"); 
-		var bool=$("#"+event.target.id).hasClass("select-item");
-		if(bool) subscribeSiteSet.add(event.target.id);
-		else subscribeSiteSet.remove(event.target.id);
-		subscribeSiteSet.print();
+		var tagName=$(event.target).prop("tagName");
+		if(tagName!='UL'){
+			$(event.target).toggleClass("select-item");
+			$(event.target).toggleClass("item-list"); 
+			var bool=$("#"+event.target.id).hasClass("select-item");
+			if(bool) subscribeSiteSet.add(event.target.id);
+			else subscribeSiteSet.remove(event.target.id);
+			subscribeSiteSet.print();
+		}
 	});
 
 	
 	//add event to list of unsubscribe site.
 	$(".subscribed-sites").click(function (event) {
-		$(event.target).toggleClass("select-item");
-		$(event.target).toggleClass("item-list"); 
-		
-		var bool=$("#"+event.target.id).hasClass("select-item");
-		if(bool) unSubscribeSiteSet.add(event.target.id);
-		else unSubscribeSiteSet.remove(event.target.id);
-		hideShowKeywordSection();
+		var tagName=$(event.target).prop("tagName");
+		if(tagName!='UL'){
+			$(event.target).toggleClass("select-item");
+			$(event.target).toggleClass("item-list"); 
+			
+			var bool=$("#"+event.target.id).hasClass("select-item");
+			if(bool) unSubscribeSiteSet.add(event.target.id);
+			else unSubscribeSiteSet.remove(event.target.id);
+			hideShowKeywordSection();
+		}
 		
 	});
 	
@@ -189,23 +135,27 @@ $(document).ready(function(){
 	
 	//add event to list of nonsubscribe keywords list.
 	$(".nonsubscribed-keywords").click(function (event) {
-		$(event.target).toggleClass("select-item");
-		$(event.target).toggleClass("item-list"); 
-		var bool=$(event.target).hasClass("select-item");
-		if(bool) subscribeKeywordSet.add(event.target.id);
-		else unsubscribeKeywordSet.remove(event.target.id);
-		
+		var tagName=$(event.target).prop("tagName");
+		if(tagName!='UL'){
+			$(event.target).toggleClass("select-item");
+			$(event.target).toggleClass("item-list"); 
+			var bool=$(event.target).hasClass("select-item");
+			if(bool) subscribeKeywordSet.add(event.target.id);
+			else unsubscribeKeywordSet.remove(event.target.id);
+		}
 	});
 
 	
 	//add event to list of unsubscribe site.
 	$(".subscribed-keywords").click(function (event) {
-		$(event.target).toggleClass("select-item");
-		$(event.target).toggleClass("item-list"); 
-		var bool=$(event.target).hasClass("select-item");
-		if(bool) unsubscribeKeywordSet.add(event.target.id);
-		else subscribeKeywordSet.remove(event.target.id);
-		
+		var tagName=$(event.target).prop("tagName");
+		if(tagName!='UL'){
+			$(event.target).toggleClass("select-item");
+			$(event.target).toggleClass("item-list"); 
+			var bool=$(event.target).hasClass("select-item");
+			if(bool) unsubscribeKeywordSet.add(event.target.id);
+			else subscribeKeywordSet.remove(event.target.id);
+		}
 	});
 	
 	//add event to subscribe btn to add selected sites to subscription list
@@ -231,6 +181,7 @@ $(document).ready(function(){
 	$(".keyword-unsubscribe-btn").click(function (event) {
 		jQuery.each(unsubscribeKeywordSet.values,function(index, value){
 			var keywordName=keywordsMap.search(value);
+			console.log("The value: "+value);
 			$(".subscribed-keywords li#"+value).remove();
 			
 			console.log(currentNonSubscribedKeywords.contains(value));
@@ -359,15 +310,15 @@ $(document).ready(function(){
 });
 
 
-//Fetch all subscriptions and store on cache:
+
 function fetchAllSubscriptions(){
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use 
-        url: '/getAllSubscribers/', // the url where we want to POST 
+        url: '/get_subscription_data/', // the url where we want to POST 
         dataType: 'json', // our data object
         encode: true,
         success: function (data, textStatus, jqXHR) {
-        	allSubscriptions=data;
+        	populateTableContent(data)
         },
         error: function (response, request) {
         	console.log("error occured fetching subscriptions")
@@ -415,7 +366,10 @@ function hideShowKeywordSection(){
 function addBtnEvents(){
 	 
 	 $("button.subscription-control").click(function (event) {
+		 console.log("Here 0");
 		    selectedSubscriptionKey=$(event.target).parent().parent().attr('id');
+		    var subscriberId=selectedSubscriptionKey.split("-")[0];
+		    var groupId=selectedSubscriptionKey.split("-")[1];
 	    	var isDelete=$(event.target).hasClass("delete-sub");
 	    	var isEdit=$(event.target).hasClass("edit-sub");
 	  
@@ -424,7 +378,6 @@ function addBtnEvents(){
 	    		$("#site-keyword").addClass("edit");
 	    		$(".new-subsription-btn").html("<i class='fa fa-plus-circle' aria-hidden='true'></i>  Update subscription");
 	    		
-
 	    		subscribeSiteSet.empty();
 	      		unSubscribeSiteSet.empty();
 	      		subscribeKeywordSet.empty();
@@ -434,7 +387,14 @@ function addBtnEvents(){
 				$(".nonsubscribed-sites").empty();
 				$(".nonsubscribed-keywords").empty();
 				$(".subscribed-keywords").empty();
-				var subMailVal=allSubscriptions[selectedSubscriptionKey]["email"];
+				
+				
+				 currentSubscribedSites.empty();
+				 currentSubscribedKeywords.empty();
+				 currentNonSubscribedSites.empty();
+				 currentNonSubscribedKeywords.empty();
+				
+				var subMailVal=subscriptionList[3][subscriberId];
 				$("#subscriber-email").val(subMailVal);
 				
 				var siteListArr=[]
@@ -442,7 +402,7 @@ function addBtnEvents(){
 				var keywordsAddedToList=new Set();
 				
 				var siteId;
-				for(siteId in allSubscriptions[selectedSubscriptionKey]["subs"]){
+				for(siteId in allSubscriptions[subscriberId][groupId]){
 					siteListArr.push(siteId);
 					currentSubscribedSites.add("site-"+siteId);
 					
@@ -451,10 +411,10 @@ function addBtnEvents(){
 		      		subscribeSiteSet.add("site-"+siteId);
 		      		
 					var keywordId;
-					for(keywordId in allSubscriptions[selectedSubscriptionKey]["subs"][siteId]){
+					for(keywordId in allSubscriptions[subscriberId][groupId][siteId]){
 						
 						
-						var ky=allSubscriptions[selectedSubscriptionKey]["subs"][siteId][keywordId];
+						var ky=allSubscriptions[subscriberId][groupId][siteId][keywordId];
 						keywordListArr.push(ky);
 						subscribeKeywordSet.add("keyword-"+ky);
 						if(!(keywordsAddedToList.contains(ky))){
@@ -576,6 +536,68 @@ function fetchAllSites(siteList,toOmit){
     });
 	}
 }
+
+
+
+function populateTableContent(subscriptionsList) {
+	subscriptionList=subscriptionsList;
+	var subsc=subscriptionsList[0];
+	allSubscriptions=subsc;
+	console.log("Play");
+	console.log(subsc);
+	jQuery.each(subsc,function(subscriberId, subscriptions){
+		
+		jQuery.each(subscriptions,function(group_id, site_maps){
+			var noOfSites = 0;
+			var i;
+
+			for (i in site_maps) {
+			    if (site_maps.hasOwnProperty(i)) {
+			    	noOfSites++;
+			    }
+			}
+			
+			var noOfKeywords=site_maps[i].length
+			
+			var mail='<td class="sub-mail">'+subscriptionsList[3][subscriberId]+'</td>';
+			
+			var stats='<td>'
+					+	'<table class="statsTb">'
+					+	'<thead>'
+					+		'<th>Sites</th>'
+					+		'<th>Keyword</th>'
+					+		'</thead>'
+					+		'<tbody>'
+					+			'<tr>'
+					+				'<td class="subs">'+noOfSites+'</td>'
+					+				'<td class="subs">'+noOfKeywords+'</td>'
+					+			'</tr>'
+					+		'</tbody>'
+					+	'</table>'
+					+	'</td>';
+				
+			var controtlButtons='<td>'
+						+	'<button type="button"  class="btn btn-info subscription-control edit-sub">'
+						+	'	<i class="fa fa-pencil" aria-hidden="true"></i>'
+						+	'</button> '
+						+	'<button type="button"'
+						+		'class="btn btn-primary subscription-control delete-sub" data-toggle="modal" data-target=".delete-modal">'
+						+		'<i class="fa fa-trash" aria-hidden="true"></i>'
+						+	'</button>'
+						+	'</td>';
+					
+
+				var trHTML ='<tr id="'+subscriberId+'-'+group_id+'">'+ mail + stats + controtlButtons+'</tr>';
+				
+			  	$('#subscription-table').append(trHTML);	
+			
+		});
+		
+	});
+	addBtnEvents();
+}
+
+
 
 function  closeAlert() {
     $("#alerter").css('display', 'block');

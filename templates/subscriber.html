@@ -230,38 +230,7 @@ ul.item-list li:HOVER {
 							</tr>
 						</thead>
 						<tbody id="subscription-table">
-							{% for sub in subscriptionList.keys() %}
-							<tr id={{sub}}>
-								<td class="sub-mail">{{ subscriptionList[sub]['email'] }}</td>
-								<td>
-									<table class="statsTb">
-										<thead>
-											<th>Sites</th>
-											<th>Keyword</th>
-										</thead>
-										<tbody>
-											<tr>
-												<td class="subs">{{ subscriptionList[sub]['totalSites'
-													]}}</td>
-												<td class="subs">{{
-													subscriptionList[sub]['totalKeywords'] }}</td>
-											</tr>
-
-										</tbody>
-									</table>
-								</td>
-								<td>
-									<button type="button"  class="btn btn-info subscription-control edit-sub">
-										<i class="fa fa-pencil" aria-hidden="true"></i>
-									</button>
-									<button type="button"
-										class="btn btn-primary subscription-control delete-sub" data-toggle="modal"
-										data-target=".delete-modal">
-										<i class="fa fa-trash" aria-hidden="true"></i>
-									</button>
-								</td>
-							</tr>
-							{% endfor %}
+							
 						</tbody>
 
 					</table>

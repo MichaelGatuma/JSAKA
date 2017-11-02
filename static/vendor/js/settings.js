@@ -70,7 +70,7 @@ function fetchAllSettings(){
         	
         },
         error: function (response, request) {
-        	//console.log("error occured fetching settings");
+        	console.log("error occured fetching settings");
         }
     });
 	

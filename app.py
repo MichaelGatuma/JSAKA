@@ -7,10 +7,13 @@ from flask import Flask, render_template
 from flask import jsonify
 from flask import request
 
-from model.dao import Keyword
-from model.dao import Site
+import json
+
 from model.dao import Subscription
 from model.dto import Subscription as subscriptioDto
+from model.dao import Keyword
+from model.dao import Site
+from model.dto import Subscriber
 from model.dao import Settings
 
 app = Flask(__name__)
@@ -119,10 +122,12 @@ def get_allSubscribers():
 @app.route("/subscription/")
 def get_subscription():
     subDao = Subscription()
-    return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscribers())
+    return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscriptions())
 
-
-
+@app.route("/get_subscription_data/")
+def get_subscriptions():
+    subDao = Subscription()
+    return  jsonify(subDao.fetchAllSubscriptions())
 
 @app.route('/delete-subscription/<subscriber_id>/', methods=['DELETE'])
 def delete_subscriber(subscriber_id=None):
@@ -135,9 +140,12 @@ def delete_subscriber(subscriber_id=None):
 @app.route('/add-subscriber/', methods=['POST'])
 def add_subscriber():
     email = request.form['email']
-    sites = request.form['sites']
-    keywords = request.form['keywords']
-    subscription = subscriptioDto(email, sites, keywords, None)
+    keywords=json.loads(request.form['keywords'])
+    sites=json.loads(request.form['sites'])
+    
+    for site in sites:
+        subscriber = Subscriber(subscriber_id=None, subscriber_email=email)    
+        subscription = subscriptioDto(site=sites, keyword=keywords, subscriber=subscriber)
     subDao = Subscription()
     returnVal = subDao.addSubscription(subscription)
     return  returnVal
@@ -147,11 +155,13 @@ def add_subscriber():
 def update_subscriber(subId=None):
     if (subId == None):
         return("No subscriber selected selected", 501)  
+    
     email = request.form['email']
-    sites = request.form['sites']
-    keywords = request.form['keywords']
-   
-    subscription = subscriptioDto(email, sites, keywords, subId)
+    keywords=json.loads(request.form['keywords'])
+    sites=json.loads(request.form['sites'])
+    subscriber_group_id=subId.split("-")
+    subscriber = Subscriber(subscriber_id=subscriber_group_id[0], subscriber_email=email)
+    subscription = subscriptioDto(site=sites, keyword=keywords,subscription_group_id=subscriber_group_id[1],subscriber=subscriber)
     subDao = Subscription()
     returnVal = subDao.updateSubscription(subscription)
     return  returnVal
