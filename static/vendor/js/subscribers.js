@@ -312,6 +312,7 @@ $(document).ready(function(){
 
 
 function fetchAllSubscriptions(){
+	$(".load-settings-spinner").css("display","block");
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use 
         url: '/get_subscription_data/', // the url where we want to POST 
@@ -440,8 +441,8 @@ function addBtnEvents(){
 	    	}else{
 	    		
 	    	}
-	    	
 	    });
+	 $(".load-settings-spinner").css("display","none");
 }
 
 

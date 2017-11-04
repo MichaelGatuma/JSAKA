@@ -57,9 +57,8 @@ function fetchAllSettings(){
         encode: true,
         success: function (data, textStatus, jqXHR) {
         	settingData=data;
-        	
-        	for(var key in data){
-        		var setting=data[key];
+        	for(var x=0;x<data.length;x++){
+        		var setting=data[x];
         		if(setting[14]!=undefined || setting[14]!=null){  //choose random subscriber to be default in settings listing
         			currentSelectedSite=setting[1];
         			currentSelectedSubscriber=setting[14];
@@ -84,9 +83,9 @@ function populateSettingTableTag(subscriberId,siteId,data){
 	$('#subscriber-sel').find("option:gt(0)").remove();
 	$('#site-sel').find("option:gt(0)").remove();
 	
-	for(var key in data){
+	for(var x=0; x<data.length;x++){
 		
-		var setting=data[key];
+		var setting=data[x];
 
 		if(setting[14]==subscriberId){
 			populateSubscriberSelectTag(setting,true);
@@ -141,21 +140,11 @@ function populateSiteSelectTag(setting,isDefault){
 function setValuesToSubAddButtonsSettingsMenu(setting){
 	//setting[3] <-- this is no of pages per keyword
   	//setting[10] <-- per site
-
   	//add events to scrap page limit and maximum jobs to alert increment $ decrement buttons 
-  	if(setting[3]===undefined  || setting[3]===null || String(setting[3]).trim()===''){
-  		addClickEventToKeywordSubSettingPagesBtn(setting[10],setting[0]);
-  	}else {
-  		addClickEventToKeywordSubSettingPagesBtn(setting[3],setting[0]);
-  	}
-  	
-
-  	if(setting[5]===undefined  || setting[5]===null || String(setting[5]).trim()===''){
-  		addClickEventToKeywordSubSettingAlertsBtn(setting[11],setting[0]);
-  	}else {
-  		addClickEventToKeywordSubSettingAlertsBtn(setting[5],setting[0]);
-  	}
-  	
+  	var id=setting[0]+'-'+setting[1]+'-'+setting[2];
+  		addClickEventToKeywordSubSettingPagesBtn(setting[3],id);  
+  		addClickEventToKeywordSubSettingAlertsBtn(setting[5],id);
+  		addClickEventToKeywordSettingSaveBtn(id);
 }
 
 
@@ -168,11 +157,7 @@ function addClickEventToKeywordSubSettingPagesBtn(maximunPageNo,id){
 			newVal = 1;
 		
 		if (btn.attr('data-dir') == 'up') {
-			if(oldValue==maximunPageNo){
-				newVal=maximunPageNo;
-			}else if(oldValue>maximunPageNo){
-				oldValue=maximunPageNo;
-			}else newVal = parseInt(oldValue) + 1;
+			newVal = parseInt(oldValue) + 1;
 		} else {
 			if (oldValue > 1) {
 				newVal = parseInt(oldValue) - 1;
@@ -187,17 +172,13 @@ function addClickEventToKeywordSubSettingPagesBtn(maximunPageNo,id){
 
 
 function addClickEventToKeywordSubSettingAlertsBtn(minimuJobsAlert,id){
-	$(document).on('click', '.alerts-number-spinner-'+id+' button', function () {    
+	$(document).on('click', '.alerts-number-spinner-'+id+' button', function () {  
 		var btn = $(this),
 			oldValue = btn.closest('.alerts-number-spinner-'+id+'').find('input').val().trim(), //get current value in input box
 			newVal = 1;
 		
 		if (btn.attr('data-dir') == 'up') {
-			if(oldValue==minimuJobsAlert){
-				newVal=minimuJobsAlert;
-			}else if(oldValue>minimuJobsAlert){
-				oldValue=minimuJobsAlert;
-			}else newVal = parseInt(oldValue) + 1;
+			newVal = parseInt(oldValue) + 1;
 		} else {
 			if (oldValue > 1) {
 				newVal = parseInt(oldValue) - 1;
@@ -212,7 +193,18 @@ function addClickEventToKeywordSubSettingAlertsBtn(minimuJobsAlert,id){
 }
 
 
-function addClickEventToKeywordSettingBtn(){
+function addClickEventToKeywordSettingSaveBtn(id){
+	$(document).on('click', '#'+id+'-save', function () {  
+		var btn = $(this),
+			noOfJobsAlerts = parseInt($('.alerts-number-spinner-'+id+'').find('input').val().trim()); //get current value in input box
+			noOfPages = parseInt($('.pages-number-spinner-'+id+'').find('input').val().trim()); //get current value in input box
+			console.log("Worship HIM "+noOfJobsAlerts +" alone "+noOfPages);
+			$(".settings-status-spinner-"+id).css("display","block");
+	});
+	
+}
+
+function addClickEventToKeywordSettingBtn(){ 
 	
 	 $("button.setting-btn").click(function (event) {
 		    
@@ -230,7 +222,7 @@ function populateTableContent(setting) {
 	console.log("Populating table content "+setting[14]+"");
 			var noOfPages='<div class="col-sm-4  col-sm-offset-2  setting-label"><label>No of pages: </label></div>'
 			+'<div style="margin-bottom: 4px;" class="col-sm-5">'
-				+'<div class="input-group pages-number-spinner-'+setting[0]+'">'
+				+'<div class="input-group pages-number-spinner-'+setting[0]+'-'+setting[1]+'-'+setting[2]+'">'
 					+'<span class="input-group-btn">'
 						+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
 					+'</span>'
@@ -243,7 +235,7 @@ function populateTableContent(setting) {
 			
 		var minimumAlerts='<div class="col-sm-4  col-sm-offset-2 setting-label" style="clear: left;"><label>Minimum Jobs alerts: </label></div>'
 		+'<div style="margin-bottom: 4px;" class="col-sm-5">'
-			+'<div class="input-group alerts-number-spinner-'+setting[0]+'">'
+			+'<div class="input-group alerts-number-spinner-'+setting[0]+'-'+setting[1]+'-'+setting[2]+'">'
 				+'<span class="input-group-btn">'
 					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
 				+'</span>'
@@ -255,27 +247,31 @@ function populateTableContent(setting) {
 		+'</div>'			
 		
 		var controlButtons='<div style="clear: left;" class="col-sm-12 text-center">'
-			+	'<button type="button" id="'+setting[0]+'-edit" class="btn btn-success  setting-btn"'
+			+	'<button type="button" id="'+setting[0]+'-'+setting[1]+'-'+setting[2]+'-save" class="btn btn-success  setting-btn"'
 			+		'data-toggle="modal" data-target=".edit-modal">'
 			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Save'
 			+	'</button>'
 			
-			+	'<button type="button" class="btn btn-warning  setting-btn"'
+			+	'<button type="button" id="'+setting[0]+'-'+setting[1]+'-'+setting[2]+'-cancel" class="btn btn-warning  setting-btn"'
 			+		'data-toggle="modal" data-target=".edit-modal">'
 			+	'<i class="fa fa-stop" aria-hidden="true"></i> Cancel'
 			+	'</button>'
-			
-			
+			+'</div>'
+			+'<div style="display: none" class="col-sm-12  text-center settings-status-spinner-'+setting[0]+'-'+setting[1]+'-'+setting[2]+'">'
+			+'		<p>'
+			+'		<span>Loading settings </span>'
+			+'		<i class="fa fa-refresh fa-spin fa-1x fa-fw"></i>'
+			+'	</p>'
 			+'</div>'
 		
 		var trHTML ='<ul class="listing"><li><label style="font-weight: normal;">'+setting[13]+'</label></li><li>'
-									+	'<button type="button" id="'+setting[0]+'" class="btn btn-info setting-btn"'
+									+	'<button type="button" id="'+setting[0]+'-'+setting[1]+'-'+setting[2]+'" class="btn btn-info setting-btn"'
 									+		'data-toggle="modal" data-target=".edit-modal">'
 									+	'<i class="fa fa-sliders" aria-hidden="true"></i>'
 									+	'</button>'
 							+		'</li>'
 							+	'</ul>'
-							+	'<div id='+setting[0]+'-panel class="container-fluid" style="display: none" >'
+							+	'<div id='+setting[0]+'-'+setting[1]+'-'+setting[2]+'-panel class="container-fluid" style="display: none" >'
 							+	'<div class="row setting-panel text-center">'
 								+	noOfPages
 								+	minimumAlerts
