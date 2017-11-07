@@ -18,7 +18,7 @@ $(document).ready(function(){
                 console.log("submit Successfully");
                 $("div.alert").removeClass("alert-danger");
                 $("div.alert").addClass("alert-success");
-                $("p.messageFeedback").text("Edit successfull");
+                $("p.messageFeedback").text("Edit successful");
                 closeAlert();
                 fetchAllnames();
             },

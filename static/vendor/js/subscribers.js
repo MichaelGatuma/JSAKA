@@ -44,7 +44,7 @@ $(document).ready(function(){
                 console.log("submit Successfully");
                 $("div.alert").removeClass("alert-danger");
                 $("div.alert").addClass("alert-success");
-                $("p.messageFeedback").text("Delete successfully");
+                $("p.messageFeedback").text("Delete successful");
                 closeAlert();
                 location.reload();
             },
