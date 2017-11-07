@@ -27,7 +27,7 @@ class dao:
     def save_item(self,upwork_item):
         other_info="Job type: %s, Job pay: %s" %(upwork_item.job_type,upwork_item.job_payment)
         dbUtil = dbConnection()
-        cur = dbUtil.getCursor()
+        cur = dbUtil.get_cursor()
         try:
             cur.execute("insert into jobs(detail,time_created,site_id,title,other_info,keyword_id) values(?,datetime('now'),2,?,?,?)" ,
                              (upwork_item.job_description,upwork_item.title,other_info,upwork_item.keyword_id) )

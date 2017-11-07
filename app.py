@@ -10,11 +10,12 @@ from flask import request
 import json
 
 from model.dao import Subscription
-from model.dto import Subscription as subscriptioDto
+from model.dto import Subscription as subscriptio_dto
 from model.dao import Keyword
 from model.dao import Site
 from model.dto import Subscriber
 from model.dao import Settings
+from meld.meldapp import app
 
 app = Flask(__name__)
 
@@ -30,8 +31,8 @@ def index():
 @app.route("/keyword/")
 def keyword():
     keywords = Keyword()
-    keyWordList = keywords.fetchAllKeyWords()    
-    return  render_template('home.html', keyWordList=keyWordList)
+    key_word_list = keywords.fetch_all_key_words()    
+    return  render_template('home.html', key_word_list=key_word_list)
 
 
 ''' 
@@ -41,7 +42,7 @@ def keyword():
 @app.route('/getAllKeywords/', methods=['GET'])
 def get_all_keywords():
     keywords = Keyword()
-    return jsonify(keywords.fetchAllKeyWords())
+    return jsonify(keywords.fetch_all_key_words())
     
 
 @app.route('/edit-keyword/<keyword>/<keyword_id>/', methods=['PUT'])
@@ -50,7 +51,7 @@ def edit_keyword(keyword=None, keyword_id=None):
         return  ("No keyword selected", 501)  
     else:
         keywords = Keyword()
-        return keywords.updateKeyword(keyword, keyword_id)
+        return keywords.update_keyword(keyword, keyword_id)
        
        
 @app.route('/delete-keyword/<keyword_id>/', methods=['DELETE'])
@@ -60,7 +61,7 @@ def delete_keyword(keyword_id=None):
         return  ("No keyword specified", 501)
     else:
         keywords = Keyword()
-        return keywords.deleteKeyword(keyword_id)
+        return keywords.delete_keyword(keyword_id)
     
  
  
@@ -71,7 +72,7 @@ def add_keyword():
         return  ("No keyword specified", 501)
     else:
         keywords = Keyword()
-        return  keywords.addKeyword(keyword)
+        return  keywords.add_keyword(keyword)
     
 
 
@@ -85,7 +86,7 @@ def add_keyword():
 @app.route('/getAllSites/', methods=['GET'])
 def get_allSites():
     site = Site()
-    return jsonify(site.fetchAllSites())
+    return jsonify(site.fetch_all_sites())
     
 
  
@@ -93,8 +94,8 @@ def get_allSites():
 @app.route("/site/")
 def site():
     site = Site()
-    nameList = site.fetchAllSites()    
-    return  render_template('Site.html', nameList=nameList)
+    name_list = site.fetch_all_sites()    
+    return  render_template('Site.html', name_list=name_list)
 
 @app.route('/edit-name/<name>/<site_id>/', methods=['PUT'])
 def edit_site(name=None, site_id=None):
@@ -102,7 +103,7 @@ def edit_site(name=None, site_id=None):
         return  ("No keyword selected", 501)  
     else:
         site = Site() 
-        return site.updateSite(name, site_id)
+        return site.update_site(name, site_id)
     
 
 
@@ -112,8 +113,8 @@ def edit_site(name=None, site_id=None):
 
 @app.route('/getAllSubscribers/', methods=['GET'])
 def get_allSubscribers():
-    subDao = Subscription()
-    subscriberDict = subDao.fetchAllSubscribers()
+    sub_dao = Subscription()
+    subscriberDict = sub_dao.fetch_all_subscribers()
     return jsonify(subscriberDict)
     
         
@@ -121,20 +122,20 @@ def get_allSubscribers():
 
 @app.route("/subscription/")
 def get_subscription():
-    subDao = Subscription()
-    return  render_template('subscriber.html', subscriptionList=subDao.fetchAllSubscriptions())
+    sub_dao = Subscription()
+    return  render_template('subscriber.html', subscriptionList=sub_dao.fetch_all_subscriptions())
 
 @app.route("/get_subscription_data/")
 def get_subscriptions():
     subDao = Subscription()
-    return  jsonify(subDao.fetchAllSubscriptions())
+    return  jsonify(subDao.fetch_all_subscriptions())
 
 @app.route('/delete-subscription/<subscriber_id>/', methods=['DELETE'])
 def delete_subscriber(subscriber_id=None):
     if subscriber_id == None:
         return  ("No Subscriber specified", 501)
-    subDao = Subscription()
-    returnVal = subDao.deleteSubscription(subscriber_id)
+    sub_dao = Subscription()
+    returnVal = sub_dao.delete_subscription(subscriber_id)
     return  returnVal
  
 @app.route('/add-subscriber/', methods=['POST'])
@@ -145,9 +146,9 @@ def add_subscriber():
     
     for site in sites:
         subscriber = Subscriber(subscriber_id=None, subscriber_email=email)    
-        subscription = subscriptioDto(site=sites, keyword=keywords, subscriber=subscriber)
-    subDao = Subscription()
-    returnVal = subDao.addSubscription(subscription)
+        subscription = subscriptio_dto(site=sites, keyword=keywords, subscriber=subscriber)
+    sub_dao = Subscription()
+    returnVal = sub_dao.add_subscription(subscription)
     return  returnVal
     
 
@@ -161,9 +162,9 @@ def update_subscriber(subId=None):
     sites=json.loads(request.form['sites'])
     subscriber_group_id=subId.split("-")
     subscriber = Subscriber(subscriber_id=subscriber_group_id[0], subscriber_email=email)
-    subscription = subscriptioDto(site=sites, keyword=keywords,subscription_group_id=subscriber_group_id[1],subscriber=subscriber)
-    subDao = Subscription()
-    returnVal = subDao.updateSubscription(subscription)
+    subscription = subscriptio_dto(site=sites, keyword=keywords,subscription_group_id=subscriber_group_id[1],subscriber=subscriber)
+    sub_dao = Subscription()
+    returnVal = sub_dao.update_subscription(subscription)
     return  returnVal
     
     
@@ -172,7 +173,7 @@ def update_subscriber(subId=None):
 @app.route("/get-settings/")
 def fetch_all_settings():
     setting_dao = Settings()
-    settings_list = setting_dao.fetchAllSettings()
+    settings_list = setting_dao.fetch_all_settings()
     return jsonify(settings_list)
     
 
@@ -181,6 +182,18 @@ def get_settings():
     return  render_template('settings.html')
 
 
+@app.route("/update-setting/", methods=['PUT'])
+def update_setting():
+    subscriber = request.form['subscriberId']
+    keyword=request.form['keywordId']
+    site=request.form['siteId']
+    page_limit=request.form['pageLimit']
+    minimum_alert=request.form['minimumAlert']
+    subscription=subscriptio_dto(site,keyword,subscriber=subscriber,page_limit=page_limit,minimum_alert=minimum_alert)
+    setting_dao = Settings()
+    return jsonify(setting_dao.update_setting(subscription))
+    
+    
 # Jobs manage endpoints  ------------->>>>>    
 
 @app.route("/jobs/")

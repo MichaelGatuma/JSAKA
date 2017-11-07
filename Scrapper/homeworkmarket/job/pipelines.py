@@ -25,7 +25,7 @@ class JobsFilter(object):
         logger.info ("Initializing sequence")
         self.con = None
         self.dbUtil = dbConnection()
-        self.cur = self.dbUtil.getCursor()
+        self.cur = self.dbUtil.get_cursor()
         self.mesgBody = ''' 
         Hi Duncan,
         
@@ -103,7 +103,7 @@ class JobsFilter(object):
         self.waks.close()
         logger.info("Terminating sequence") 
         try:
-            self.dbUtil.closeDbConnection()
+            self.dbUtil.close_db_connection()
         except Exception as e:
             print(e)
             

@@ -29,10 +29,10 @@ class dbConnection:
         self.__con.commit()
      
     
-    def getCursor(self):
+    def get_cursor(self):
         return self.__cur
     
-    def closeDbConnection(self):
+    def close_db_connection(self):
         self.__con.close()
         
     def commit(self):

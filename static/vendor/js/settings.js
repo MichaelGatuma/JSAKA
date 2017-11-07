@@ -110,6 +110,7 @@ function populateSettingTableTag(subscriberId,siteId,data){
 	}
 
 	addClickEventToKeywordSettingBtn();
+	addClickEventToCancelKeywordSettingBtn()
 }
 
 
@@ -145,16 +146,17 @@ function setValuesToSubAddButtonsSettingsMenu(setting){
   		addClickEventToKeywordSubSettingPagesBtn(setting[3],id);  
   		addClickEventToKeywordSubSettingAlertsBtn(setting[5],id);
   		addClickEventToKeywordSettingSaveBtn(id);
+  		
 }
 
 
 function addClickEventToKeywordSubSettingPagesBtn(maximunPageNo,id){
 
-	$(document).on('click', '.pages-number-spinner-'+id+' button', function () {
+	$( '.pages-number-spinner-'+id+' button').on('click',function () {
 
 		var btn = $(this);
-			oldValue = btn.closest('.pages-number-spinner-'+id+'').find('input').val().trim(), //get current value in input box
-			newVal = 1;
+		var oldValue = btn.closest('.pages-number-spinner-'+id+'').find('input').val().trim(); //get current value in input box
+		var newVal = 1;
 		
 		if (btn.attr('data-dir') == 'up') {
 			newVal = parseInt(oldValue) + 1;
@@ -172,10 +174,10 @@ function addClickEventToKeywordSubSettingPagesBtn(maximunPageNo,id){
 
 
 function addClickEventToKeywordSubSettingAlertsBtn(minimuJobsAlert,id){
-	$(document).on('click', '.alerts-number-spinner-'+id+' button', function () {  
-		var btn = $(this),
-			oldValue = btn.closest('.alerts-number-spinner-'+id+'').find('input').val().trim(), //get current value in input box
-			newVal = 1;
+	$('.alerts-number-spinner-'+id+' button').on('click', function () {  
+		var btn = $(this);
+		var oldValue = btn.closest('.alerts-number-spinner-'+id+'').find('input').val().trim(); //get current value in input box
+		var newVal = 1;
 		
 		if (btn.attr('data-dir') == 'up') {
 			newVal = parseInt(oldValue) + 1;
@@ -195,11 +197,39 @@ function addClickEventToKeywordSubSettingAlertsBtn(minimuJobsAlert,id){
 
 function addClickEventToKeywordSettingSaveBtn(id){
 	$(document).on('click', '#'+id+'-save', function () {  
+		$(".settings-status-spinner-"+id).css("display","block");
 		var btn = $(this),
 			noOfJobsAlerts = parseInt($('.alerts-number-spinner-'+id+'').find('input').val().trim()); //get current value in input box
 			noOfPages = parseInt($('.pages-number-spinner-'+id+'').find('input').val().trim()); //get current value in input box
 			console.log("Worship HIM "+noOfJobsAlerts +" alone "+noOfPages);
-			$(".settings-status-spinner-"+id).css("display","block");
+			var idArr=id.split("-");
+			subscriberId=idArr[0];
+			siteId=idArr[1];
+			keywordId=idArr[2];
+			
+			var formData = {
+		            "subscriberId": subscriberId,
+		            "siteId": siteId,
+		            "keywordId": keywordId,
+		            "minimumAlert": noOfJobsAlerts,
+		            "pageLimit": noOfPages
+		        };
+			$.ajax({
+		        type: 'PUT', // define the type of HTTP verb we want to use 
+		        url: '/update-setting/ ', // the url where we want to POST 
+		        dataType: 'json', // our data object
+		        data: formData, // our data object
+	            encode: true,
+		        success: function (data, textStatus, jqXHR) {
+		        	settingData=data;
+		        	$(".settings-status-spinner-"+id).css("display","none");
+		        },
+		        error: function (response, request) {
+		        	console.log("error occured fetching settings");
+		        	$(".settings-status-spinner-"+id).css("display","none");
+		        }
+		    });
+			
 	});
 	
 }
@@ -213,9 +243,20 @@ function addClickEventToKeywordSettingBtn(){
 	    	//$(settingPanel).val($(nameEl).html());
 	    	$(settingPanel).toggle();
 	    });	
-	 
-	 
 }
+
+
+function addClickEventToCancelKeywordSettingBtn(){
+	
+	 $("button.setting-cancel-btn").click(function (event) {
+		    idArr=event.target.id.split("-");
+	    	var selectedKey=idArr[0]+"-"+idArr[1]+"-"+idArr[2];
+	    	var settingPanel='div#'+selectedKey+'-panel';
+	    	//$(settingPanel).val($(nameEl).html());
+	    	$(settingPanel).toggle();
+	    });	
+}
+
 
 /*populates html table with content if any from sever*/
 function populateTableContent(setting) {
@@ -226,7 +267,7 @@ function populateTableContent(setting) {
 					+'<span class="input-group-btn">'
 						+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
 					+'</span>'
-					+'<input type="text"  disabled class="form-control text-center spinner-input"  value="1">'
+					+'<input type="text"  disabled class="form-control text-center spinner-input"  value="'+setting[3]+'">'
 					+'<span class="input-group-btn" style="float:left;">'
 						+'<button class="btn btn-default"  data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
 					+'</span>'
@@ -239,7 +280,7 @@ function populateTableContent(setting) {
 				+'<span class="input-group-btn">'
 					+'<button class="btn btn-default" data-dir="dwn"><span class="glyphicon glyphicon-minus"></span></button>'
 				+'</span>'
-				+'<input type="text" disabled class="form-control text-center  spinner-input" value="1">'
+				+'<input type="text" disabled class="form-control text-center  spinner-input" value="'+setting[4]+'">'
 				+'<span class="input-group-btn" style="float:left;">'
 					+'<button class="btn btn-default" data-dir="up"><span class="glyphicon glyphicon-plus"></span></button>'
 				+'</span>'
@@ -252,7 +293,7 @@ function populateTableContent(setting) {
 			+	'<i class="fa fa-pencil" aria-hidden="true"></i> Save'
 			+	'</button>'
 			
-			+	'<button type="button" id="'+setting[0]+'-'+setting[1]+'-'+setting[2]+'-cancel" class="btn btn-warning  setting-btn"'
+			+	'<button type="button" id="'+setting[0]+'-'+setting[1]+'-'+setting[2]+'-cancel" class="btn btn-warning  setting-btn setting-cancel-btn"'
 			+		'data-toggle="modal" data-target=".edit-modal">'
 			+	'<i class="fa fa-stop" aria-hidden="true"></i> Cancel'
 			+	'</button>'

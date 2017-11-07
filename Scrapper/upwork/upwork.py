@@ -35,7 +35,7 @@ class upwork:
         #self.chrome_options.add_argument('--no-sandbox')
         #get user agent
         self.dbUtil = dbConnection()
-        self.cur = self.dbUtil.getCursor()
+        self.cur = self.dbUtil.get_cursor()
         self.cur.execute("select user_agent from site where site_id=2")
         data=self.cur.fetchall()
         if data[0][0]==None or len(data[0][0])==0:
@@ -56,7 +56,7 @@ class upwork:
         
         try:
             self.dbUtil = dbConnection()
-            self.cur = self.dbUtil.getCursor()
+            self.cur = self.dbUtil.get_cursor()
             print("Creating upwork db record")
             self.cur.execute("insert into site(site_id,name) select 2,'Upwork' WHERE NOT EXISTS(SELECT 1 FROM site WHERE site_id = 2 AND name = 'Upwork');  ")
             self.dbUtil.commit()
@@ -109,7 +109,7 @@ class upwork:
             WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("a[href='/o/jobs/browse/c/web-mobile-software-dev/']")).click()
             self.driver.save_screenshot("/tmp/upwrk.png")
 #             self.dbUtil = dbConnection()
-#             self.cur = self.dbUtil.getCursor()
+#             self.cur = self.dbUtil.get_cursor()
 #             logger.info("searching for cookies")
 #             self.cur.execute("select * from cookie where site_id=2")
 #             data = self.cur.fetchall()
@@ -154,7 +154,7 @@ class upwork:
                 #parse first page
                 self.parse_page(key)
                 self.dbUtil = dbConnection()
-                self.cur = self.dbUtil.getCursor()
+                self.cur = self.dbUtil.get_cursor()
                 logger.info("fetching pagination info for keyword %s" %keywrd)
                 self.cur.execute("select page_limit from setting where site_id=2 and keyword_id=?" ,(key,))
                 data = self.cur.fetchall()
@@ -197,7 +197,7 @@ class upwork:
                 self._increment_counter()
                 logger.info("retrying")
                 self.dbUtil = dbConnection()
-                self.cur = self.dbUtil.getCursor()
+                self.cur = self.dbUtil.get_cursor()
                 #self.cur.execute("delete  from cookie where site_id=2")
                 self.cur.execute("update site set user_agent=Null where  site_id=2")
                 self.dbUtil.commit()
@@ -212,7 +212,7 @@ class upwork:
     
     def _get_counter(self):
         self.dbUtil = dbConnection()
-        self.cur = self.dbUtil.getCursor()
+        self.cur = self.dbUtil.get_cursor()
         self.cur.execute("select retry from retry_counter where site_id=2")
         data=self.cur.fetchall()
         self.dbUtil.commit()
@@ -223,14 +223,14 @@ class upwork:
     
     def _increment_counter(self):
         self.dbUtil = dbConnection()
-        self.cur = self.dbUtil.getCursor()
+        self.cur = self.dbUtil.get_cursor()
         self.cur.execute("delete from retry_counter where site_id=2")
         self.cur.execute("insert into retry_counter(retry,site_id) values(1,2)")
         self.dbUtil.commit()        
     
     def _reset_counter(self):
         self.dbUtil = dbConnection()
-        self.cur = self.dbUtil.getCursor()
+        self.cur = self.dbUtil.get_cursor()
         self.cur.execute("delete from retry_counter where site_id=2")
         self.cur.execute("insert into retry_counter(retry,site_id) values(0,2)")
         self.dbUtil.commit()  
