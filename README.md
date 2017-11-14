@@ -97,4 +97,7 @@ Subscription Manager
 
 ![Manage subscriptions](screenshots/Manage_Subs.png)
 
+Spider setting
+
+![Spider setting](screenshots/spider_settings.png)
 
