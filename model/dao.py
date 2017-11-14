@@ -147,6 +147,16 @@ class Subscription():
             subscriber_dict[subsc[0]] = subscriber
         dbUtil.close_db_connection()
         return  subscriber_dict  
+    
+    
+    def fetch_raw_subscriptions(self):
+        dbUtil = dbConnection()
+        cur = dbUtil.get_cursor() 
+        cur.execute('''select * from subscription s inner join keyword  k on k.keyword_id= s.keyword_id 
+                       inner join site site on site.site_id=s.site_id 
+                       inner join subscriber subsc on subsc.subscriber_id=s.subscriber_id''')
+        subscriptions = cur.fetchall()
+        return subscriptions
         
         
     def fetch_all_subscriptions(self):
@@ -320,4 +330,20 @@ class Settings():
         
     
     
+class Job:
+    def __init__(self):
+        '''pass'''
     
+    def get_raw_jobs(self):
+        sql_jobs="Select * from jobs"
+        dbUtil = dbConnection()
+        cur = dbUtil.get_cursor()
+        try:
+            jobs = cur.fetchall(sql_jobs) 
+        except Exception,e:
+            print(e)
+        return  jobs
+        
+        
+        
+        
