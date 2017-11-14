@@ -9,46 +9,12 @@ var count=0;
 
 $(document).ready(function(){
 	fetchAllSettings();
-		//url: 'updateContentById?contentId=' + contentId, 
-	
-//	$("button.edit-name").click(function (event) {
-//		$("div#edit-modal").modal('hide');
-//		var newname=$("input.edit-name").val();
-//		editUrl='/edit-name/'+newname+'/'+selectedKey+'/';
-//		$.ajax({
-//            type: 'PUT', // define the type of HTTP verb we want to use
-//            url: editUrl, // the url where we want to POST 
-//            encode: true,
-//            success: function (data, textStatus, jqXHR) {
-//                console.log("submit Successfully");
-//                $("div.alert").removeClass("alert-danger");
-//                $("div.alert").addClass("alert-success");
-//                $("p.messageFeedback").text("Edit successfull");
-//                closeAlert();
-//                fetchAllnames();
-//            },
-//            error: function (response, request) {
-//            	$("div.alert").removeClass("alert-success");
-//            	$("div.alert").addClass("alert-danger");
-//                var parsed_data = response.responseText;
-//                $("p.messageFeedback").text(parsed_data);
-//                closeAlert();
-//            }
-//
-//        });
-//		
-//		
-//	});
-	
-	
-	
 });
 
 
 
 //Fetch all subscriptions and store on cache:
 function fetchAllSettings(){
-	console.log("Fetching settings");
 	$(".load-settings-spinner").css("display","block");
 	$.ajax({
         type: 'GET', // define the type of HTTP verb we want to use 
@@ -69,7 +35,6 @@ function fetchAllSettings(){
         	
         },
         error: function (response, request) {
-        	console.log("error occured fetching settings");
         }
     });
 	
@@ -201,7 +166,6 @@ function addClickEventToKeywordSettingSaveBtn(id){
 		var btn = $(this),
 			noOfJobsAlerts = parseInt($('.alerts-number-spinner-'+id+'').find('input').val().trim()); //get current value in input box
 			noOfPages = parseInt($('.pages-number-spinner-'+id+'').find('input').val().trim()); //get current value in input box
-			console.log("Worship HIM "+noOfJobsAlerts +" alone "+noOfPages);
 			var idArr=id.split("-");
 			subscriberId=idArr[0];
 			siteId=idArr[1];
@@ -225,7 +189,6 @@ function addClickEventToKeywordSettingSaveBtn(id){
 		        	$(".settings-status-spinner-"+id).css("display","none");
 		        },
 		        error: function (response, request) {
-		        	console.log("error occured fetching settings");
 		        	$(".settings-status-spinner-"+id).css("display","none");
 		        }
 		    });
@@ -260,7 +223,6 @@ function addClickEventToCancelKeywordSettingBtn(){
 
 /*populates html table with content if any from sever*/
 function populateTableContent(setting) {
-	console.log("Populating table content "+setting[14]+"");
 			var noOfPages='<div class="col-sm-4  col-sm-offset-2  setting-label"><label>No of pages: </label></div>'
 			+'<div style="margin-bottom: 4px;" class="col-sm-5">'
 				+'<div class="input-group pages-number-spinner-'+setting[0]+'-'+setting[1]+'-'+setting[2]+'">'

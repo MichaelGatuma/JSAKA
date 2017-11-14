@@ -41,7 +41,6 @@ $(document).ready(function(){
             url: delUrl, // the url where we want to POST 
             encode: true,
             success: function (data, textStatus, jqXHR) {
-                console.log("submit Successfully");
                 $("div.alert").removeClass("alert-danger");
                 $("div.alert").addClass("alert-success");
                 $("p.messageFeedback").text("Delete successful");
@@ -164,8 +163,6 @@ $(document).ready(function(){
 		jQuery.each(subscribeKeywordSet.values,function(index, value){
 			var keywordName=keywordsMap.search(value);
 			$(".nonsubscribed-keywords #"+value).remove();
-			
-			console.log(currentSubscribedKeywords.contains(value));
 			if(!currentSubscribedKeywords.contains(value)){
 				$(".subscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
 				currentSubscribedKeywords.add(value);
@@ -181,10 +178,7 @@ $(document).ready(function(){
 	$(".keyword-unsubscribe-btn").click(function (event) {
 		jQuery.each(unsubscribeKeywordSet.values,function(index, value){
 			var keywordName=keywordsMap.search(value);
-			console.log("The value: "+value);
 			$(".subscribed-keywords li#"+value).remove();
-			
-			console.log(currentNonSubscribedKeywords.contains(value));
 			if(!currentNonSubscribedKeywords.contains(value)){
 				$(".nonsubscribed-keywords").append("<li id="+value+">"+keywordName+"</li>");
 				currentSubscribedKeywords.remove(value);
@@ -201,10 +195,7 @@ $(document).ready(function(){
 		
 		var style=$("#site-keyword").css("display");
 		var hasEditClass=$("#site-keyword").hasClass("edit");
-		console.log("Display "+style);
-		console.log("Has edit class "+hasEditClass);
 		if(style!=='none' && !hasEditClass) {
-			console.log("here one");
 			$("#site-keyword").css("display","none");
 			
 			var keywordsToSend=new Set(3);
@@ -220,7 +211,6 @@ $(document).ready(function(){
 			});
 			
 			var email=$("#subscriber-email").val();
-			console.log("email "+ email);
 			sitesS=JSON.stringify(sitesToSend.values);
 			keywordS=JSON.stringify(keywordsToSend.values);
 			
@@ -272,7 +262,6 @@ $(document).ready(function(){
 			});
 			
 			var email=$("#subscriber-email").val();
-			console.log("email "+ email);
 			sitesS=JSON.stringify(sitesToSend.values);
 			keywordS=JSON.stringify(keywordsToSend.values);
 			
@@ -322,7 +311,6 @@ function fetchAllSubscriptions(){
         	populateTableContent(data)
         },
         error: function (response, request) {
-        	console.log("error occured fetching subscriptions")
         }
 
     });
@@ -367,7 +355,6 @@ function hideShowKeywordSection(){
 function addBtnEvents(){
 	 
 	 $("button.subscription-control").click(function (event) {
-		 console.log("Here 0");
 		    selectedSubscriptionKey=$(event.target).parent().parent().attr('id');
 		    var subscriberId=selectedSubscriptionKey.split("-")[0];
 		    var groupId=selectedSubscriptionKey.split("-")[1];
@@ -433,10 +420,8 @@ function addBtnEvents(){
 				
 	    		
 	    	}else if(isDelete){
-	    		console.log("tr#"+selectedSubscriptionKey+" td");
 	    		elemnt="tr#"+selectedSubscriptionKey+" td";
 	    		var subMail=$(elemnt).html();
-	    		console.log("mail "+subMail);
 	    		$("label.delete-subscription").html(subMail);
 	    	}else{
 	    		
@@ -453,7 +438,6 @@ function fetchAllKeywords(keywordsList,toOmit){
 		for(var i in keywordsList){
     		
 			var isContinue=false;
-    		console.log("length "+toOmit.length);
 			for(var x=0;x<toOmit.length;x++){
 				if(toOmit[x]==i){
 					isContinue=true;
@@ -544,8 +528,6 @@ function populateTableContent(subscriptionsList) {
 	subscriptionList=subscriptionsList;
 	var subsc=subscriptionsList[0];
 	allSubscriptions=subsc;
-	console.log("Play");
-	console.log(subsc);
 	jQuery.each(subsc,function(subscriberId, subscriptions){
 		
 		jQuery.each(subscriptions,function(group_id, site_maps){

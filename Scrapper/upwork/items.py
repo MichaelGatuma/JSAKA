@@ -21,6 +21,7 @@ class upwork_item:
         self.job_type=""
         self.title=""
         self.keyword_id=""
+        self.link=""
 
 class dao:
     
@@ -29,8 +30,8 @@ class dao:
         dbUtil = dbConnection()
         cur = dbUtil.get_cursor()
         try:
-            cur.execute("insert into jobs(detail,time_created,site_id,title,other_info,keyword_id) values(?,datetime('now'),2,?,?,?)" ,
-                             (upwork_item.job_description,upwork_item.title,other_info,upwork_item.keyword_id) )
+            cur.execute("insert into jobs(detail,time_created,site_id,title,link,other_info,keyword_id) values(?,datetime('now'),2,?,?,?,?)" ,
+                             (upwork_item.job_description,upwork_item.title,upwork_item.link,other_info,upwork_item.keyword_id) )
                
         except IntegrityError,e:
             logger.error(e, exc_info=True)

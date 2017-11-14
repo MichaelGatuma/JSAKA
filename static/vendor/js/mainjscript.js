@@ -15,7 +15,6 @@ $(document).ready(function(){
             url: editUrl, // the url where we want to POST 
             encode: true,
             success: function (data, textStatus, jqXHR) {
-                console.log("submit Successfully");
                 $("div.alert").removeClass("alert-danger");
                 $("div.alert").addClass("alert-success");
                 $("p.messageFeedback").text("Edit successful");
@@ -44,7 +43,6 @@ $(document).ready(function(){
             url: delUrl, // the url where we want to POST 
             encode: true,
             success: function (data, textStatus, jqXHR) {
-                console.log("submit Successfully");
                 $("div.alert").removeClass("alert-danger");
                 $("div.alert").addClass("alert-success");
                 $("p.messageFeedback").text("Delete successful");
@@ -76,7 +74,6 @@ $(document).ready(function(){
             data: formData, // our data object
             encode: true,
             success: function (data, textStatus, jqXHR) {
-                console.log("submit Successfully");
                 $("div.alert").addClass("alert-success");
                 $("p.messageFeedback").text("Created successfully");
                 closeAlert();
@@ -101,10 +98,8 @@ $(document).ready(function(){
 
 function addBtnEvents(){
 	 $("button.keyword").click(function (event) {
-	    	console.log("Clicked id "+event.target.id);
 	    	selectedKey=event.target.id;
 	    	var keywordEl='td#'+selectedKey+'-keyword';
-	    	console.log("keyword selector"+keywordEl)
 	    	$('input.edit-keyword').val($(keywordEl).html());
 	    	$('label.delete-keyword').html($(keywordEl).html());
 	    
@@ -122,7 +117,6 @@ function fetchAllKeywords(){
         encode: true,
         success: function (data, textStatus, jqXHR) {
             $('table#contentItems').find("tr:gt(0)").remove();
-            console.log("the status gotten: " + textStatus);
             populateContentTable(data);
         },
         error: function (data, textStatus, jqXHR) {
@@ -142,8 +136,6 @@ function fetchAllKeywords(){
 function populateContentTable(data) {
 	
 	for(var i in data){
-  	  console.log(i); // alerts key
-  	console.log(data[i]); //alerts key's value
   	  var trHTML;
   	trHTML +='<tr><td id=\''+i+'-keyword\'>' + data[i] + '</td>'
   	+	'<td><button type="button" id=\''+i+'\' class="btn btn-info keyword" data-toggle="modal" style="margin-right:4px;" data-target=".edit-modal">'

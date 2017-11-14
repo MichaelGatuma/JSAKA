@@ -15,7 +15,6 @@ $(document).ready(function(){
             url: editUrl, // the url where we want to POST 
             encode: true,
             success: function (data, textStatus, jqXHR) {
-                console.log("submit Successfully");
                 $("div.alert").removeClass("alert-danger");
                 $("div.alert").addClass("alert-success");
                 $("p.messageFeedback").text("Edit successful");
@@ -43,10 +42,8 @@ $(document).ready(function(){
 
 function addBtnEvents(){
 	 $("button.name").click(function (event) {
-	    	console.log("Clicked id "+event.target.id);
 	    	selectedKey=event.target.id;
 	    	var nameEl='td#'+selectedKey+'-name';
-	    	console.log("name selector"+nameEl)
 	    	$('input.edit-name').val($(nameEl).html());
 	    
 	    });
@@ -63,7 +60,6 @@ function fetchAllnames(){
         encode: true,
         success: function (data, textStatus, jqXHR) {
             $('table#contentItems').find("tr:gt(0)").remove();
-            console.log("the status gotten: " + textStatus);
             populateContentTable(data);
         },
         error: function (data, textStatus, jqXHR) {
@@ -83,8 +79,6 @@ function fetchAllnames(){
 function populateContentTable(data) {
 	
 	for(var i in data){
-  	  console.log(i); // alerts key
-  	console.log(data[i]); //alerts key's value
   	  var trHTML;
   	trHTML +='<tr> <td>' + i + '</td> <td id=\''+i+'-name\'>' + data[i] + '</td>'
   	+	'<td><button type="button" id=\''+i+'\' class="btn btn-info name" data-toggle="modal" style="margin-right:4px;" data-target=".edit-modal">'
