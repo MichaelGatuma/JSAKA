@@ -334,16 +334,6 @@ class Job:
     def __init__(self):
         '''pass'''
     
-    def get_raw_jobs(self):
-        sql_jobs="Select * from jobs"
-        dbUtil = dbConnection()
-        cur = dbUtil.get_cursor()
-        try:
-            jobs = cur.fetchall(sql_jobs) 
-        except Exception,e:
-            print(e)
-        return  jobs
-        
-        
+    
         
         

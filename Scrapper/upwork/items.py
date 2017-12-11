@@ -26,7 +26,7 @@ class upwork_item:
 class dao:
     
     def save_item(self,upwork_item):
-        other_info="Job type: %s, Job pay: %s" %(upwork_item.job_type,upwork_item.job_payment)
+        other_info="Job type: %s, Job pay: %s, Posted: %s" %(upwork_item.job_type,upwork_item.job_payment,upwork_item.job_time_elapse)
         dbUtil = dbConnection()
         cur = dbUtil.get_cursor()
         try:
