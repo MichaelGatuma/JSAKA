@@ -244,8 +244,6 @@ class Subscription():
                 k=keyword
                 cur.execute(sql_select_subscription, (mailId[0], site, keyword, subscription.subscription_group_id)) 
                 subscript = cur.fetchone()
-                print("Haha")
-                print(subscript)
                 if(subscript!=None):
                     sqlFetchSite = "select name from site where site_id=?"
                     cur.execute(sqlFetchSite, (s,)) 

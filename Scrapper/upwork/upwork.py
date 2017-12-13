@@ -19,13 +19,15 @@ from random import randint
 from Useragent import agent_list
 from selenium.webdriver.common.action_chains import ActionChains
 from docutils.nodes import footer
-
+import schedule
+import time
 
 class upwork:
     
     def __init__(self):
         logger.info("initializing upwork crawler")
-        self.init_url="https://www.upwork.com"
+        #self.init_url="https://www.upwork.com"
+        self.init_url="https://www.upwork.com/o/jobs/browse/c/web-mobile-software-dev/"
         #self.init_url="http://139.59.4.7:8080/"
         #self.chrome_options = webdriver.ChromeOptions()
         #self.chrome_options.add_argument("--headless") 
@@ -92,10 +94,10 @@ class upwork:
             cookies_dict=self.driver.get_cookies()
             print(cookies_dict)
             #click on the browse button
-            elem = WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("ul.site-links li.ng-isolate-scope a"))
-            elem.click()
+            #elem = WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("ul.site-links li.ng-isolate-scope a"))
+            #elem.click()
             self.driver.save_screenshot("/tmp/upwrk.png")
-            sleep(1)
+            #sleep(1)
             #look for  the Browse Jobs option sub menu
 #             elems=self.driver.find_elements_by_css_selector("ul.sub-menu li.tile a.tile-title")
 #             print(elems)
@@ -105,9 +107,9 @@ class upwork:
 #                     print("element to click is %s " %elem.text)
 #                     e.click()
 #                     break
-            self.driver.execute_script("document.querySelector('ul.sub-menu li.tile:nth-child(3)').classList.add('active')")
-            WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("a[href='/o/jobs/browse/c/web-mobile-software-dev/']")).click()
-            self.driver.save_screenshot("/tmp/upwrk.png")
+            #self.driver.execute_script("document.querySelector('ul.sub-menu li.tile:nth-child(3)').classList.add('active')")
+            #WebDriverWait(self.driver, 10).until(lambda x: x.find_element_by_css_selector("a[href='/o/jobs/browse/c/web-mobile-software-dev/']")).click()
+            #self.driver.save_screenshot("/tmp/upwrk.png")
 #             self.dbUtil = dbConnection()
 #             self.cur = self.dbUtil.get_cursor()
 #             logger.info("searching for cookies")
@@ -193,7 +195,7 @@ class upwork:
                 self.tear_down()
                 self.__init__()
                 self.open_job_listing_page()
-                keywords_to_scrap=upw.get_subscribed_keywords()
+                keywords_to_scrap=self.get_subscribed_keywords()
                 self.search_jobs(keywords_to_scrap)
                 
                 
@@ -312,12 +314,8 @@ class upwork:
             attributes_list.append(row[2])
             keywordsDict[row[1]]=  attributes_list
         return keywordsDict
-        
 
-if __name__== "__main__":
-    logging.basicConfig(filename='/tmp/upwork.log', filemode='w', level=logging.DEBUG, format='%(asctime)s %(message)s')
-    logger = logging.getLogger(__name__)
-    logger.info("Crawler started")
+def bootstrap():        
     upw=upwork()
     try:
         upw.open_job_listing_page()
@@ -329,6 +327,18 @@ if __name__== "__main__":
     finally:
         upw.tear_down()
         upw._reset_counter()
+        
+if __name__== "__main__":
+    logging.basicConfig(filename='/tmp/upwork.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
+    logger = logging.getLogger(__name__)
+    logger.info("Crawler started")
+    schedule.every(2).minutes.do(bootstrap)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+    
+    
 
 
 
