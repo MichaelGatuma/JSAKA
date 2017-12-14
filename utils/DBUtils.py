@@ -13,7 +13,6 @@ class dbConnection:
         
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         db_path = os.path.join(BASE_DIR, "JSaka.db")
-        print("The db path---------->" + db_path)
         self.__con = lite.connect(db_path)
         self.__cur = self.__con.cursor()
         self.__cur.execute("create table IF NOT EXISTS  jobs(job_id INTEGER PRIMARY KEY ASC,name TEXT(100) UNIQUE ,time_created TEXT(100),site_id INTEGER,status INTEGER(1) DEFAULT 0)")
