@@ -131,7 +131,7 @@ if __name__== "__main__":
     logging.basicConfig(filename='/tmp/jobsscrapper.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
     logger = logging.getLogger(__name__)
     logger.info("Dispatcher started")
-    schedule.every(10).seconds.do(jobs_colletor)
+    schedule.every(10).minutes.do(jobs_colletor)
 
     while True:
         schedule.run_pending()

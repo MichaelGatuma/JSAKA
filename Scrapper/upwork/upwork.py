@@ -4,6 +4,8 @@ Created on Sep 14, 2017
 @author: duncan
 '''
 import logging
+import sys
+sys.path.insert(0, "/home/duncan/workspace/JobsScapper")
 from time import sleep
 
 from selenium import webdriver
@@ -332,7 +334,7 @@ if __name__== "__main__":
     logging.basicConfig(filename='/tmp/upwork.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
     logger = logging.getLogger(__name__)
     logger.info("Crawler started")
-    schedule.every(2).minutes.do(bootstrap)
+    schedule.every(5).minutes.do(bootstrap)
 
     while True:
         schedule.run_pending()
