@@ -15,13 +15,17 @@ class dbConnection:
         db_path = os.path.join(BASE_DIR, "JSaka.db")
         self.__con = lite.connect(db_path)
         self.__cur = self.__con.cursor()
-        self.__cur.execute("create table IF NOT EXISTS  jobs(job_id INTEGER PRIMARY KEY ASC,name TEXT(100) UNIQUE ,time_created TEXT(100),site_id INTEGER,status INTEGER(1) DEFAULT 0)")
+        self.__cur.execute('''create table IF NOT EXISTS  jobs(job_id INTEGER PRIMARY KEY ASC,name TEXT(100) UNIQUE,
+                          time_created TEXT(100),detail TEXT(2000),link TEXT,other_info TEXT,site_id INTEGER,
+                          status INTEGER(1) DEFAULT 0,keyword_id INTEGER)''')
         self.__cur.execute('''
-            create table IF NOT EXISTS subscription( subscriber_id INTEGER, 
-            site_id INTEGER, keyword_id INTEGER, page_limit INTEGER NOT NULL DEFAULT 1, minimum_alert INTEGER NOT NULL DEFAULT 1,subscription_group_id INTEGER,
-            PRIMARY KEY(subscriber_id,site_id,keyword_id) )
+                        create table IF NOT EXISTS subscription( subscriber_id INTEGER, 
+                        site_id INTEGER, keyword_id INTEGER, page_limit INTEGER NOT NULL DEFAULT 1, minimum_alert INTEGER NOT NULL DEFAULT 1,
+                        subscription_group_id INTEGER,
+                        PRIMARY KEY(subscriber_id,site_id,keyword_id) )
         ''')
-        self.__cur.execute('''create table IF NOT EXISTS sent_jobs ( subscriber_id INTEGER NOT NULL, job_id INTEGER NOT NULL, PRIMARY KEY(subscriber_id,job_id),
+        self.__cur.execute('''create table IF NOT EXISTS sent_jobs ( subscriber_id INTEGER NOT NULL, job_id INTEGER NOT NULL,
+             timestamp TEXT(100),PRIMARY KEY(subscriber_id,job_id),
              FOREIGN KEY(subscriber_id) REFERENCES subscriber(subsriber_id) ON DELETE CASCADE ON UPDATE NO ACTION, 
              FOREIGN KEY(job_id) REFERENCES jobs(job_id) ON DELETE CASCADE ON UPDATE NO ACTION)                      
         ''')
