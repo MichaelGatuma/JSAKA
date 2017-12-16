@@ -14,13 +14,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from utils.DBUtils import dbConnection
-from mock.mock import self
 from items import upwork_item
 from items import dao
 from random import randint
 from Useragent import agent_list
 from selenium.webdriver.common.action_chains import ActionChains
-from docutils.nodes import footer
 import schedule
 import time
 
@@ -42,7 +40,7 @@ class upwork:
         self.cur = self.dbUtil.get_cursor()
         self.cur.execute("select user_agent from site where site_id=2")
         data=self.cur.fetchall()
-        if data[0][0]==None or len(data[0][0])==0:
+        if len(data)==0 or data[0][0]==None or len(data[0][0])==0:
             print("generating agent")
             index=randint(0,len(agent_list)-1)
             #self.chrome_options.add_argument("--user-agent=%s" %agent_list[index])
@@ -334,7 +332,7 @@ if __name__== "__main__":
     logging.basicConfig(filename='/tmp/upwork.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
     logger = logging.getLogger(__name__)
     logger.info("Crawler started")
-    schedule.every(5).minutes.do(bootstrap)
+    schedule.every(5).seconds.do(bootstrap)
 
     while True:
         schedule.run_pending()
