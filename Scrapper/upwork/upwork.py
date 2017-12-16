@@ -332,7 +332,7 @@ if __name__== "__main__":
     logging.basicConfig(filename='/tmp/upwork.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
     logger = logging.getLogger(__name__)
     logger.info("Crawler started")
-    schedule.every(5).seconds.do(bootstrap)
+    schedule.every(5).minutes.do(bootstrap)
 
     while True:
         schedule.run_pending()

@@ -6,7 +6,6 @@ Created on Sep 17, 2017
 
 from utils.DBUtils import dbConnection
 from sqlite3 import IntegrityError
-from mock.mock import self
 import logging
 
 logging.basicConfig(filename='/tmp/upwork.log', filemode='w', level=logging.DEBUG, format='%(asctime)s %(message)s')

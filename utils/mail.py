@@ -17,6 +17,7 @@ def send_mail(body_message,sender,to,subject=None):
           "",
           "%s"
           ] )%(sender,to,subject,body_message)
+        msg=msg.encode('ascii', 'ignore')
         server.sendmail(sender, to, msg)
         server.quit()
 
