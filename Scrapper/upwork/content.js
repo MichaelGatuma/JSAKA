@@ -5,7 +5,7 @@ const elementDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype,
 
 // redefine the property with a patched descriptor
 Object.defineProperty(HTMLDivElement.prototype, 'offsetHeight', {
-  ...elementDescriptor,
+	elementDescriptor,
   get: function() {
     if (this.id === 'modernizr') {
         return 1;
@@ -20,7 +20,7 @@ Object.defineProperty(HTMLDivElement.prototype, 'offsetHeight', {
 
 	  // redefine the property with a patched descriptor
 	  Object.defineProperty(HTMLImageElement.prototype, property, {
-	    ...imageDescriptor,
+	    imageDescriptor,
 	    get: function() {
 	      // return an arbitrary non-zero dimension if the image failed to load
 	      if (this.complete && this.naturalHeight == 0) {

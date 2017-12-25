@@ -15,7 +15,7 @@ from model.dao import Keyword
 from model.dao import Site
 from model.dto import Subscriber
 from model.dao import Settings
-from meld.meldapp import app
+
 
 app = Flask(__name__)
 
