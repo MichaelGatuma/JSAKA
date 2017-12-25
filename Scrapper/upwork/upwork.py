@@ -14,14 +14,14 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
 from utils.DBUtils import dbConnection
-from mock.mock import self
 from items import upwork_item
 from items import dao
 from random import randint
 from Useragent import agent_list
 from selenium.webdriver.common.action_chains import ActionChains
-from docutils.nodes import footer
+from selenium.common.exceptions import WebDriverException
 import schedule
+import os
 import time
 
 class upwork:
@@ -29,8 +29,8 @@ class upwork:
     def __init__(self):
         logger.info("initializing upwork crawler")
         #self.init_url="https://www.upwork.com"
-        self.init_url="https://www.upwork.com/o/jobs/browse/c/web-mobile-software-dev/"
-        #self.init_url="http://139.59.4.7:8080/"
+        #self.init_url="https://www.upwork.com/o/jobs/browse/c/web-mobile-software-dev/"
+        self.init_url="http://139.59.4.7:8080/"
         #self.chrome_options = webdriver.ChromeOptions()
         #self.chrome_options.add_argument("--headless") 
         #self.chrome_options.add_argument("--window-size=1437,760")
@@ -42,20 +42,28 @@ class upwork:
         self.cur = self.dbUtil.get_cursor()
         self.cur.execute("select user_agent from site where site_id=2")
         data=self.cur.fetchall()
-        if data[0][0]==None or len(data[0][0])==0:
-            print("generating agent")
-            index=randint(0,len(agent_list)-1)
-            #self.chrome_options.add_argument("--user-agent=%s" %agent_list[index])
-            print(agent_list[index])
-            #self.cur.execute("update site set user_agent=? where site_id=2", (agent_list[index],))
-            self.dbUtil.commit()
-        else:
+        try:
+            
+            if data[0][0]==None or len(data[0][0])==0:
+                print("generating agent")
+                index=randint(0,len(agent_list)-1)
+                #self.chrome_options.add_argument("--user-agent=%s" %agent_list[index])
+                print(agent_list[index])
+                self.cur.execute("update site set user_agent=? where site_id=2", (agent_list[index],))
+                self.dbUtil.commit()
+            else:
+                agnt=""
+                for agent in data:
+                    agnt=agent[0]
+                #self.chrome_options.add_argument("--user-agent=%s" %agnt)
+            #self.driver = webdriver.Chrome(chrome_options=self.chrome_options)
+        except IndexError,i:
             agnt=""
             for agent in data:
                 agnt=agent[0]
-            #self.chrome_options.add_argument("--user-agent=%s" %agnt)
-            print(agnt)
-        #self.driver = webdriver.Chrome(chrome_options=self.chrome_options)
+                #self.chrome_options.add_argument("--user-agent=%s" %agnt)
+            #self.driver = webdriver.Chrome(chrome_options=self.chrome_options)
+            logger.error('No user agent specified')
         self.driver = webdriver.Firefox()
         
         try:
@@ -302,7 +310,12 @@ class upwork:
         
     def tear_down(self):
         logger.info("terminating upwork crawler, shutting down web driver")
-        self.driver.quit()
+        try:
+            self.driver.close()
+            os.system("pkill geckodriver") #if usign fire fox, change accordingly
+        except WebDriverException,e:
+            pass
+
        
        
     def get_subscribed_keywords(self):
@@ -334,7 +347,7 @@ if __name__== "__main__":
     logging.basicConfig(filename='/tmp/upwork.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
     logger = logging.getLogger(__name__)
     logger.info("Crawler started")
-    schedule.every(5).minutes.do(bootstrap)
+    schedule.every(7).minutes.do(bootstrap)
 
     while True:
         schedule.run_pending()

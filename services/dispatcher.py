@@ -128,7 +128,7 @@ def update_sent_jobs(message_properties_dictionary):
             
             
 if __name__== "__main__":
-    logging.basicConfig(filename='/tmp/jobsscrapper.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
+    logging.basicConfig(filename='/tmp/dispatcher.log', level=logging.DEBUG, format='%(asctime)s %(message)s')
     logger = logging.getLogger(__name__)
     logger.info("Dispatcher started")
     schedule.every(10).minutes.do(jobs_colletor)
