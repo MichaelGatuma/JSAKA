@@ -25,17 +25,21 @@ def jobs_colletor():
     '''
     dbUtil = dbConnection()
     cur = dbUtil.get_cursor()
-    jobs_to_dispatch='''select tt1.subscriber_id as subscriber_id,tt1.keyword_id as keyword_id,
+    jobs_to_dispatch='''
+                    select tt1.subscriber_id as subscriber_id,tt1.keyword_id as keyword_id,
                     tt1.keyword as keyword,tt1.site_id as site_id,tt1.name as site_name,
                     jb.detail as job_detail,tt1.email as email,jb.link as job_link,
                     jb.time_created as post_time,jb.other_info as other_info,jb.job_id as job_id from 
-                    (select subscrib.subscriber_id,subscrib.email,keyw.keyword_id,keyw.keyword,sit.site_id,sit.name,subscrip.minimum_alert as jobs_no,keyw.keyword,sit.name
+                   (select subscrib.subscriber_id,subscrib.email,keyw.keyword_id,keyw.keyword,sit.site_id,sit.name,subscrip.minimum_alert as jobs_no,keyw.keyword,sit.name
                     from subscription subscrip 
                     inner join subscriber as subscrib on  subscrip.subscriber_id=subscrib.subscriber_id
                     inner join keyword keyw on subscrip.keyword_id=keyw.keyword_id
-                    inner join site sit on subscrip.site_id=sit.site_id) as tt1,(select count(*) as jobs_no,jobo.keyword_id as keyword_id,jobo.site_id as site_id,subscrib.subscriber_id as subscriber_id from jobs jobo
+                    inner join site sit on subscrip.site_id=sit.site_id) as tt1,
+                    
+                    (select count(*) as jobs_no,jobo.keyword_id as keyword_id,jobo.site_id as site_id,subscrib.subscriber_id as subscriber_id from jobs jobo
                     inner join subscription subs on subs.site_id=jobo.site_id and subs.keyword_id=jobo.keyword_id
                     inner join subscriber subscrib on subscrib.subscriber_id=subs.subscriber_id  
+                    where not exists (select 1 from sent_jobs where  subscrib.subscriber_id=subscriber_id and jobo.job_id=job_id)
                     group by subscrib.subscriber_id,jobo.keyword_id,jobo.site_id) as tt2
                     inner join jobs jb on 
                     tt1.site_id=jb.site_id  and tt1.keyword_id=jb.keyword_id and jb.job_id=jb.job_id
