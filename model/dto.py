@@ -4,7 +4,6 @@ Created on Aug 7, 2017
 @author: duncan
 '''
 
-from mock.mock import self
 
 
 class Subscriber(object):
