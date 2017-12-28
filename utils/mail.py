@@ -9,7 +9,7 @@ def send_mail(body_message,sender,to,subject=None):
         server = smtplib.SMTP('smtp.gmail.com:587')
         server.ehlo()
         server.starttls()
-        server.login('duncanndiithi@gmail.com','elizabeth@wairimu26')
+        server.login('username','password')
         msg = "\r\n".join([
           "From: %s",
           "To: %s",
