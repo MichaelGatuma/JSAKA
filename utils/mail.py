@@ -6,7 +6,7 @@ Created on Sep 15, 2017
 import smtplib
 
 def send_mail(body_message,sender,to,subject=None):
-        server = smtplib.SMTP('smtp.gmail.com:587')
+        server = smtplib.SMTP('server:port')
         server.ehlo()
         server.starttls()
         server.login('username','password')
